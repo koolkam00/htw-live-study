@@ -26,7 +26,7 @@ export default function MethodologyPage() {
       </ol>
       <p>
         Formally, with base pace \( p_b \) and observed pace \( p_d \) at distance \( d \ge 20 \) km, an HTW episode
-        occurs when \( p_d \ge (1 + \text{DoS}) \cdot p_b \) for a continuous window of at least \( \text{LoS} \) km,
+        occurs when \( p_d \ge (1 + \\text&#123;DoS&#125;) \cdot p_b \) for a continuous window of at least \( \\text&#123;LoS&#125; \) km,
         where DoS = 0.25 and LoS = 5 km.
       </p>
 
