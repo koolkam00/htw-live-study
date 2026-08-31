@@ -1,0 +1,164 @@
+:root {
+  --bg: #0b0f14;
+  --panel: #121821;
+  --muted: #8b9bb4;
+  --text: #e6edf3;
+  --accent: #3da9fc;
+  --accent-muted: #264f78;
+  --border: #223047;
+  --danger: #ff6b6b;
+  --success: #59d38c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 1.25rem;
+  margin: 0 auto;
+}
+
+header.site-header {
+  border-bottom: 1px solid var(--border);
+  background: rgba(18, 24, 33, 0.7);
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+.site-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.site-subtitle {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 900px) {
+  .toolbar {
+    grid-template-columns: 2fr 1fr;
+    align-items: end;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+select, button, input {
+  background: #0d131c;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.stat {
+  background: #0d131c;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  min-width: 140px;
+}
+.stat .label { color: var(--muted); font-size: 0.8rem; }
+.stat .value { font-weight: 700; font-size: 1.2rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.figure-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.figure-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.figure-title {
+  font-weight: 600;
+}
+.badge {
+  font-size: 0.75rem;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+}
+.placeholder {
+  display: grid;
+  place-items: center;
+  height: 280px;
+  background: #0d131c;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  text-align: center;
+  padding: 1rem;
+}
+.chart {
+  height: 320px;
+}
+
+.footer {
+  margin-top: 2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
