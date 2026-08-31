@@ -22,15 +22,16 @@ The app reads `public/data/live.json`:
 {
   "status": "empty" | "ready",
   "as_of": "2026-08-31T00:00:00Z" | null,
-  "definition": { "dos": 0.25, "los_km": 5 },
+  "definition": { "dos": 0.25, "los_km": 5, "after_km": 20, "base_window_km": [5, 20] },
   "corpus": { "races": number|null, "runners": number|null, "records": number|null },
-  "figures": { "fig1": {}, "fig2": {}, "fig3": {}, "fig4": {}, "fig5": {}, "fig6": {} }
+  "figures": { "fig1": {}, "fig2": {}, "fig3": {}, "fig4": {}, "fig5": {}, "fig6": {} } | null,
+  "tables": { "t1": {}, "t2": {}, "t3": {}, "t4": {} } | null
 }
 ```
 
 Start with `status: "empty"`. When moving to `"ready"`, provide data in a shape that the components
 understand (e.g., `series: [{ "name": "label", "value": 0.0 }]`). Live figures never reuse the
-paper's 2021 numbers; any comparison redraws must be labeled “2021 published”.
+paper's 2021 numbers; any comparison redraws must be labeled “Smyth 2021 (published)”.
 
 ## Development
 
@@ -64,4 +65,4 @@ Then publish the `out/` directory (e.g., to the `gh-pages` branch or to `docs/` 
 ## Notes
 
 - Do not invent live numbers. The default `public/data/live.json` ships with `status: "empty"`.
-- Any S1 redraw for comparison must be clearly labeled “2021 published”.
+- Any S1 redraw for comparison must be clearly labeled “Smyth 2021 (published)”.

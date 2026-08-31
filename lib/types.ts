@@ -21,6 +21,8 @@ export type AbilityBucket =
 export interface HtwDefinition {
   dos: number; // degree of slowdown threshold (e.g., 0.25 for 25%)
   los_km: number; // length of slowdown (km) threshold (e.g., 5)
+  after_km: number; // apply slowdown detection after this distance (e.g., 20)
+  base_window_km: [number, number]; // base-pace window inclusive bounds (e.g., [5, 20])
 }
 
 export interface CorpusCounts {
@@ -30,6 +32,7 @@ export interface CorpusCounts {
 }
 
 export type FigureDataset = Record<string, unknown>;
+export type TableDataset = Record<string, unknown>;
 
 export interface LiveJson {
   status: 'empty' | 'ready';
@@ -37,13 +40,19 @@ export interface LiveJson {
   definition: HtwDefinition;
   corpus: CorpusCounts;
   figures: {
-    fig1?: FigureDataset;
-    fig2?: FigureDataset;
-    fig3?: FigureDataset;
-    fig4?: FigureDataset;
-    fig5?: FigureDataset;
-    fig6?: FigureDataset;
-  };
+    fig1?: FigureDataset | null;
+    fig2?: FigureDataset | null;
+    fig3?: FigureDataset | null;
+    fig4?: FigureDataset | null;
+    fig5?: FigureDataset | null;
+    fig6?: FigureDataset | null;
+  } | null;
+  tables?: {
+    t1?: TableDataset | null;
+    t2?: TableDataset | null;
+    t3?: TableDataset | null;
+    t4?: TableDataset | null;
+  } | null;
 }
 
 export interface Filters {

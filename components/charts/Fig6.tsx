@@ -17,7 +17,7 @@ export default function Fig6({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW cost vs. slowdown relationship will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="HTW finish time and time cost by age and ability will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 6 chart">

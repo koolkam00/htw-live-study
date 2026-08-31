@@ -9,14 +9,20 @@ import Fig4 from '@/components/charts/Fig4';
 import Fig5 from '@/components/charts/Fig5';
 import Fig6 from '@/components/charts/Fig6';
 import { useLiveData } from '@/hooks/useLiveData';
+import TableCard from '@/components/TableCard';
+import T1 from '@/components/tables/T1';
+import T2 from '@/components/tables/T2';
+import T3 from '@/components/tables/T3';
+import T4 from '@/components/tables/T4';
 
 function Dashboard() {
   const { filters } = useFilters();
   const { data, status, loading, error } = useLiveData(60000);
+  const isReady = status === 'ready';
   const asOf =
-    data?.as_of && typeof data.as_of === 'string' && data.as_of.length > 0
+    isReady && data?.as_of && typeof data.as_of === 'string' && data.as_of.length > 0
       ? new Date(data.as_of).toLocaleString()
-      : '—';
+      : 'Live results not yet published';
   const corpus = data?.corpus ?? { races: null, runners: null, records: null };
 
   return (
@@ -56,34 +62,92 @@ function Dashboard() {
       </div>
 
       <div className="grid">
-        <FigureCard title="Figure 1: HTW proportion" subtitle="by age group and ability" badge="Live">
-          <Fig1 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig1} filters={filters} />
+        <FigureCard
+          title="Figure 1: HTW proportion vs DoS/LoS thresholds (sensitivity)"
+          subtitle="Sensitivity analysis across slowdown and window thresholds"
+          badge={isReady && data?.figures?.fig1 ? 'Live' : 'Waiting'}
+        >
+          <Fig1 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig1} filters={filters} />
         </FigureCard>
 
-        <FigureCard title="Figure 2: HTW vs. PB proximity" subtitle="years around personal best" badge="Live">
-          <Fig2 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig2} filters={filters} />
+        <FigureCard
+          title="Figure 2: HTW by age and by ability"
+          subtitle="Sex split available via filters"
+          badge={isReady && data?.figures?.fig2 ? 'Live' : 'Waiting'}
+        >
+          <Fig2 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig2} filters={filters} />
         </FigureCard>
 
-        <FigureCard title="Figure 3: HTW start distance" subtitle="km after 20km" badge="Live">
-          <Fig3 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig3} filters={filters} />
+        <FigureCard
+          title="Figure 3: HTW vs years before/after a recent PB"
+          subtitle="Relationship to PB proximity"
+          badge={isReady && data?.figures?.fig3 ? 'Live' : 'Waiting'}
+        >
+          <Fig3 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig3} filters={filters} />
         </FigureCard>
 
-        <FigureCard title="Figure 4: HTW slowdown degree" subtitle="percentage slowdown" badge="Live">
-          <Fig4 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig4} filters={filters} />
+        <FigureCard
+          title="Figure 4: Figure 3 split by age and ability"
+          subtitle="PB proximity analysis stratified by age and ability"
+          badge={isReady && data?.figures?.fig4 ? 'Live' : 'Waiting'}
+        >
+          <Fig4 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig4} filters={filters} />
         </FigureCard>
 
-        <FigureCard title="Figure 5: HTW time cost" subtitle="minutes lost" badge="Live">
-          <Fig5 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig5} filters={filters} />
+        <FigureCard
+          title="Figure 5: HTW start, distance, and slowdown by age and ability"
+          subtitle="Distribution of onset, duration, and slowdown degree"
+          badge={isReady && data?.figures?.fig5 ? 'Live' : 'Waiting'}
+        >
+          <Fig5 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig5} filters={filters} />
         </FigureCard>
 
-        <FigureCard title="Figure 6: Cost vs. slowdown" subtitle="relationship between time cost and slowdown" badge="Live">
-          <Fig6 status={status === 'ready' ? 'ready' : 'empty'} dataset={data?.figures?.fig6} filters={filters} />
+        <FigureCard
+          title="Figure 6: HTW finish time and time cost by age and ability"
+          subtitle="Impact on marathon finish time"
+          badge={isReady && data?.figures?.fig6 ? 'Live' : 'Waiting'}
+        >
+          <Fig6 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig6} filters={filters} />
         </FigureCard>
+      </div>
+
+      <div className="grid">
+        <TableCard
+          title="Table 1: Original × city/race"
+          subtitle="Original sample breakdown by city/race"
+          badge={isReady && data?.tables?.t1 ? 'Live' : 'Waiting'}
+        >
+          <T1 status={isReady ? 'ready' : 'empty'} dataset={data?.tables?.t1} filters={filters} />
+        </TableCard>
+
+        <TableCard
+          title="Table 2: Repeaters × city/race"
+          subtitle="Repeaters sample breakdown by city/race"
+          badge={isReady && data?.tables?.t2 ? 'Live' : 'Waiting'}
+        >
+          <T2 status={isReady ? 'ready' : 'empty'} dataset={data?.tables?.t2} filters={filters} />
+        </TableCard>
+
+        <TableCard
+          title="Table 3: Original × age×sex"
+          subtitle="Original sample breakdown by age and sex"
+          badge={isReady && data?.tables?.t3 ? 'Live' : 'Waiting'}
+        >
+          <T3 status={isReady ? 'ready' : 'empty'} dataset={data?.tables?.t3} filters={filters} />
+        </TableCard>
+
+        <TableCard
+          title="Table 4: Repeaters × age×sex"
+          subtitle="Repeaters sample breakdown by age and sex"
+          badge={isReady && data?.tables?.t4 ? 'Live' : 'Waiting'}
+        >
+          <T4 status={isReady ? 'ready' : 'empty'} dataset={data?.tables?.t4} filters={filters} />
+        </TableCard>
       </div>
 
       <div className="panel" role="note">
         <div className="site-subtitle">
-          Any 2021 paper redraws, if added for context, will be labeled “2021 published”. Live figures never use the paper’s static numbers.
+          Any 2021 paper redraws, if added for context, will be labeled “Smyth 2021 (published)”. Live figures and tables never use the paper’s static numbers.
         </div>
       </div>
     </div>

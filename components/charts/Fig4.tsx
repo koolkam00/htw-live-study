@@ -17,7 +17,7 @@ export default function Fig4({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW slowdown percentage distribution will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="Figure 3 split by age and ability will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 4 chart">

@@ -1,14 +1,8 @@
 {
   "status": "empty",
   "as_of": null,
-  "definition": { "dos": 0.25, "los_km": 5 },
+  "definition": { "dos": 0.25, "los_km": 5, "after_km": 20, "base_window_km": [5, 20] },
   "corpus": { "races": null, "runners": null, "records": null },
-  "figures": {
-    "fig1": {},
-    "fig2": {},
-    "fig3": {},
-    "fig4": {},
-    "fig5": {},
-    "fig6": {}
-  }
+  "figures": null,
+  "tables": null
 }

@@ -17,7 +17,7 @@ export default function Fig5({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW time/cost (minutes) distribution will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="HTW start, distance, and slowdown by age and ability will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 5 chart">
