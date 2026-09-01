@@ -23,7 +23,11 @@ function Dashboard() {
     isReady && data?.as_of && typeof data.as_of === 'string' && data.as_of.length > 0
       ? new Date(data.as_of).toLocaleString()
       : 'Live results not yet published';
-  const corpus = data?.corpus ?? { races: null, runners: null, records: null };
+  const corpus = data?.corpus ?? { races: null, runners: null, records: null } as any;
+  // Display-only aliasing for corpus counts: prefer canonical keys, else fall back to analyst-provided n_* keys
+  const displayRaces = (corpus?.races ?? corpus?.n_races) ?? '—';
+  const displayRunners = (corpus?.runners ?? corpus?.n_runners) ?? '—';
+  const displayRecords = (corpus?.records ?? corpus?.n_records) ?? '—';
 
   return (
     <div className="stack" style={{ display: 'grid', gap: '1rem' }}>
@@ -41,15 +45,15 @@ function Dashboard() {
           <div style={{ marginTop: '0.75rem' }} className="stats" role="status">
             <div className="stat">
               <div className="label">Races</div>
-              <div className="value">{corpus.races ?? '—'}</div>
+              <div className="value">{displayRaces}</div>
             </div>
             <div className="stat">
               <div className="label">Runners</div>
-              <div className="value">{corpus.runners ?? '—'}</div>
+              <div className="value">{displayRunners}</div>
             </div>
             <div className="stat">
               <div className="label">Records</div>
-              <div className="value">{corpus.records ?? '—'}</div>
+              <div className="value">{displayRecords}</div>
             </div>
           </div>
           {status !== 'ready' && (
