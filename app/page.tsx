@@ -16,10 +16,17 @@ function StatusBadge({ id, meta }: { id: string; meta: any | null }) {
   return <span className="badge">{label}</span>;
 }
 
-function readIndexIds(): string[] {
-  const idxPath = path.join(process.cwd(), 'public', 'data', 'packs', 'INDEX.json');
+function readPackIds(): string[] {
+  const packsDir = path.join(process.cwd(), 'public', 'data', 'packs');
+  const idsPathA = path.join(packsDir, 'PACK_IDS.json'); // preferred
+  const idsPathB = path.join(packsDir, 'INDEX.json'); // legacy
   try {
-    const raw = fs.readFileSync(idxPath, 'utf-8');
+    const raw = fs.readFileSync(idsPathA, 'utf-8');
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr)) return arr as string[];
+  } catch {}
+  try {
+    const raw = fs.readFileSync(idsPathB, 'utf-8');
     const arr = JSON.parse(raw);
     if (Array.isArray(arr)) return arr as string[];
   } catch {}
@@ -37,7 +44,7 @@ function readMeta(id: string): any | null {
 }
 
 export default function HomeIndexPage() {
-  const ids = readIndexIds();
+  const ids = readPackIds();
   const paper = ids.filter((id) => id === 'smyth_htw');
   const sPacks = ids.filter((id) => /^s\d+_/.test(id));
   const rPacks = ids.filter((id) => /^r\d+_/.test(id));

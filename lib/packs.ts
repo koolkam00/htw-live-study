@@ -12,7 +12,7 @@ export interface PackInfo {
 // Registry of packs (ids and titles). Status here is a default/fallback used only
 // when no pack_meta.json exists on disk; actual readiness comes from pack_meta.
 export const PACKS: PackInfo[] = [
-  { id: 'smyth_htw', title: 'Smyth 2021 — Hitting the Wall', status: 'ready', group: 'paper' },
+  { id: 'smyth_htw', title: 'HTW — Smyth 2021', status: 'ready', group: 'paper' },
   { id: 's1_banking_time', title: 'S1 — The price of banking time', status: 'ready', group: 'S' },
   { id: 's2_target_odds', title: 'S2 — Odds of breaking a target time', status: 'ready', group: 'S' },
   { id: 's3_course_breaks', title: 'S3 — Where each marathon breaks people', status: 'enrichment', group: 'S', enrichment: true },
