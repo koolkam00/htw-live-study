@@ -64,7 +64,11 @@ export default function PacksIndexPage() {
           <div className="site-subtitle">Needs weather/elevation overlays</div>
         )}
         <div>
-          <Link href={`/packs/${id}`}>Open</Link>
+          {id === 'smyth_htw' ? (
+            <Link href="/">Open HTW dashboard</Link>
+          ) : (
+            <Link href={`/packs/${id}`}>Open</Link>
+          )}
         </div>
       </div>
     );
