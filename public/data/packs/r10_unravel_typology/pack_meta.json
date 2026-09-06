@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r10_unravel_typology",
+  "slug": "r10_unravel_typology",
+  "display_id": "R10",
+  "title": "Unravel patterns typology",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:11Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/fade_type_x_htw.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

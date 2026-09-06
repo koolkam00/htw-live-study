@@ -1,0 +1,11 @@
+{
+  "n_cities_joined": 24,
+  "n_segment_rows": 216,
+  "missing_gpx_omitted": [
+    "Eindhoven",
+    "Melbourne",
+    "Mexico City",
+    "Warsaw",
+    "Washington"
+  ]
+}

@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r19_near_miss_return",
+  "slug": "r19_near_miss_return",
+  "display_id": "R19",
+  "title": "Near miss \u2192 return within a year",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:33:09Z",
+  "n_features": 3167990,
+  "n_rows_used": 208755,
+  "tables": [
+    "tables/near_miss_return.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

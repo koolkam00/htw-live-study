@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r06_decided_after_30k",
+  "slug": "r06_decided_after_30k",
+  "display_id": "R6",
+  "title": "How much decided after 30km",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:05Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/decided_after_30k.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

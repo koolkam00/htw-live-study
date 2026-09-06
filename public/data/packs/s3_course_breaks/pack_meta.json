@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "s3_course_breaks",
+  "slug": "s3_course_breaks",
+  "display_id": "S3",
+  "title": "Where each marathon breaks people",
+  "status": "ready",
+  "readiness": "enrichment",
+  "as_of": "2026-09-06T23:34:12Z",
+  "n_features": 3167990,
+  "n_rows_used": 20255103,
+  "tables": [
+    "tables/course_section_elev_vs_pace.csv",
+    "summary.json"
+  ],
+  "notes": "Real course_segments\u00d7pace join; cities without GPX omitted",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

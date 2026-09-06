@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r25_huge_kick_next",
+  "slug": "r25_huge_kick_next",
+  "display_id": "R25",
+  "title": "Huge kick \u2192 next improvement",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:34:09Z",
+  "n_features": 3167990,
+  "n_rows_used": 251286,
+  "tables": [
+    "tables/huge_kick_next.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

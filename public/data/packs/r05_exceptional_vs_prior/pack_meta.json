@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r05_exceptional_vs_prior",
+  "slug": "r05_exceptional_vs_prior",
+  "display_id": "R5",
+  "title": "Exceptional vs prior: even / negative / modest fade",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:04Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/fade_type_exceptional.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

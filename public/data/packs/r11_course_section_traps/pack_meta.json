@@ -1,4 +1,20 @@
 {
+  "pack_id": "r11_course_section_traps",
+  "title": "Course section traps",
   "status": "stub",
-  "as_of": null
+  "readiness": "enrichment",
+  "maps_to": "",
+  "notes": "needs course segments",
+  "n_features": 50000,
+  "as_of": "2026-09-06T23:00:54Z",
+  "implementation": "Scaffold only. Feature table columns are prepared for ready packs; enrichment packs wait on GET /v1/enrichment + course_segments. Do not invent weather/elev/timestamps/BQ standards.",
+  "requires": [
+    "GET /v1/enrichment?city=&year=",
+    "course_segments (Weather Elevation) via join_course_segments stub"
+  ],
+  "slug": "r11_course_section_traps",
+  "canonical": true,
+  "note": "Canonical pack_id == folder name (long slug). display_id is S1/R1 label only. Sight badges from pack_meta.status ready|ok \u2014 never hardcode.",
+  "display_id": "R11",
+  "deprecated": false
 }

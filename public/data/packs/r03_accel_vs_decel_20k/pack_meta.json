@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r03_accel_vs_decel_20k",
+  "slug": "r03_accel_vs_decel_20k",
+  "display_id": "R3",
+  "title": "Same 20km, accel vs decelerate \u2192 finish",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:01Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/accel_vs_decel_20k.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }
