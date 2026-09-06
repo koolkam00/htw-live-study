@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { getPackInfo } from '@/lib/packs';
+import { getPackInfo, isEnrichment, isParked } from '@/lib/packs';
 import { usePackMeta } from '@/hooks/usePackMeta';
 
 export default function PackClientPage({ params }: { params: { packId: string } }) {
@@ -33,18 +33,20 @@ export default function PackClientPage({ params }: { params: { packId: string } 
   }
 
   const badge =
-    meta?.status === 'ready' || info.status === 'ready'
+    meta?.status === 'ready' || meta?.status === 'ok'
       ? 'Ready'
-      : info.status === 'enrichment' || meta?.status === 'enrichment'
+      : meta?.status === 'coming-soon' || isParked(info.id)
+      ? 'Coming soon'
+      : isEnrichment(info.id)
       ? 'Enrichment'
-      : 'Coming soon';
+      : 'Waiting';
   const asOf =
     meta?.as_of && typeof meta.as_of === 'string' && meta.as_of.length > 0
       ? new Date(meta.as_of).toLocaleString()
       : null;
 
-  const enrichmentNeeds = info.status === 'enrichment' && (!meta || meta.status !== 'ready');
-  const isComingSoon = info.status === 'coming-soon';
+  const enrichmentNeeds = isEnrichment(info.id) && (!meta || (meta.status !== 'ready' && meta.status !== 'ok'));
+  const isComingSoon = meta?.status === 'coming-soon' || isParked(info.id);
   const waiting = !meta && !isComingSoon && !enrichmentNeeds;
 
   return (

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 export interface PackMeta {
-  status: 'ready' | 'ok' | 'empty' | 'enrichment' | 'coming-soon';
+  status: 'ready' | 'ok' | 'empty' | 'enrichment' | 'coming-soon' | 'stub';
   as_of?: string | null;
   [key: string]: unknown;
 }
