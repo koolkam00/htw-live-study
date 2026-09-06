@@ -1,4 +1,37 @@
 {
+  "pack_id": "smyth_htw",
+  "slug": "smyth_htw",
+  "display_id": "HTW",
+  "title": "Smyth 2021 Hitting the Wall (Figs 1\u20136)",
   "status": "ok",
-  "as_of": "2026-09-06T04:47:06Z"
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:31:51Z",
+  "n_features": 3167990,
+  "n_rows_used": 3167990,
+  "tables": [
+    "tables/fig1_sensitivity.csv",
+    "tables/fig2_a_htw_by_age.csv",
+    "tables/fig2_b_htw_by_ability.csv",
+    "tables/fig3_a_years_from_pb.csv",
+    "tables/fig3_b_pb_periods.csv",
+    "tables/fig5_a_htw_start_by_age.csv",
+    "tables/fig5_b_htw_start_by_ability.csv",
+    "tables/fig5_c_htw_distance_by_age.csv",
+    "tables/fig5_d_htw_distance_by_ability.csv",
+    "tables/fig5_e_htw_slowdown_by_age.csv",
+    "tables/fig5_f_htw_slowdown_by_ability.csv",
+    "tables/fig6_a_htw_time_by_age.csv",
+    "tables/fig6_b_htw_time_by_ability.csv",
+    "tables/fig6_c_htw_cost_by_age.csv",
+    "tables/fig6_d_htw_cost_by_ability.csv",
+    "tables/fig6_e_htw_rel_cost_by_age.csv",
+    "tables/fig6_f_htw_rel_cost_by_ability.csv",
+    "tables/htw_proportion_overall.csv",
+    "tables/table_original_by_city.csv",
+    "tables/table_original_by_sex.csv",
+    "tables/table_repeaters_by_sex.csv",
+    "live.json"
+  ],
+  "method": "Smyth 2021",
+  "notes": "Primary delivery is live.json PUT; folder mirrors summary tables."
 }

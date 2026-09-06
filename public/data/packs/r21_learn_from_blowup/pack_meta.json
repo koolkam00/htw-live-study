@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r21_learn_from_blowup",
+  "slug": "r21_learn_from_blowup",
+  "display_id": "R21",
+  "title": "Learn from blowing up",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:33:14Z",
+  "n_features": 3167990,
+  "n_rows_used": 666298,
+  "tables": [
+    "tables/learn_after_blowup.csv",
+    "summary.json"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

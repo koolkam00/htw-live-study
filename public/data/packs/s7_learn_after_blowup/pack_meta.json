@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "s7_learn_after_blowup",
+  "slug": "s7_learn_after_blowup",
+  "display_id": "S7",
+  "title": "Do runners learn after blowing up?",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:31:53Z",
+  "n_features": 3167990,
+  "n_rows_used": 666298,
+  "tables": [
+    "tables/learn_after_blowup.csv",
+    "summary.json"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r02_recover_slow_start",
+  "slug": "r02_recover_slow_start",
+  "display_id": "R2",
+  "title": "Recover slow start: immediate vs gradual",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:31:58Z",
+  "n_features": 3167990,
+  "n_rows_used": 154046,
+  "tables": [
+    "tables/slow_start_recover.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

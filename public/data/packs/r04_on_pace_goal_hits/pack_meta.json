@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r04_on_pace_goal_hits",
+  "slug": "r04_on_pace_goal_hits",
+  "display_id": "R4",
+  "title": "On-pace \u2192 sub-3 / 3:30 / 4 hit rates",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:02Z",
+  "n_features": 3167990,
+  "n_rows_used": 4311866,
+  "tables": [
+    "tables/on_pace_hit_rates.csv",
+    "summary.json"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

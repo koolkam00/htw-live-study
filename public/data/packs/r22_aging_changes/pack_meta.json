@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r22_aging_changes",
+  "slug": "r22_aging_changes",
+  "display_id": "R22",
+  "title": "Aging: what changes first",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:33:15Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/age_speed_endurance.csv",
+    "summary.json"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

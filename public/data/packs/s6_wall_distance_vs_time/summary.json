@@ -1,0 +1,11 @@
+{
+  "n_htw": 748817,
+  "n_with_segment_elev": 638294,
+  "missing_gpx_cities_excluded": [
+    "Eindhoven",
+    "Melbourne",
+    "Mexico City",
+    "Warsaw",
+    "Washington"
+  ]
+}

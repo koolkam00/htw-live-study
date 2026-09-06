@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r13_great_day_vs_consistency",
+  "slug": "r13_great_day_vs_consistency",
+  "display_id": "R13",
+  "title": "Great day vs consistency by course",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:32:13Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/great_day_vs_consistency.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

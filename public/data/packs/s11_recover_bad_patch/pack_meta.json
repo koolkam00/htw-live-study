@@ -1,4 +1,17 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "s11_recover_bad_patch",
+  "slug": "s11_recover_bad_patch",
+  "display_id": "S11",
+  "title": "Can runners recover from a bad patch?",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:31:57Z",
+  "n_features": 3167990,
+  "n_rows_used": 1203644,
+  "tables": [
+    "tables/bad_patch_recover.csv",
+    "summary.json"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

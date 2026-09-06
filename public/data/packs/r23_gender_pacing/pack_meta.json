@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r23_gender_pacing",
+  "slug": "r23_gender_pacing",
+  "display_id": "R23",
+  "title": "Gender pacing: open vs sustain",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:33:16Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "tables": [
+    "tables/gender_open_vs_sustain.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

@@ -1,4 +1,16 @@
 {
-  "status": "stub",
-  "as_of": null
+  "pack_id": "r24_interval_after_pb",
+  "slug": "r24_interval_after_pb",
+  "display_id": "R24",
+  "title": "Interval after PB vs collapse \u2192 next",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-06T23:34:08Z",
+  "n_features": 3167990,
+  "n_rows_used": 771113,
+  "tables": [
+    "tables/interval_after_pb_vs_collapse.csv"
+  ],
+  "notes": "",
+  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
 }

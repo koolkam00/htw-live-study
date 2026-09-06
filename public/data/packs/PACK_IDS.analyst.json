@@ -1,0 +1,398 @@
+{
+  "as_of": "2026-09-06T23:34:16Z",
+  "canonical_rule": "Folder output/packs/<pack_id>/ MUST equal long slug (s1_banking_time, r01_banking_time, smyth_htw). Sight mirrors public/data/packs/<pack_id>/. Do not hardcode Ready \u2014 read pack_meta.status (ready|ok|stub).",
+  "htw_note": "HTW primary delivery remains live.json; pack folder smyth_htw mirrors pack #1.",
+  "n_features": 3167990,
+  "by_id": {
+    "smyth_htw": {
+      "pack_id": "smyth_htw",
+      "display_id": "HTW",
+      "slug": "smyth_htw",
+      "title": "Smyth 2021 Hitting the Wall (Figs 1\u20136)",
+      "readiness": "ready",
+      "status": "ok",
+      "dir": "output/packs/smyth_htw",
+      "sight_dir": "public/data/packs/smyth_htw"
+    },
+    "s1_banking_time": {
+      "pack_id": "s1_banking_time",
+      "display_id": "S1",
+      "slug": "s1_banking_time",
+      "title": "The price of banking time",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s1_banking_time",
+      "sight_dir": "public/data/packs/s1_banking_time"
+    },
+    "s2_target_odds": {
+      "pack_id": "s2_target_odds",
+      "display_id": "S2",
+      "slug": "s2_target_odds",
+      "title": "Odds of breaking a target time",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s2_target_odds",
+      "sight_dir": "public/data/packs/s2_target_odds"
+    },
+    "s3_course_breaks": {
+      "pack_id": "s3_course_breaks",
+      "display_id": "S3",
+      "slug": "s3_course_breaks",
+      "title": "Where each marathon breaks people",
+      "readiness": "enrichment",
+      "status": "ready",
+      "dir": "output/packs/s3_course_breaks",
+      "sight_dir": "public/data/packs/s3_course_breaks"
+    },
+    "s4_time_translation": {
+      "pack_id": "s4_time_translation",
+      "display_id": "S4",
+      "slug": "s4_time_translation",
+      "title": "What your time translates to on another course",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/s4_time_translation",
+      "sight_dir": "public/data/packs/s4_time_translation"
+    },
+    "s5_pacing_vs_difficult_day": {
+      "pack_id": "s5_pacing_vs_difficult_day",
+      "display_id": "S5",
+      "slug": "s5_pacing_vs_difficult_day",
+      "title": "Was it my pacing or a difficult race day?",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/s5_pacing_vs_difficult_day",
+      "sight_dir": "public/data/packs/s5_pacing_vs_difficult_day"
+    },
+    "s6_wall_distance_vs_time": {
+      "pack_id": "s6_wall_distance_vs_time",
+      "display_id": "S6",
+      "slug": "s6_wall_distance_vs_time",
+      "title": "Wall linked to distance or elapsed time?",
+      "readiness": "enrichment",
+      "status": "ready",
+      "dir": "output/packs/s6_wall_distance_vs_time",
+      "sight_dir": "public/data/packs/s6_wall_distance_vs_time"
+    },
+    "s7_learn_after_blowup": {
+      "pack_id": "s7_learn_after_blowup",
+      "display_id": "S7",
+      "slug": "s7_learn_after_blowup",
+      "title": "Do runners learn after blowing up?",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s7_learn_after_blowup",
+      "sight_dir": "public/data/packs/s7_learn_after_blowup"
+    },
+    "s8_age_speed_vs_endurance": {
+      "pack_id": "s8_age_speed_vs_endurance",
+      "display_id": "S8",
+      "slug": "s8_age_speed_vs_endurance",
+      "title": "What changes with age: speed or endurance?",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s8_age_speed_vs_endurance",
+      "sight_dir": "public/data/packs/s8_age_speed_vs_endurance"
+    },
+    "s9_weather_penalty": {
+      "pack_id": "s9_weather_penalty",
+      "display_id": "S9",
+      "slug": "s9_weather_penalty",
+      "title": "Weather penalty for different runners",
+      "readiness": "enrichment",
+      "status": "ready",
+      "dir": "output/packs/s9_weather_penalty",
+      "sight_dir": "public/data/packs/s9_weather_penalty"
+    },
+    "s10_goal_slips": {
+      "pack_id": "s10_goal_slips",
+      "display_id": "S10",
+      "slug": "s10_goal_slips",
+      "title": "What happens when a goal slips away?",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s10_goal_slips",
+      "sight_dir": "public/data/packs/s10_goal_slips"
+    },
+    "s11_recover_bad_patch": {
+      "pack_id": "s11_recover_bad_patch",
+      "display_id": "S11",
+      "slug": "s11_recover_bad_patch",
+      "title": "Can runners recover from a bad patch?",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/s11_recover_bad_patch",
+      "sight_dir": "public/data/packs/s11_recover_bad_patch"
+    },
+    "s12_pacing_over_20y": {
+      "pack_id": "s12_pacing_over_20y",
+      "display_id": "S12",
+      "slug": "s12_pacing_over_20y",
+      "title": "Have marathoners become better at pacing over 20 years?",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/s12_pacing_over_20y",
+      "sight_dir": "public/data/packs/s12_pacing_over_20y"
+    },
+    "r01_banking_time": {
+      "pack_id": "r01_banking_time",
+      "display_id": "R1",
+      "slug": "r01_banking_time",
+      "title": "Banking time cost (first 10km vs after 30km)",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r01_banking_time",
+      "sight_dir": "public/data/packs/r01_banking_time"
+    },
+    "r02_recover_slow_start": {
+      "pack_id": "r02_recover_slow_start",
+      "display_id": "R2",
+      "slug": "r02_recover_slow_start",
+      "title": "Recover slow start: immediate vs gradual",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r02_recover_slow_start",
+      "sight_dir": "public/data/packs/r02_recover_slow_start"
+    },
+    "r03_accel_vs_decel_20k": {
+      "pack_id": "r03_accel_vs_decel_20k",
+      "display_id": "R3",
+      "slug": "r03_accel_vs_decel_20k",
+      "title": "Same 20km, accel vs decelerate \u2192 finish",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r03_accel_vs_decel_20k",
+      "sight_dir": "public/data/packs/r03_accel_vs_decel_20k"
+    },
+    "r04_on_pace_goal_hits": {
+      "pack_id": "r04_on_pace_goal_hits",
+      "display_id": "R4",
+      "slug": "r04_on_pace_goal_hits",
+      "title": "On-pace \u2192 sub-3 / 3:30 / 4 hit rates",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r04_on_pace_goal_hits",
+      "sight_dir": "public/data/packs/r04_on_pace_goal_hits"
+    },
+    "r05_exceptional_vs_prior": {
+      "pack_id": "r05_exceptional_vs_prior",
+      "display_id": "R5",
+      "slug": "r05_exceptional_vs_prior",
+      "title": "Exceptional vs prior: even / negative / modest fade",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r05_exceptional_vs_prior",
+      "sight_dir": "public/data/packs/r05_exceptional_vs_prior"
+    },
+    "r06_decided_after_30k": {
+      "pack_id": "r06_decided_after_30k",
+      "display_id": "R6",
+      "slug": "r06_decided_after_30k",
+      "title": "How much decided after 30km",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r06_decided_after_30k",
+      "sight_dir": "public/data/packs/r06_decided_after_30k"
+    },
+    "r07_wall_clock_vs_distance": {
+      "pack_id": "r07_wall_clock_vs_distance",
+      "display_id": "R7",
+      "slug": "r07_wall_clock_vs_distance",
+      "title": "Wall: clock vs distance",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r07_wall_clock_vs_distance",
+      "sight_dir": "public/data/packs/r07_wall_clock_vs_distance"
+    },
+    "r08_early_blowup_signal": {
+      "pack_id": "r08_early_blowup_signal",
+      "display_id": "R8",
+      "slug": "r08_early_blowup_signal",
+      "title": "How early blowup shows",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r08_early_blowup_signal",
+      "sight_dir": "public/data/packs/r08_early_blowup_signal"
+    },
+    "r09_bad_patch_recoverable": {
+      "pack_id": "r09_bad_patch_recoverable",
+      "display_id": "R9",
+      "slug": "r09_bad_patch_recoverable",
+      "title": "Bad patch recoverable vs cascade",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r09_bad_patch_recoverable",
+      "sight_dir": "public/data/packs/r09_bad_patch_recoverable"
+    },
+    "r10_unravel_typology": {
+      "pack_id": "r10_unravel_typology",
+      "display_id": "R10",
+      "slug": "r10_unravel_typology",
+      "title": "Unravel patterns typology",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r10_unravel_typology",
+      "sight_dir": "public/data/packs/r10_unravel_typology"
+    },
+    "r11_course_section_traps": {
+      "pack_id": "r11_course_section_traps",
+      "display_id": "R11",
+      "slug": "r11_course_section_traps",
+      "title": "Course section traps",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/r11_course_section_traps",
+      "sight_dir": "public/data/packs/r11_course_section_traps"
+    },
+    "r12_fastest_by_ability": {
+      "pack_id": "r12_fastest_by_ability",
+      "display_id": "R12",
+      "slug": "r12_fastest_by_ability",
+      "title": "Fastest marathon by ability band",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r12_fastest_by_ability",
+      "sight_dir": "public/data/packs/r12_fastest_by_ability"
+    },
+    "r13_great_day_vs_consistency": {
+      "pack_id": "r13_great_day_vs_consistency",
+      "display_id": "R13",
+      "slug": "r13_great_day_vs_consistency",
+      "title": "Great day vs consistency by course",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r13_great_day_vs_consistency",
+      "sight_dir": "public/data/packs/r13_great_day_vs_consistency"
+    },
+    "r14_knowing_course": {
+      "pack_id": "r14_knowing_course",
+      "display_id": "R14",
+      "slug": "r14_knowing_course",
+      "title": "Knowing course improves sections",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r14_knowing_course",
+      "sight_dir": "public/data/packs/r14_knowing_course"
+    },
+    "r15_weather_penalty_who": {
+      "pack_id": "r15_weather_penalty_who",
+      "display_id": "R15",
+      "slug": "r15_weather_penalty_who",
+      "title": "Weather penalty who/where",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/r15_weather_penalty_who",
+      "sight_dir": "public/data/packs/r15_weather_penalty_who"
+    },
+    "r16_groups_hold_or_fall": {
+      "pack_id": "r16_groups_hold_or_fall",
+      "display_id": "R16",
+      "slug": "r16_groups_hold_or_fall",
+      "title": "Groups hold or fall apart",
+      "readiness": "extra",
+      "status": "stub",
+      "dir": "output/packs/r16_groups_hold_or_fall",
+      "sight_dir": "public/data/packs/r16_groups_hold_or_fall"
+    },
+    "r17_milestone_kick": {
+      "pack_id": "r17_milestone_kick",
+      "display_id": "R17",
+      "slug": "r17_milestone_kick",
+      "title": "Milestone kick final 2.195",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r17_milestone_kick",
+      "sight_dir": "public/data/packs/r17_milestone_kick"
+    },
+    "r18_bq_rule_changes": {
+      "pack_id": "r18_bq_rule_changes",
+      "display_id": "R18",
+      "slug": "r18_bq_rule_changes",
+      "title": "BQ rule changes pacing",
+      "readiness": "extra",
+      "status": "stub",
+      "dir": "output/packs/r18_bq_rule_changes",
+      "sight_dir": "public/data/packs/r18_bq_rule_changes"
+    },
+    "r19_near_miss_return": {
+      "pack_id": "r19_near_miss_return",
+      "display_id": "R19",
+      "slug": "r19_near_miss_return",
+      "title": "Near miss \u2192 return within a year",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r19_near_miss_return",
+      "sight_dir": "public/data/packs/r19_near_miss_return"
+    },
+    "r20_pacing_personalities": {
+      "pack_id": "r20_pacing_personalities",
+      "display_id": "R20",
+      "slug": "r20_pacing_personalities",
+      "title": "Pacing personalities persist",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r20_pacing_personalities",
+      "sight_dir": "public/data/packs/r20_pacing_personalities"
+    },
+    "r21_learn_from_blowup": {
+      "pack_id": "r21_learn_from_blowup",
+      "display_id": "R21",
+      "slug": "r21_learn_from_blowup",
+      "title": "Learn from blowing up",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r21_learn_from_blowup",
+      "sight_dir": "public/data/packs/r21_learn_from_blowup"
+    },
+    "r22_aging_changes": {
+      "pack_id": "r22_aging_changes",
+      "display_id": "R22",
+      "slug": "r22_aging_changes",
+      "title": "Aging: what changes first",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r22_aging_changes",
+      "sight_dir": "public/data/packs/r22_aging_changes"
+    },
+    "r23_gender_pacing": {
+      "pack_id": "r23_gender_pacing",
+      "display_id": "R23",
+      "slug": "r23_gender_pacing",
+      "title": "Gender pacing: open vs sustain",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r23_gender_pacing",
+      "sight_dir": "public/data/packs/r23_gender_pacing"
+    },
+    "r24_interval_after_pb": {
+      "pack_id": "r24_interval_after_pb",
+      "display_id": "R24",
+      "slug": "r24_interval_after_pb",
+      "title": "Interval after PB vs collapse \u2192 next",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r24_interval_after_pb",
+      "sight_dir": "public/data/packs/r24_interval_after_pb"
+    },
+    "r25_huge_kick_next": {
+      "pack_id": "r25_huge_kick_next",
+      "display_id": "R25",
+      "slug": "r25_huge_kick_next",
+      "title": "Huge kick \u2192 next improvement",
+      "readiness": "ready",
+      "status": "ready",
+      "dir": "output/packs/r25_huge_kick_next",
+      "sight_dir": "public/data/packs/r25_huge_kick_next"
+    },
+    "r26_pacing_over_20y": {
+      "pack_id": "r26_pacing_over_20y",
+      "display_id": "R26",
+      "slug": "r26_pacing_over_20y",
+      "title": "20y: faster early vs less late fade",
+      "readiness": "enrichment",
+      "status": "stub",
+      "dir": "output/packs/r26_pacing_over_20y",
+      "sight_dir": "public/data/packs/r26_pacing_over_20y"
+    }
+  }
+}
