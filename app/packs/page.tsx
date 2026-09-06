@@ -43,7 +43,7 @@ function readMeta(id: string): any | null {
   }
 }
 
-export default function HomeIndexPage() {
+export default function PacksIndexPage() {
   const ids = readPackIds();
   const paper = ids.filter((id) => id === 'smyth_htw');
   const sPacks = ids.filter((id) => /^s\d+_/.test(id));
@@ -64,7 +64,7 @@ export default function HomeIndexPage() {
           <div className="site-subtitle">Needs weather/elevation overlays</div>
         )}
         <div>
-          {id === 'smyth_htw' ? <Link href="/">Open</Link> : <Link href={`/packs/${id}`}>Open</Link>}
+          <Link href={`/packs/${id}`}>Open</Link>
         </div>
       </div>
     );
