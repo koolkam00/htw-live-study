@@ -1,82 +1,16 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import Link from 'next/link';
+import { liveRows } from '@/lib/research-data';
+import { formatNumber } from '@/lib/csv';
 
-type LiveJsonShape = {
-  status?: 'empty' | 'ready';
-  filters?: {
-    cities?: string[];
-  } | null;
-};
-
-async function getCities(): Promise<string[]> {
-  try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'live.json');
-    const raw = await fs.readFile(filePath, 'utf8');
-    const json = JSON.parse(raw) as LiveJsonShape;
-    const cities = Array.isArray(json?.filters?.cities) ? json!.filters!.cities! : [];
-    return Array.from(new Set(cities)).filter((c) => typeof c === 'string' && c.trim().length > 0);
-  } catch {
-    // If the file is missing or malformed, surface an empty list (honest state).
-    return [];
-  }
+export const metadata = { title: 'Courses | HTW Live Study' };
+function slugifyCity(name: string) { return name.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+export default function CoursesPage() {
+  const rows = liveRows('t1');
+  return <div className="prose">
+    <h1>What changes by course?</h1>
+    <p className="answer-detail">Pacing patterns and coverage for each city in the study.</p>
+    {rows.length ? <ul className="course-list">{rows.map(row => <li key={String(row.city)}>
+      <Link href={`/courses/${slugifyCity(String(row.city))}`}><strong>{row.city}</strong><span className="study-meta" style={{ display: 'block' }}>{row.years} · {formatNumber(Number(row.n_records), 'runners')} finishes</span></Link>
+    </li>)}</ul> : <p>Course results are not available in this snapshot.</p>}
+  </div>;
 }
-
-function slugifyCity(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '') // strip accents
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-export const metadata = {
-  title: 'Courses — HTW Live Study',
-};
-
-export default async function CoursesIndexPage() {
-  const cities = await getCities();
-  const hasCities = cities.length > 0;
-
-  return (
-    <div className="stack" style={{ display: 'grid', gap: '1rem' }}>
-      <div className="panel">
-        <h1 style={{ marginTop: 0 }}>Courses</h1>
-        <p className="site-subtitle" style={{ marginTop: '-0.5rem' }}>
-          Browse course pages by city. Wall Map and per-edition views are being scaffolded.
-        </p>
-      </div>
-
-      {!hasCities && (
-        <div className="panel" role="status">
-          <div className="site-subtitle">
-            Course pages waiting on Analyst course dumps.
-          </div>
-        </div>
-      )}
-
-      {hasCities && (
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
-          {cities.map((city) => {
-            const slug = slugifyCity(city);
-            return (
-              <Link
-                key={city}
-                href={`/courses/${slug}`}
-                className="panel"
-                style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ fontWeight: 600 }}>{city}</div>
-                  <div className="badge">Course</div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-

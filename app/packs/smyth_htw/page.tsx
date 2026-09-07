@@ -1,6 +1,1 @@
-'use client';
-import HTWDashboard from '@/components/HTWDashboard';
-
-export default function SmythHTWPackPage() {
-  return <HTWDashboard />;
-}
+export { default, metadata } from '@/app/htw/page';

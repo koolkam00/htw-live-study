@@ -1,28 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { PACK_IDS } from '@/lib/packs';
-import type { PackMeta } from '@/hooks/usePackMeta';
-import PackClientPage from '@/components/PackClientPage';
-
-function readJsonIfExists(filePath: string): unknown | null {
-  try {
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
+import { getExtraAnswer } from '@/lib/research-data';
+import ResearchQuestion from '@/components/ResearchQuestion';
 
 export default function Page({ params }: { params: { packId: string } }) {
-  const packId = params.packId;
-  const packDir = path.join(process.cwd(), 'public', 'data', 'packs', packId);
-  const metaPath = path.join(packDir, 'pack_meta.json');
-  const summaryPath = path.join(packDir, 'summary.json');
-  const initialMeta = readJsonIfExists(metaPath) as PackMeta | null;
-  const initialSummary = readJsonIfExists(summaryPath) as Record<string, unknown> | null;
-  return <PackClientPage params={params} initialMeta={initialMeta} initialSummary={initialSummary} />;
+  if (!PACK_IDS.includes(params.packId)) notFound();
+  return <><ResearchQuestion question={getExtraAnswer(params.packId)} standalone /><p><Link href="/">All research questions</Link></p></>;
 }
-
-export function generateStaticParams() {
-  return PACK_IDS.map((id) => ({ packId: id }));
+export function generateStaticParams() { return PACK_IDS.map(packId => ({ packId })); }
+export function generateMetadata({ params }: { params: { packId: string } }) {
+  return { title: `${getExtraAnswer(params.packId).title} | HTW Live Study` };
 }

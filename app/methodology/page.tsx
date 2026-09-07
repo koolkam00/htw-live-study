@@ -1,95 +1,61 @@
-import type { Metadata } from 'next';
+import Link from 'next/link';
+import { getLive, getStudyAnswer } from '@/lib/research-data';
 
-export const metadata: Metadata = {
-  title: 'Methodology — HTW Live Study',
-};
+export const metadata = { title: 'Methodology | HTW Live Study' };
+
+const additions = [
+  { name: 'Hourly weather', fields: 'Temperature, dew point, humidity, rain, wind, cloud cover, and solar radiation.', benefit: 'Match conditions to the time each runner reaches a segment. Use a consistent historical model across years.', href: 'https://open-meteo.com/en/docs/historical-weather-api', source: 'Open-Meteo historical weather', coverage: 'Broad historical coverage; modeled grid estimates, not conditions measured at the runner.' },
+  { name: 'Weather-station observations', fields: 'Observed temperature, dew point, wind, and precipitation, with station location and quality flags.', benefit: 'Check unusual weather days against observations near the course.', href: 'https://www.ncei.noaa.gov/products/global-historical-climatology-network-hourly', source: 'NOAA GHCN hourly', coverage: 'Station and year coverage vary. The newer GHCN hourly archive replaces ISD.' },
+  { name: 'The route for each race edition', fields: 'Course geometry, checkpoint locations, certification ID, route changes, and separate start routes.', benefit: 'Calculate section distance, turns, road direction, and the route actually used that year.', href: 'https://certifiedroadraces.com/search/', source: 'USATF course certification database', coverage: 'US courses; use each organizer’s dated maps elsewhere. Older routes often need manual recovery.' },
+  { name: 'Elevation and slope by section', fields: 'Climb, descent, net elevation change, and grade along the route.', benefit: 'Separate terrain-related pacing patterns from a runner’s unusual slowdown.', href: 'https://www.opentopodata.org/datasets/srtm/', source: 'Open Topo Data / SRTM', coverage: 'Available for route coordinates. Check bridges and tunnels separately: terrain height may differ from the road deck.' },
+  { name: 'Waves, corrals, and actual start times', fields: 'Wave schedule, runner corral, chip start, gun finish, and timing conventions.', benefit: 'Estimate time-of-day exposure and establish who was together at a checkpoint.', href: 'https://www.chicagomarathon.com/event-info/participant-information/', source: 'Official participant information', coverage: 'Schedules are commonly published; individual start timestamps depend on the timing provider. A wave start is not an individual start.' },
+  { name: 'Aid stations and course amenities', fields: 'Water and fuel locations, supplied products, medical stations, toilets, and station changes by year.', benefit: 'Compare local pacing patterns with where runners can stop or refuel.', href: 'https://www.chicagomarathon.com/event-info/participant-information/course/', source: 'Official course and aid-station guide', coverage: 'Often available in participant guides. Product availability does not reveal what any runner consumed.' },
+  { name: 'Qualifying rules and entry routes', fields: 'Published time standards, eligible age, qualifying window, acceptance cutoff, and entry category where public.', benefit: 'Study goal incentives and account for differences in who enters each race.', href: 'https://www.baa.org/races/boston-marathon/qualify/', source: 'Boston Athletic Association', coverage: 'Use dated rules and announcements. Historical records need an edition-by-edition audit.' },
+  { name: 'Air quality', fields: 'Particle pollution, ozone, and other pollutants at the race location and time.', benefit: 'Explore whether poor-air-quality editions have different pacing patterns.', href: 'https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4', source: 'Copernicus CAMS reanalysis', coverage: 'Historical modeled coverage from 2003; spatial resolution is too coarse to represent every street.' },
+];
 
 export default function MethodologyPage() {
-  return (
-    <div className="panel">
-      <h1 style={{ marginTop: 0 }}>Methodology</h1>
-      <p className="site-subtitle" style={{ marginTop: '-0.5rem' }}>
-        How this site reproduces the “hitting the wall” (HTW) definition from Smyth 2021 (PLOS ONE).
-      </p>
-
-      <h2>HTW definition</h2>
-      <ol>
-        <li>
-          <b>Base pace</b>: computed as the mean pace across 5–10 km, 10–15 km, and 15–20 km split
-          segments. These mid-race segments are used to avoid early-race variability.
-        </li>
-        <li>
-          <b>HTW event</b>: a runner is considered to have “hit the wall” if, after 20 km,
-          their pace slows by <b>≥ 25%</b> relative to their base pace, sustained for a continuous distance of
-          <b> ≥ 5 km</b>.
-        </li>
-      </ol>
-      <p>
-        Formally, with base pace \( p_b \) and observed pace \( p_d \) at distance \( d \ge 20 \) km, an HTW episode
-        occurs when \( p_d \ge (1 + \\text&#123;DoS&#125;) \cdot p_b \) for a continuous window of at least \( \\text&#123;LoS&#125; \) km,
-        where DoS = 0.25 and LoS = 5 km.
-      </p>
-
-      <h2>Filters</h2>
-      <ul>
-        <li><b>Sex</b>: male, female (or all).</li>
-        <li><b>Age group</b>: 20–39, 40–44, 45–49, 50–54, 55–59, 60+ (or all).</li>
-        <li><b>Ability</b>: 30-minute PB buckets (e.g., &lt;3:00, 3:00–3:29, …, 5:00+).</li>
-      </ul>
-
-      <h2>Figures</h2>
-      <p>
-        Six figures mirror the paper exactly:
-        (1) HTW proportion vs DoS/LoS thresholds (sensitivity);
-        (2) HTW by age and by ability;
-        (3) HTW vs years before/after a recent PB;
-        (4) Fig 3 split by age and ability;
-        (5) HTW start, distance, and slowdown by age and ability;
-        (6) HTW finish time and time cost by age and ability.
-        All are split by sex and support the filters above.
-      </p>
-      <p>
-        When live data are not present, figures and tables display an honest empty state. If we include any redraws of the 2021
-        paper for context, they are explicitly labeled <b>“Smyth 2021 (published)”</b> and never treated as live data.
-      </p>
-
-      <h2>Data contract</h2>
-      <p>
-        The site reads a single JSON at <code>public/data/live.json</code> with the following shape:
-      </p>
-      <pre style={{ whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
-{`{
-  "status": "empty" | "ready",
-  "as_of": string | null,            // ISO timestamp for live data snapshot
-  "definition": { "dos": 0.25, "los_km": 5, "after_km": 20, "base_window_km": [5, 20] },
-  "corpus": { "races": number|null, "runners": number|null, "records": number|null },
-  "figures": {
-    "fig1": { /* implementation-defined series */ },
-    "fig2": { /* implementation-defined series */ },
-    "fig3": { /* implementation-defined series */ },
-    "fig4": { /* implementation-defined series */ },
-    "fig5": { /* implementation-defined series */ },
-    "fig6": { /* implementation-defined series */ }
-  } | null,
-  "tables": {
-    "t1": { /* implementation-defined */ },
-    "t2": { /* implementation-defined */ },
-    "t3": { /* implementation-defined */ },
-    "t4": { /* implementation-defined */ }
-  } | null
-}`}
-      </pre>
-      <p>
-        Start with <code>status: "empty"</code>. Do not invent live numbers. When moving to <code>"ready"</code>, add data
-        that each component understands (for example, figures may expect a <code>series</code> array of <code>&#123;name, value&#125;</code> objects).
-      </p>
-
-      <h2>Repro notes</h2>
-      <ul>
-        <li>Split data must include 5-km segments to compute base pace and detect HTW windows.</li>
-        <li>Bias checks: filters are applied consistently before aggregations.</li>
-        <li>All computations are done offline; this UI is a static site with client-side rendering.</li>
-      </ul>
-    </div>
-  );
+  const study = getStudyAnswer();
+  const live = getLive();
+  return <article className="prose">
+    <h1>How to read the results</h1>
+    <p className="answer">Each question pairs a finding with the data behind it. Some results are descriptive; others need more information before the full question can be answered.</p>
+    <h2>What counts as hitting the wall?</h2>
+    <p>{study.method[0]}</p>
+    <p>A sustained slowdown is observable in the splits. Its cause is not. The method follows the pacing-based approach in <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">Smyth’s 2021 study</a>.</p>
+    <h2>What is in this snapshot?</h2>
+    {live?.corpus && <p>{new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Coverage is uneven: this is not every runner at every marathon in every year.</p>}
+    <p>A finish is one race performance. A runner can contribute several finishes. Age and weather analyses can have smaller samples because the necessary fields are missing for some records.</p>
+    <h2>What do the chart numbers mean?</h2>
+    <ul>
+      <li><strong>Wall rate:</strong> the percentage of eligible finishes meeting the sustained-slowdown definition.</li>
+      <li><strong>Second-half slowing:</strong> second-half pace divided by first-half pace, minus one. A value of 10% means the second half was run at a pace 10% slower.</li>
+      <li><strong>Sample size:</strong> the observations behind a particular value. Open “View exact values” for counts where the source provides them.</li>
+      <li><strong>Missing values:</strong> unknown measurements stay missing. They are never plotted as zero.</li>
+    </ul>
+    <h2>What can these comparisons establish?</h2>
+    <p>They describe associations in observed race results. Comparing different runners, courses, or years does not by itself isolate a pacing strategy’s effect.</p>
+    <p>Some available exports answer only part of the proposed question. For example, an age-group comparison is not a study of the same runners aging, and a fastest-city table is not a personal course conversion. Each question explains the remaining gap.</p>
+    <p>Five-kilometer splits identify an interval of slowdown, not an exact onset point. The final segment is 2.195 km and must be converted to pace before comparison. A 20 km checkpoint is before halfway, which is 21.0975 km.</p>
+    <h2>How the question lists fit together</h2>
+    <p>The original 26 questions retain their numbers. The first list adds question 27, the course-by-course wall map; question 28, personal pacing versus a difficult race day; and question 29, what happens when a goal slips away. Personal course translation is included in question 12.</p>
+    <details className="methodology" id="additional-data">
+      <summary>Additional web data that could strengthen the study</summary>
+      <div className="methodology-content">
+        <p>Start with dated course routes, hourly weather, and start times. These are proposed sources for extending and validating the dataset; availability here does not mean every source has already been joined.</p>
+        {additions.map(item => <section key={item.name}>
+          <h3>{item.name}</h3>
+          <p>{item.fields} {item.benefit}</p>
+          <p className="study-meta">{item.coverage} <a href={item.href}>{item.source}</a>.</p>
+        </section>)}
+        <h3>More fields to retain from official results</h3>
+        <p>Keep all published timing points, including halfway and the finish; bib and provider IDs; reported age and category; gun and chip times; official finish, withdrawal, disqualification, and non-start statuses; and result corrections. Availability varies by organizer and year.</p>
+        <p>Do not infer a withdrawal from one missing timing read, or a debut marathon from a runner’s first appearance in this database.</p>
+        <h3>Preserve the evidence</h3>
+        <p>For every added field, retain its source URL, race edition, retrieval date, original unit, and whether it was observed, modeled, or inferred. Keep one weather record per place and time, then join it to estimated segment exposure. Between timing mats, a runner’s exact location is an estimate.</p>
+        <p>Hourly wind plus route direction can estimate headwind exposure. Route geometry can estimate turn counts. Crowd density, shade, training, shoes, and individual fueling are harder to reconstruct consistently over 20 years and should not be assumed.</p>
+      </div>
+    </details>
+    <div className="source-links"><Link href="/">Return to the questions</Link><a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/data/live.json`}>Download the study snapshot</a></div>
+  </article>;
 }
