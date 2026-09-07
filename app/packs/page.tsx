@@ -67,7 +67,7 @@ export default function PacksIndexPage() {
         )}
         <div>
           {id === 'smyth_htw' ? (
-            <Link href="/">Open HTW dashboard</Link>
+            <Link href={`/packs/${id}`}>Open</Link>
           ) : (
             <Link href={`/packs/${id}`}>Open</Link>
           )}
