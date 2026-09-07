@@ -9,15 +9,15 @@ export interface PackMeta {
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
-export function usePackMeta(packId: string) {
-  const [meta, setMeta] = useState<PackMeta | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+export function usePackMeta(packId: string, initialMeta?: PackMeta | null) {
+  const [meta, setMeta] = useState<PackMeta | null>(initialMeta ?? null);
+  const [loading, setLoading] = useState<boolean>(!initialMeta);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
-      try {
+    try {
         const res = await fetch(`${BASE_PATH}/data/packs/${packId}/pack_meta.json`, {
           cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
