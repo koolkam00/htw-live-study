@@ -25,5 +25,16 @@
   ],
   "canonical": true,
   "deprecated": false,
-  "implementation": "Streaming row-group aggregates from features.parquet; no race_records writes."
+  "implementation": "Streaming row-group aggregates from features.parquet; no race_records writes.",
+  "answer_prose": "Among 2,512,860 valid finishers (mean finish 254.9 min), finish-time density piles up just before round goals. sub-3 1.75\u00d7 denser in the minute before vs after (n_before=12,704, n_after=7,264); 3:30 1.29\u00d7 denser in the minute before vs after (n_before=21,175, n_after=16,411); sub-4 1.36\u00d7 denser in the minute before vs after (n_before=27,678, n_after=20,338). That is reference dependence: runners clear clock landmarks, then thin out just after. On-pace\u2192hit tables at 20/30 km vs sub-3 / 3:30 / sub-4 show how early reference pacing converts to goal hits.",
+  "methodology_prose": "Finish times from the feature dump (minutes). Cliff metric: finishers in a 1-minute window immediately before each target (180/210/240/270/300) vs the minute after; spike_ratio=n_before/n_after. Histogram: 0.5-min bins over 120\u2013420. On-pace and hit_* use even-split budgets at checkpoints. Maps to S10/R4/R17. Dump numbers only; no invented BQ standards.",
+  "prose_as_of": "2026-09-07T00:42:25Z",
+  "ux": {
+    "requires": [
+      "answer_prose",
+      "methodology_prose",
+      "viz"
+    ],
+    "note": "Sight must not invent copy; numbers from Analyst dumps only."
+  }
 }

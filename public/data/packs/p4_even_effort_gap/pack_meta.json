@@ -96,5 +96,16 @@
   ],
   "canonical": true,
   "deprecated": false,
-  "implementation": "Streaming row-group aggregates from features_v2.parquet (pace_* only); live gap_substrate.gap.load_curve/gap_multiplier \u00d7 course_segments; stored gap_pace_* ignored; gc between groups; no race_records writes."
+  "implementation": "Streaming row-group aggregates from features_v2.parquet (pace_* only); live gap_substrate.gap.load_curve/gap_multiplier \u00d7 course_segments; stored gap_pace_* ignored; gc between groups; no race_records writes.",
+  "answer_prose": "On 2,512,860 valid finishers with live GAP coverage \u224899.98% (27 cities with elev segments), mean observed positive split is 0.115, while GAP-adjusted positive split falls to 0.039 (\u0394 -0.076). Much of the late fade looks like grade cost \u2014 even-effort pacing should follow the GAP-warped profile, not flat splits. Melbourne elev remains null; curve v2_27cities as_of 2026-09-07T00:31:38Z.",
+  "methodology_prose": "Even-effort GAP: observed segment pace \u00f7 gap_multiplier(avg_grade, mid_km, post20) from course_segments \u00d7 gap_curve.json (v2_27cities, md5 5bc86aa1714d5c31689539b6ce6d7f09). Stored features_v2 gap_pace_* from the older 6-major curve are ignored. Positive split = second/first half pace \u2212 1; GAP-adjusted split uses live GAP paces. Never invent elev; race_records untouched. Grade-only OLS vs Huber caveat is in pack tables.",
+  "prose_as_of": "2026-09-07T00:42:25Z",
+  "ux": {
+    "requires": [
+      "answer_prose",
+      "methodology_prose",
+      "viz"
+    ],
+    "note": "Sight must not invent copy; numbers from Analyst dumps only."
+  }
 }
