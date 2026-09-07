@@ -300,7 +300,7 @@ export default function QuestionsHome() {
     const idxPct = t2.columns.findIndex((c: string) => /^pct_htw$/i.test(c));
     if (idxN === -1 || idxPct === -1) return null;
     let totalN = 0;
-    let sumWeighted = 0;
+    let sumWeighted = 0; // pct already on 0..100 scale
     for (const row of t2.rows) {
       const n = Number(row[idxN]);
       const pct = Number(row[idxPct]);
@@ -310,10 +310,9 @@ export default function QuestionsHome() {
       }
     }
     if (totalN <= 0) return null;
-    const overall = sumWeighted / totalN; // fraction 0..1
-    if (!Number.isFinite(overall)) return null;
-    const pctStr = (overall * 100).toFixed(1);
-    return `Overall HTW proportion (all runners): ${pctStr}%`;
+    const overallPct = sumWeighted / totalN; // already percent 0..100
+    if (!Number.isFinite(overallPct)) return null;
+    return `Overall HTW proportion (all runners): ${overallPct.toFixed(1)}% (n=${totalN.toLocaleString()}).`;
   }
   const htwDerivedAnswer = liveReady ? computeHtwAnswerFromLive(live) : null;
 
@@ -424,12 +423,11 @@ export default function QuestionsHome() {
             const t2 = live?.tables?.t2;
             const hasT2 = t2 && Array.isArray(t2.columns) && Array.isArray(t2.rows);
             const defHasFields =
-              def &&
-              (def.dos !== undefined ||
-                def.los_km !== undefined ||
-                def.after_km !== undefined ||
-                def.base_pace_from_km !== undefined ||
-                def.base_pace_to_km !== undefined);
+              typeof (def as any)?.dos === 'number' ||
+              typeof (def as any)?.los_km === 'number' ||
+              typeof (def as any)?.after_km === 'number' ||
+              typeof (def as any)?.base_pace_from_km === 'number' ||
+              typeof (def as any)?.base_pace_to_km === 'number';
             const htwShowMethod =
               (q.methodologyProse && q.methodologyProse.trim().length > 0) ||
               (q.methodFallback && q.methodFallback.trim().length > 0) ||
@@ -444,7 +442,9 @@ export default function QuestionsHome() {
                   <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{htwDerivedAnswer}</p>
                 ) : (
                   <p className="site-subtitle text-col" style={{ marginTop: '0.5rem' }}>
-                    {blockedReason(q)}
+                    {liveReady
+                      ? 'Waiting for live.json t2 (pct_htw/n). This question appears in full once the live tables are published.'
+                      : 'Live corpus pending. This question appears in full once live.json is published.'}
                   </p>
                 )}
                 {/* How it was computed */}
