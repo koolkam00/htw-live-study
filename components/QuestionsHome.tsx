@@ -119,7 +119,45 @@ function normalizeTables(tables: unknown): string[] {
 function buildQuestionItem(id: string): QuestionItem | null {
   const metaPath = path.join(process.cwd(), 'public', 'data', 'packs', id, 'pack_meta.json');
   const meta = safeReadJson<PackMeta | null>(metaPath);
-  if (!meta) return null;
+  const deriveDisplayId = (slug: string): string | null => {
+    if (/^s(\d+)_/i.test(slug)) {
+      const m = slug.match(/^s(\d+)_/i)!;
+      return `S${parseInt(m[1], 10)}`;
+    }
+    if (/^r(\d+)_/i.test(slug)) {
+      const m = slug.match(/^r(\d+)_/i)!;
+      return `R${parseInt(m[1], 10)}`;
+    }
+    if (/^rn(\d+)_/i.test(slug)) {
+      const m = slug.match(/^rn(\d+)_/i)!;
+      return `RN${parseInt(m[1], 10)}`;
+    }
+    if (/^p(\d+)_/i.test(slug)) {
+      const m = slug.match(/^p(\d+)_/i)!;
+      return `P${parseInt(m[1], 10)}`;
+    }
+    if (slug === 'smyth_htw') return 'HTW';
+    return null;
+  };
+
+  if (!meta) {
+    const info = getPackInfo(id);
+    const title = info?.title || id;
+    return {
+      id,
+      displayId: deriveDisplayId(id),
+      title,
+      asOf: null,
+      answerProse: null,
+      methodologyProse: null,
+      methodFallback: null,
+      csvTables: [],
+      isHTW: id === 'smyth_htw',
+      status: 'stub',
+      readiness: null,
+      notes: null,
+    };
+  }
   const status = String(meta.status || '').toLowerCase();
 
   const summaryPath = path.join(process.cwd(), 'public', 'data', 'packs', id, 'summary.json');
@@ -132,7 +170,7 @@ function buildQuestionItem(id: string): QuestionItem | null {
 
   const info = getPackInfo(id);
   const title = meta.title || info?.title || id;
-  const displayId = meta.display_id || null;
+  const displayId = meta.display_id || deriveDisplayId(id);
   const asOf =
     meta.as_of && typeof meta.as_of === 'string' && meta.as_of.length > 0
       ? meta.as_of
@@ -357,6 +395,10 @@ export default function QuestionsHome() {
           if (q.isHTW) {
             const t2 = live?.tables?.t2;
             const hasT2 = t2 && Array.isArray(t2.columns) && Array.isArray(t2.rows);
+            const htwShowMethod =
+              (q.methodologyProse && q.methodologyProse.trim().length > 0) ||
+              (q.methodFallback && q.methodFallback.trim().length > 0) ||
+              !!def;
             return (
               <article key={q.id} id={`q-${q.id}`} className="readable">
                 <header style={{ marginBottom: '0.25rem' }}>
@@ -371,19 +413,21 @@ export default function QuestionsHome() {
                   </p>
                 )}
                 {/* How it was computed (+ Source under) */}
-                <section className="method-col" style={{ marginTop: '0.5rem' }}>
-                  <h3 className="question-section">How it was computed</h3>
-                  <p className="prose">
-                    {def
-                      ? `HTW is defined as slowdown (DoS) ≥ ${def.dos ?? '—'} with length (LoS) ≥ ${def.los_km ?? '—'} km after ${def.after_km ?? '—'} km, relative to base pace over ${def.base_pace_from_km ?? '—'}–${def.base_pace_to_km ?? '—'} km.`
-                      : (q.methodologyProse && q.methodologyProse.trim().length > 0
-                          ? q.methodologyProse
-                          : q.methodFallback || '')}
-                  </p>
-                  <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
-                    <code>public/data/live.json</code> — Published {lastPublishUtc ?? '—'}
-                  </div>
-                </section>
+                {htwShowMethod && (
+                  <section className="method-col" style={{ marginTop: '0.5rem' }}>
+                    <h3 className="question-section">How it was computed</h3>
+                    <p className="prose">
+                      {def
+                        ? `HTW is defined as slowdown (DoS) ≥ ${def.dos ?? '—'} with length (LoS) ≥ ${def.los_km ?? '—'} km after ${def.after_km ?? '—'} km, relative to base pace over ${def.base_pace_from_km ?? '—'}–${def.base_pace_to_km ?? '—'} km.`
+                        : (q.methodologyProse && q.methodologyProse.trim().length > 0
+                            ? q.methodologyProse
+                            : q.methodFallback || '')}
+                    </p>
+                    <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+                      <code>public/data/live.json</code> — Published {lastPublishUtc ?? '—'}
+                    </div>
+                  </section>
+                )}
                 {/* Visualization from live.json (prefer t2 age table) */}
                 {hasT2 ? (
                   <section style={{ marginTop: '0.5rem' }}>
@@ -434,18 +478,20 @@ export default function QuestionsHome() {
                 <>
                   <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{q.answerProse}</p>
 
-                  <section style={{ marginTop: '0.5rem' }}>
-                    <h3 className="question-section">How it was computed</h3>
-                    <p className="prose method-col">
-                      {q.methodologyProse && q.methodologyProse.trim().length > 0
-                        ? q.methodologyProse
-                        : q.methodFallback}
-                    </p>
-                    <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
-                      <code style={{ fontFamily: 'monospace' }}>{`public/data/packs/${q.id}/`}</code>
-                      {` — Published ${pubUtc ?? '—'}`}
-                    </div>
-                  </section>
+                  {showMethod && (
+                    <section style={{ marginTop: '0.5rem' }}>
+                      <h3 className="question-section">How it was computed</h3>
+                      <p className="prose method-col">
+                        {q.methodologyProse && q.methodologyProse.trim().length > 0
+                          ? q.methodologyProse
+                          : q.methodFallback}
+                      </p>
+                      <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+                        <code style={{ fontFamily: 'monospace' }}>{`public/data/packs/${q.id}/`}</code>
+                        {` — Published ${pubUtc ?? '—'}`}
+                      </div>
+                    </section>
+                  )}
 
                   <section style={{ marginTop: '0.5rem' }}>
                     <h3 className="question-section">Visualization</h3>
