@@ -58,6 +58,19 @@ type LiveJson = {
     base_pace_from_km?: number;
     base_pace_to_km?: number;
   };
+  tables?: {
+    t1?: {
+      caption?: string;
+      columns?: string[];
+      rows?: (string | number | null)[][];
+    };
+    t2?: {
+      caption?: string;
+      columns?: string[];
+      rows?: (string | number | null)[][];
+    };
+    [k: string]: any;
+  };
 };
 
 function safeReadJson<T = any>(p: string): T | null {
@@ -141,12 +154,27 @@ function buildQuestionItem(id: string): QuestionItem | null {
   };
 }
 
-function formatUtc(asOf: string | null): string | null {
+function formatUtcPretty(asOf: string | null): string | null {
   if (!asOf) return null;
   try {
     const d = new Date(asOf);
     if (isNaN(d.getTime())) return null;
-    return d.toISOString().replace('T', ' ').replace('Z', ' UTC');
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'UTC',
+    }).formatToParts(d);
+    const get = (type: string) => parts.find((p) => p.type === type)?.value || '';
+    const day = get('day');
+    const mon = get('month');
+    const year = get('year');
+    const hour = get('hour');
+    const minute = get('minute');
+    return `${day} ${mon} ${year}, ${hour}:${minute} UTC`;
   } catch {
     return null;
   }
@@ -155,18 +183,19 @@ function formatUtc(asOf: string | null): string | null {
 function blockedReason(q: QuestionItem): string {
   const ready = q.status === 'ready' || q.status === 'ok';
   if (ready && (!q.answerProse || q.answerProse.trim().length === 0)) {
-    return 'Waiting for Analyst answer_prose';
+    return 'Waiting for Analyst answer_prose. This question appears in full once the Analyst publishes the answer prose.';
   }
   if (q.status === 'coming-soon' || isParked(q.id)) {
-    return (q.notes && q.notes.trim().length > 0) ? q.notes : 'Coming soon (parked)';
+    const base = (q.notes && q.notes.trim().length > 0) ? q.notes : 'Coming soon (parked)';
+    return `${base}. This question appears in full once the prerequisites land.`;
   }
   if (q.status === 'stub' && (q.readiness === 'enrichment' || isEnrichment(q.id))) {
-    return 'Waiting for weather/elevation overlays';
+    return 'Waiting for weather/elevation overlays. This question appears in full once overlays are joined.';
   }
   if (q.notes && q.notes.trim().length > 0) {
     return q.notes;
   }
-  return 'Waiting for Wall Analyst ready dump';
+  return 'Waiting for Wall Analyst ready dump. This question appears in full once published.';
 }
 
 function buildOrderedIdsFromRegistry(registry: string[]): string[] {
@@ -222,96 +251,173 @@ export default function QuestionsHome() {
   const live = readLiveJson();
   const corpus = live?.corpus || {};
   const def = live?.definition || {};
-  const lastPublishUtc = formatUtc(live?.as_of ?? null);
+  const lastPublishUtc = formatUtcPretty(live?.as_of ?? null);
+
+  // Build grouped contents
+  const groupOf = (id: string): 'study' | 'S' | 'RN' | 'P' | 'R' => {
+    if (id === 'smyth_htw') return 'study';
+    if (/^s\d+_/.test(id)) return 'S';
+    if (/^rn\d+_/.test(id)) return 'RN';
+    if (/^p\d+_/.test(id)) return 'P';
+    return 'R';
+  };
+  const groups = [
+    { key: 'study', title: 'The study' },
+    { key: 'S', title: 'For runners' },
+    { key: 'RN', title: 'New research' },
+    { key: 'P', title: 'Tools' },
+    { key: 'R', title: 'Research questions' },
+  ] as const;
+  const byGroup = new Map<string, QuestionItem[]>();
+  for (const q of items) {
+    const g = groupOf(q.id);
+    const arr = byGroup.get(g) || [];
+    arr.push(q);
+    byGroup.set(g, arr);
+  }
 
   return (
     <div className="questions">
+      {/* Sticky top bar */}
+      <div className="stickybar">
+        <div className="stickybar-inner">
+          <div className="running-head">HTW Live Study</div>
+          <nav className="tabs" aria-label="On-page">
+            <a href="#contents">Contents</a>
+            <a href="#method">Method</a>
+            <a href="#data">Data</a>
+          </nav>
+        </div>
+      </div>
+
       {/* Study intro */}
-      <section className="readable" style={{ marginBottom: '1.25rem' }}>
+      <section className="reading-col" style={{ marginBottom: '1.25rem' }}>
         <h1 style={{ marginTop: 0, fontFamily: 'var(--font-serif)' }}>HTW Live Study</h1>
-        <div className="site-subtitle" style={{ marginTop: '-0.25rem' }}>
-          Findings presented as Answer → How it was computed → Source → Visualization
-        </div>
-        <div style={{ marginTop: '0.75rem' }}>
-          <span className="badge">
-            Definition: DoS ≥ {def.dos ?? '—'} and LoS ≥ {def.los_km ?? '—'} km after {def.after_km ?? '—'} km vs {def.base_pace_from_km ?? '—'}–{def.base_pace_to_km ?? '—'} km base pace
-          </span>
-        </div>
-        <div className="stats" role="status" style={{ marginTop: '0.75rem' }}>
-          <div className="stat">
-            <div className="label">Records</div>
-            <div className="value">{typeof corpus.n_records === 'number' ? corpus.n_records.toLocaleString() : '—'}</div>
-          </div>
-          <div className="stat">
-            <div className="label">Runners</div>
-            <div className="value">{typeof corpus.n_runners === 'number' ? corpus.n_runners.toLocaleString() : '—'}</div>
-          </div>
-          <div className="stat">
-            <div className="label">Races</div>
-            <div className="value">{typeof corpus.n_races === 'number' ? corpus.n_races.toLocaleString() : '—'}</div>
-          </div>
-          <div className="stat">
-            <div className="label">Cities</div>
-            <div className="value">{typeof corpus.n_cities === 'number' ? corpus.n_cities.toLocaleString() : '—'}</div>
-          </div>
-          <div className="stat">
-            <div className="label">Years</div>
-            <div className="value">
-              {typeof corpus.year_min === 'number' && typeof corpus.year_max === 'number'
-                ? `${corpus.year_min}–${corpus.year_max}`
-                : '—'}
-            </div>
-          </div>
-          <div className="stat">
-            <div className="label">Published</div>
-            <div className="value">{lastPublishUtc ?? '—'}</div>
-          </div>
+        <p className="site-subtitle text-col" style={{ marginTop: '0.25rem' }}>
+          {typeof corpus.n_records === 'number' &&
+          typeof corpus.n_runners === 'number' &&
+          typeof corpus.n_races === 'number' &&
+          typeof corpus.n_cities === 'number' &&
+          typeof corpus.year_min === 'number' &&
+          typeof corpus.year_max === 'number'
+            ? `Live corpus: ${corpus.n_records.toLocaleString()} records from ${corpus.n_runners.toLocaleString()} runners across ${corpus.n_races} races in ${corpus.n_cities} cities (${corpus.year_min}–${corpus.year_max}). Last published ${lastPublishUtc ?? '—'}.`
+            : `Live corpus pending. Last published ${lastPublishUtc ?? '—'}.`}
+        </p>
+        <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+          Definition: DoS ≥ {def.dos ?? '—'} and LoS ≥ {def.los_km ?? '—'} km after {def.after_km ?? '—'} km vs {def.base_pace_from_km ?? '—'}–{def.base_pace_to_km ?? '—'} km base pace
         </div>
       </section>
 
       {/* Contents */}
-      <section className="readable" id="contents" style={{ marginBottom: '1rem' }}>
-        <h2 style={{ margin: '0 0 0.25rem 0', fontFamily: 'var(--font-sans)' }}>Contents</h2>
-        <nav aria-label="Table of contents">
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {items.map((q) => {
-              const title = `${q.displayId ? q.displayId + ' — ' : ''}${q.title}`;
-              return (
-                <li key={q.id} style={{ margin: '0.2rem 0' }}>
-                  <a href={`#q-${q.id}`} style={{ color: 'inherit', textDecoration: 'underline' }}>
-                    {title}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+      <section className="reading-col" id="contents" style={{ marginBottom: '1rem' }}>
+        <h2 style={{ margin: '0 0 0.5rem 0', fontFamily: 'var(--font-sans)' }}>Contents</h2>
+        {groups.map((g) => {
+          const arr = byGroup.get(g.key) || [];
+          if (!arr.length) return null;
+          return (
+            <div key={g.key}>
+              <div className="toc-group">{g.title}</div>
+              <ul className="toc-list">
+                {arr.map((q) => {
+                  const title = `${q.title}`;
+                  const statusReady = (q.status === 'ready' || q.status === 'ok') && (!!q.answerProse || q.isHTW);
+                  return (
+                    <li key={q.id}>
+                      <a href={`#q-${q.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                        {q.displayId ? <span className="display-id">{q.displayId}</span> : null}
+                        <span>{title}</span>
+                      </a>
+                      <span className={`status ${statusReady ? 'ready' : 'waiting'}`}>{statusReady ? 'Ready' : 'Waiting'}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
       </section>
 
+      {/* Method and Data anchors for sticky bar */}
+      <div id="method" className="reading-col" style={{ height: 0 }} />
+      <div id="data" className="reading-col" style={{ height: 0 }} />
+
       {/* Question blocks */}
-      <div className="stack" style={{ display: 'grid', gap: '1.25rem' }}>
+      <div className="stack reading-col" style={{ display: 'grid', gap: '1.25rem' }}>
         {items.map((q) => {
-          const title = `${q.displayId ? q.displayId + ' — ' : ''}${q.title}`;
+          const title = `${q.title}`;
           const ready = q.status === 'ready' || q.status === 'ok';
           const hasAnswer = !!(q.answerProse && q.answerProse.trim().length > 0);
           const showMethod =
             (q.methodologyProse && q.methodologyProse.trim().length > 0) ||
             (q.methodFallback && q.methodFallback.trim().length > 0);
           const vizCsvs = q.csvTables;
-          const pubUtc = formatUtc(q.asOf ?? null);
+          const pubUtc = formatUtcPretty(q.asOf ?? null);
 
           // Special HTW block
           if (q.isHTW) {
+            const t2 = live?.tables?.t2;
+            const hasT2 = t2 && Array.isArray(t2.columns) && Array.isArray(t2.rows);
             return (
               <article key={q.id} id={`q-${q.id}`} className="readable">
-                <header className="figure-header" style={{ marginBottom: '0.25rem' }}>
+                <header style={{ marginBottom: '0.25rem' }}>
+                  {q.displayId ? <div className="display-id">{q.displayId}</div> : null}
                   <h2 className="question-title" style={{ margin: 0 }}>{title}</h2>
                 </header>
-                <p className="prose" style={{ marginTop: '0.5rem' }}>
-                  Explore the Smyth 2021 reading UI with live-study overlays.
-                </p>
-                <p style={{ marginTop: '0.25rem' }}>
-                  <Link href="/htw">Open HTW</Link>
+                {hasAnswer ? (
+                  <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{q.answerProse}</p>
+                ) : (
+                  <p className="site-subtitle text-col" style={{ marginTop: '0.5rem' }}>
+                    {blockedReason(q)}
+                  </p>
+                )}
+                {/* How it was computed (+ Source under) */}
+                <section className="method-col" style={{ marginTop: '0.5rem' }}>
+                  <h3 className="question-section">How it was computed</h3>
+                  <p className="prose">
+                    {def
+                      ? `HTW is defined as slowdown (DoS) ≥ ${def.dos ?? '—'} with length (LoS) ≥ ${def.los_km ?? '—'} km after ${def.after_km ?? '—'} km, relative to base pace over ${def.base_pace_from_km ?? '—'}–${def.base_pace_to_km ?? '—'} km.`
+                      : (q.methodologyProse && q.methodologyProse.trim().length > 0
+                          ? q.methodologyProse
+                          : q.methodFallback || '')}
+                  </p>
+                  <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+                    <code>public/data/live.json</code> — Published {lastPublishUtc ?? '—'}
+                  </div>
+                </section>
+                {/* Visualization from live.json (prefer t2 age table) */}
+                {hasT2 ? (
+                  <section style={{ marginTop: '0.5rem' }}>
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                        <thead>
+                          <tr>
+                            {t2!.columns!.map((h: string) => (
+                              <th key={h} style={{ textAlign: 'left', borderBottom: '1px solid var(--rule)', padding: '0.35rem 0.5rem', color: 'var(--slate)' }}>
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {t2!.rows!.slice(0, 20).map((row: any[], i: number) => (
+                            <tr key={i}>
+                              {row.map((cell, j) => (
+                                <td key={j} style={{ padding: '0.35rem 0.5rem', borderBottom: '1px solid var(--rule)' }}>
+                                  {cell as any}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="site-subtitle" style={{ marginTop: '0.4rem' }}>
+                      {t2?.caption || 'HTW proportion by age group and sex (from live study)'}
+                    </div>
+                  </section>
+                ) : null}
+                <p style={{ marginTop: '0.5rem' }}>
+                  <Link href="/htw">Explore the HTW dashboard</Link>
                 </p>
               </article>
             );
@@ -319,29 +425,23 @@ export default function QuestionsHome() {
 
           return (
             <article key={q.id} id={`q-${q.id}`} className="readable">
-              <header className="figure-header" style={{ marginBottom: '0.25rem' }}>
+              <header style={{ marginBottom: '0.25rem' }}>
+                {q.displayId ? <div className="display-id">{q.displayId}</div> : null}
                 <h2 className="question-title" style={{ margin: 0 }}>{title}</h2>
               </header>
 
               {ready && hasAnswer ? (
                 <>
-                  <section style={{ marginTop: '0.5rem' }}>
-                    <h3 className="question-section">Answer</h3>
-                    <p className="prose">{q.answerProse}</p>
-                  </section>
+                  <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{q.answerProse}</p>
 
                   <section style={{ marginTop: '0.5rem' }}>
                     <h3 className="question-section">How it was computed</h3>
-                    <p className="prose">
+                    <p className="prose method-col">
                       {q.methodologyProse && q.methodologyProse.trim().length > 0
                         ? q.methodologyProse
                         : q.methodFallback}
                     </p>
-                  </section>
-
-                  <section style={{ marginTop: '0.5rem' }}>
-                    <h3 className="question-section">Source</h3>
-                    <div className="site-subtitle">
+                    <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
                       <code style={{ fontFamily: 'monospace' }}>{`public/data/packs/${q.id}/`}</code>
                       {` — Published ${pubUtc ?? '—'}`}
                     </div>
@@ -358,7 +458,7 @@ export default function QuestionsHome() {
                 </>
               ) : (
                 <section style={{ marginTop: '0.5rem' }}>
-                  <div className="site-subtitle">{blockedReason(q)}</div>
+                  <div className="site-subtitle text-col">{blockedReason(q)}</div>
                 </section>
               )}
             </article>

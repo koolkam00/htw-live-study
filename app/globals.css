@@ -1,11 +1,12 @@
 :root {
-  /* Design tokens (Supervisor law) */
-  --paper: #ffffff;
-  --ink: #111111;
-  --slate: #5b6676;
-  --course: #0f6ad9;
-  --wall: #c2432f;
-  --border: #e5e7eb;
+  /* Supervisor tokens */
+  --paper: #FFFFFF;
+  --ink: #17233F;
+  --slate: #5B6577;
+  --course: #0A5AD6;
+  --wall: #C8442B;
+  --rule: #E3E8F0;
+  --wash: #F3F6FA;
   --muted: var(--slate);
   --text: var(--ink);
   --accent: var(--course);
@@ -43,7 +44,7 @@ a:hover {
 }
 
 header.site-header {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--rule);
   background: var(--paper);
 }
 .site-title {
@@ -83,7 +84,7 @@ header.site-header {
 }
 select, button, input {
   background: var(--paper);
-  border: 1px solid var(--border);
+  border: 1px solid var(--rule);
   color: var(--text);
   padding: 0.5rem 0.75rem;
   border-radius: 0; /* no radius */
@@ -135,7 +136,7 @@ label {
 .badge {
   font-size: 0.75rem;
   color: var(--muted);
-  border: 1px solid var(--border);
+  border: 1px solid var(--rule);
   border-radius: 0;
   padding: 0.1rem 0.35rem;
 }
@@ -144,7 +145,7 @@ label {
   place-items: center;
   height: 280px;
   background: transparent;
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--rule);
   border-radius: 0;
   color: var(--muted);
   text-align: center;
@@ -161,10 +162,21 @@ label {
 }
 
 /* Questions reading UI */
-.readable {
-  max-width: 68ch;
+.readable { /* general readable wrapper when specific measures are not applied */
+  max-width: 56rem;
   margin-left: auto;
   margin-right: auto;
+}
+.reading-col {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.text-col {
+  max-width: 42rem;
+}
+.method-col {
+  max-width: 38rem;
 }
 .question-title {
   font-weight: 700;
@@ -179,4 +191,71 @@ label {
 .prose {
   line-height: 1.6;
   color: var(--text);
+}
+
+/* Sticky top bar for reading UI */
+.stickybar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.stickybar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.running-head {
+  font-weight: 600;
+  color: var(--ink);
+}
+.tabs {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+.tabs a {
+  color: var(--slate);
+  text-decoration: none;
+}
+.tabs a:hover {
+  text-decoration: underline;
+}
+
+/* Contents list styles */
+.toc-group {
+  margin: 0.5rem 0 0.25rem 0;
+  color: var(--slate);
+  font-weight: 600;
+}
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0.75rem 0;
+}
+.toc-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  padding: 0.25rem 0;
+}
+.status {
+  font-size: 0.8rem;
+}
+.status.ready { color: var(--course); }
+.status.waiting { color: var(--slate); }
+
+.display-id {
+  color: var(--slate);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  margin-bottom: 0.15rem;
 }

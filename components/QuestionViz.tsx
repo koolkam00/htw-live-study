@@ -196,19 +196,19 @@ export default function QuestionViz({
       <ResponsiveContainer width="100%" height="100%">
         {xIsNumber ? (
           <AreaChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey={xKey!} tick={{ fill: '#8b9bb4' }} />
-            <YAxis tick={{ fill: '#8b9bb4' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E3E8F0" />
+            <XAxis dataKey={xKey!} tick={{ fill: '#5B6577' }} />
+            <YAxis tick={{ fill: '#5B6577' }} />
             <Tooltip />
-            <Area type="monotone" dataKey={yKey!} stroke="#0f6ad9" fill="#0f6ad9" fillOpacity={0.15} />
+            <Area type="monotone" dataKey={yKey!} stroke="#0A5AD6" fill="#0A5AD6" fillOpacity={0.15} />
           </AreaChart>
         ) : (
           <BarChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey={xKey!} tick={{ fill: '#8b9bb4' }} interval={0} angle={-20} textAnchor="end" height={50} />
-            <YAxis tick={{ fill: '#8b9bb4' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E3E8F0" />
+            <XAxis dataKey={xKey!} tick={{ fill: '#5B6577' }} interval={0} angle={-20} textAnchor="end" height={50} />
+            <YAxis tick={{ fill: '#5B6577' }} />
             <Tooltip />
-            <Bar dataKey={yKey!} fill="#0f6ad9" />
+            <Bar dataKey={yKey!} fill="#0A5AD6" />
           </BarChart>
         )}
       </ResponsiveContainer>
