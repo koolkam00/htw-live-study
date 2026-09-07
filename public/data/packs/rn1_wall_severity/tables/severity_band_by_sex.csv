@@ -1,0 +1,9 @@
+sex,severity_band,n,pct_within_sex
+F,mild,282878,36.162
+F,moderate,41533,5.3094
+F,none,451094,57.666
+F,severe,6748,0.8626
+M,mild,602669,34.8241
+M,moderate,177326,10.2465
+M,none,904064,52.2397
+M,severe,46548,2.6897

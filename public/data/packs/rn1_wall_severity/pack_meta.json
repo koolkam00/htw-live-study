@@ -1,0 +1,55 @@
+{
+  "pack_id": "rn1_wall_severity",
+  "slug": "rn1_wall_severity",
+  "display_id": "RN1",
+  "title": "Wall severity spectrum",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-07T00:23:31Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "maps_to": "extends HTW / R7\u2013R10",
+  "source_features": "/workspace/wall-analyst/output-api-dump-2026-09-06/features.parquet",
+  "sidecar_severity": "/workspace/wall-analyst/output-api-dump-2026-09-06/features_severity.parquet",
+  "band_thresholds": {
+    "none": "[0, 0.10)",
+    "mild": "[0.10, 0.25)",
+    "moderate": "[0.25, 0.40)",
+    "severe": ">= 0.40"
+  },
+  "band_thresholds_detail": [
+    {
+      "band": "none",
+      "lo": 0.0,
+      "hi": 0.1
+    },
+    {
+      "band": "mild",
+      "lo": 0.1,
+      "hi": 0.25
+    },
+    {
+      "band": "moderate",
+      "lo": 0.25,
+      "hi": 0.4
+    },
+    {
+      "band": "severe",
+      "lo": 0.4,
+      "hi": null,
+      "hi_note": "unbounded"
+    }
+  ],
+  "notes": "Continuous wall severity = distance-weighted mean of positive second-half DoS (DoS<=0 \u2192 0). Ordinal bands: none [0,0.10); mild [0.10,0.25); moderate [0.25,0.40); severe >=0.40. Computed via gap_substrate.severity.compute_severity; Smyth htw binary flag is never overwritten. Full corpus (not majors-only sample).",
+  "method": "gap_substrate.severity.compute_severity on full features.parquet; no weather API",
+  "tables": [
+    "tables/severity_histogram.csv",
+    "tables/severity_band_counts.csv",
+    "tables/severity_band_by_sex.csv",
+    "tables/htw_vs_severity_band.csv",
+    "tables/severity_band_by_ability.csv",
+    "summary.json"
+  ],
+  "canonical": true,
+  "deprecated": false
+}

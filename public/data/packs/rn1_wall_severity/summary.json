@@ -1,0 +1,50 @@
+{
+  "n_features": 3167990,
+  "n_valid_splits": 2512860,
+  "n_rows_used": 2512860,
+  "severity_mean": 0.117072,
+  "severity_median": 0.090106,
+  "severity_p90": 0.257435,
+  "severity_p95": 0.321065,
+  "band_counts": {
+    "none": 1355158,
+    "mild": 885547,
+    "moderate": 218859,
+    "severe": 53296
+  },
+  "band_pct": {
+    "none": 53.9289,
+    "mild": 35.2406,
+    "moderate": 8.7096,
+    "severe": 2.1209
+  },
+  "band_thresholds": {
+    "none": "[0, 0.10)",
+    "mild": "[0.10, 0.25)",
+    "moderate": "[0.25, 0.40)",
+    "severe": ">= 0.40"
+  },
+  "cross_htw_severity_band": {
+    "none|htw": 6596,
+    "none|no_htw": 1348562,
+    "mild|htw": 470529,
+    "mild|no_htw": 415018,
+    "moderate|htw": 218609,
+    "moderate|no_htw": 250,
+    "severe|htw": 53083,
+    "severe|no_htw": 213
+  },
+  "by_sex_band": {
+    "F|mild": 282878,
+    "F|moderate": 41533,
+    "F|none": 451094,
+    "F|severe": 6748,
+    "M|mild": 602669,
+    "M|moderate": 177326,
+    "M|none": 904064,
+    "M|severe": 46548
+  },
+  "method": "gap_substrate.severity.compute_severity (DW mean positive second-half DoS)",
+  "source_features": "/workspace/wall-analyst/output-api-dump-2026-09-06/features.parquet",
+  "sidecar": "/workspace/wall-analyst/output-api-dump-2026-09-06/features_severity.parquet"
+}
