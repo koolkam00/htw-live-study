@@ -16,6 +16,7 @@ export const PACKS: PackInfo[] = [
   { id: 'rn1_wall_severity', title: 'RN1 — Wall severity spectrum', status: 'ready', group: 'RN' },
   { id: 'rn4_reference_dependence', title: 'RN4 — Reference dependence', status: 'ready', group: 'RN' },
   { id: 'p4_even_effort_gap', title: 'P4 — Even-effort GAP splits', status: 'ready', group: 'P' },
+  { id: 'p1_pace_band_planner', title: 'P1 — Pace band planner', status: 'ready', group: 'P' },
   { id: 'p2_halfway_calculator', title: 'P2 — Halfway calculator', status: 'ready', group: 'P' },
   { id: 's1_banking_time', title: 'S1 — The price of banking time', status: 'ready', group: 'S' },
   { id: 's2_target_odds', title: 'S2 — Odds of breaking a target time', status: 'ready', group: 'S' },
