@@ -1,0 +1,29 @@
+{
+  "pack_id": "rn4_reference_dependence",
+  "slug": "rn4_reference_dependence",
+  "display_id": "RN4",
+  "title": "Reference dependence",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-07T00:27:20Z",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "maps_to": "S10 / R4 / R17",
+  "source_features": "/workspace/wall-analyst/output-api-dump-2026-09-06/features.parquet",
+  "notes": "Round-number / goal-reference dependence: finish-time density cliffs at sub3=180, 3:30=210, sub4=240 (and :00/:30 boundaries); on-pace\u2192hit rates extending R4/S2/S10; milestone_kick vs goal hits (R17-adjacent). Full corpus valid_splits filter; viral SHOW is annotated finish histogram.",
+  "method": "valid_splits==True; finish_time minutes; 0.5-min histogram; cliff spike_ratio = n[T-w,T)/n[T,T+w); on_pace\u2192hit at 20/30k; milestone_kick quartiles among near-goal (\u00b110 min or on-pace-30 or hit/near_miss)",
+  "tables": [
+    "tables/finish_histogram.csv",
+    "tables/finish_histogram_by_sex.csv",
+    "tables/cliff_ratios.csv",
+    "tables/cliff_ratios_primary.csv",
+    "tables/on_pace_hit_rates.csv",
+    "tables/milestone_kick_hit.csv",
+    "tables/milestone_kick_by_outcome.csv",
+    "tables/hit_near_miss_counts.csv",
+    "summary.json"
+  ],
+  "canonical": true,
+  "deprecated": false,
+  "implementation": "Streaming row-group aggregates from features.parquet; no race_records writes."
+}
