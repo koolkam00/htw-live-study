@@ -14,6 +14,7 @@ export interface PackInfo {
 export const PACKS: PackInfo[] = [
   { id: 'smyth_htw', title: 'HTW — Smyth 2021', status: 'ready', group: 'paper' },
   { id: 'rn1_wall_severity', title: 'RN1 — Wall severity spectrum', status: 'ready', group: 'RN' },
+  { id: 'rn4_reference_dependence', title: 'RN4 — Reference dependence', status: 'ready', group: 'RN' },
   { id: 's1_banking_time', title: 'S1 — The price of banking time', status: 'ready', group: 'S' },
   { id: 's2_target_odds', title: 'S2 — Odds of breaking a target time', status: 'ready', group: 'S' },
   { id: 's3_course_breaks', title: 'S3 — Where each marathon breaks people', status: 'enrichment', group: 'S', enrichment: true },
