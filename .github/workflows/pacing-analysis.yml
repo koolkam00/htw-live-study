@@ -1,0 +1,49 @@
+name: Private marathon pacing analysis
+
+on:
+  pull_request:
+    paths:
+      - 'analysis/**'
+      - '.github/workflows/pacing-analysis.yml'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Private export release tag (blank uses analysis/release.json)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  analyse:
+    if: >-
+      github.repository == 'koolkam00/htw-live-study' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'private-export-'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install analysis dependency
+        run: python -m pip install -r analysis/requirements.txt
+      - name: Download verified private CORE export
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACING_RELEASE_TAG: ${{ inputs.release_tag || github.event.release.tag_name || '' }}
+        run: python analysis/download_release.py --output "$RUNNER_TEMP/pacing-private" --tag "$PACING_RELEASE_TAG"
+      - name: Inspect available fields and coverage
+        run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-inspection"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pacing-export-inspection
+          path: ${{ runner.temp }}/pacing-inspection/
+          if-no-files-found: error
+          retention-days: 7

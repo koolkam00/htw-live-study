@@ -11,3 +11,9 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Private analysis inputs never belong in the site repository.
+*.parquet
+*.tar.gz
+analysis/private/
+__pycache__/

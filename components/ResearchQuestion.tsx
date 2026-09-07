@@ -14,7 +14,6 @@ export default function ResearchQuestion({ question, standalone = false, heading
     </header>
     <p className={question.available ? 'answer' : 'answer-state'}>{question.answer}</p>
     {question.detail && <p className="answer-detail">{question.detail}</p>}
-    {question.charts.map((spec, i) => <QuestionViz key={`${question.id}-${i}`} spec={spec} />)}
     <details className="methodology">
       <summary>Methodology &amp; sources</summary>
       <div className="methodology-content">
@@ -33,5 +32,6 @@ export default function ResearchQuestion({ question, standalone = false, heading
         {question.related?.length ? <div className="source-links">{question.related.map(link => <Link key={link.href} href={link.href}>{link.label}</Link>)}</div> : null}
       </div>
     </details>
+    {question.charts.map((spec, i) => <QuestionViz key={`${question.id}-${i}`} spec={spec} />)}
   </article>;
 }
