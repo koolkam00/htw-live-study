@@ -117,6 +117,7 @@ const PRIORITY: string[] = [
   'rn4_reference_dependence',
   'p4_even_effort_gap',
   'p2_halfway_calculator',
+  'p1_pace_band_planner',
 ];
 
 function priorityIndex(id: string): number {
@@ -129,8 +130,8 @@ export default function QuestionsHome() {
   const items = ids
     .map(buildQuestionItem)
     .filter((x): x is QuestionItem => !!x)
-    // Skip stubs with no prose and no tables (except HTW which can link out)
-    .filter((q) => q.isHTW || q.answerProse || q.csvTables.length > 0);
+    // Strict: require Answer prose for non-HTW; HTW may appear as a link-out block
+    .filter((q) => q.isHTW || !!q.answerProse);
 
   // Sort by priority, then by asOf (desc), then by id
   items.sort((a, b) => {
