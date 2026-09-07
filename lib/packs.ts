@@ -19,6 +19,7 @@ export const PACKS: PackInfo[] = [
   { id: 'p4_even_effort_gap', title: 'P4 — Even-effort GAP splits', status: 'ready', group: 'P' },
   { id: 'p1_pace_band_planner', title: 'P1 — Pace band planner', status: 'ready', group: 'P' },
   { id: 'p2_halfway_calculator', title: 'P2 — Halfway calculator', status: 'ready', group: 'P' },
+  { id: 'p3_race_week_weather', title: 'P3 — Race-week weather advisory', status: 'ready', group: 'P' },
   { id: 's1_banking_time', title: 'S1 — The price of banking time', status: 'ready', group: 'S' },
   { id: 's2_target_odds', title: 'S2 — Odds of breaking a target time', status: 'ready', group: 'S' },
   { id: 's3_course_breaks', title: 'S3 — Where each marathon breaks people', status: 'enrichment', group: 'S', enrichment: true },

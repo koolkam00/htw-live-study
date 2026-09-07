@@ -118,6 +118,7 @@ const PRIORITY: string[] = [
   'rn4_reference_dependence',
   'p4_even_effort_gap',
   'p2_halfway_calculator',
+  'p3_race_week_weather',
   'p1_pace_band_planner',
 ];
 

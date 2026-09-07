@@ -1,0 +1,79 @@
+{
+  "api_url": "http://127.0.0.1:8787/v1/race_forecasts",
+  "api_as_of": "2026-09-07T01:07:46Z",
+  "n_forecasts": 3,
+  "n_race_morning_available": 0,
+  "n_with_leadup_data": 1,
+  "n_null_race_morning": 3,
+  "cities": [
+    {
+      "city": "Berlin",
+      "year": 2026,
+      "race_date": "2026-09-27",
+      "forecast_status": "partial_window",
+      "race_morning_available": false,
+      "n_hours_temp_nonnull": 45,
+      "leadup_temp_c_min": 11.9,
+      "leadup_temp_c_max": 26.9,
+      "leadup_temp_c_mean": 16.38888888888889
+    },
+    {
+      "city": "Chicago",
+      "year": 2026,
+      "race_date": "2026-10-11",
+      "forecast_status": "awaiting_forecast_window",
+      "race_morning_available": false,
+      "n_hours_temp_nonnull": 0,
+      "leadup_temp_c_min": null,
+      "leadup_temp_c_max": null,
+      "leadup_temp_c_mean": null
+    },
+    {
+      "city": "New York",
+      "year": 2026,
+      "race_date": "2026-11-01",
+      "forecast_status": "awaiting_forecast_window",
+      "race_morning_available": false,
+      "n_hours_temp_nonnull": 0,
+      "leadup_temp_c_min": null,
+      "leadup_temp_c_max": null,
+      "leadup_temp_c_mean": null
+    }
+  ],
+  "berlin_2026": {
+    "race_date": "2026-09-27",
+    "start_local": "09:15",
+    "forecast_status": "partial_window",
+    "race_morning_temp_c": null,
+    "fetched_window_start": "2026-09-21",
+    "fetched_window_end": "2026-09-22",
+    "race_week_start": "2026-09-21",
+    "race_week_end": "2026-09-27",
+    "n_hours": 48,
+    "n_hourly_rows": 48,
+    "n_hours_temp_nonnull": 45,
+    "temp_c_min": 11.9,
+    "temp_c_max": 26.9,
+    "temp_c_mean": 16.38888888888889,
+    "feels_like_c_min": 10.2,
+    "feels_like_c_max": 22.9,
+    "humidity_pct_mean": 62.55555555555556,
+    "precip_mm_sum": 0.6000000000000001,
+    "wind_mps_mean": 3.434444444444445,
+    "wind_mps_max": 5.6,
+    "caveat": "race_morning_summary=null (race_date outside fetched hours)"
+  },
+  "rn3_link": {
+    "pack_id": "rn3_heat_curves",
+    "table": "tables/rn3_berlin_htw_by_band.csv",
+    "n_berlin_bands": 4
+  },
+  "honesty": {
+    "never_invent_temps": true,
+    "race_morning_null_policy": "leave null; state in answer_prose",
+    "chi_nyc_stubs_ok": true
+  },
+  "maps_to": "S9",
+  "never_writes_race_records": true,
+  "method": "Live /v1/race_forecasts dump; real fields only; RN3 historical link optional"
+}

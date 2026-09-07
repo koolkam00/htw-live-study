@@ -1,0 +1,5 @@
+link_pack,city,weather_band,n,city_n_all_bands,htw_rate,severity_mean,positive_split_rate,split_ratio_mean,wx_temp_mean,note
+rn3_heat_curves,Berlin,cool,86443,451520,0.168342,0.079894,0.823699,1.077791,9.3537,Historical corpus HTW-by-band for Berlin (RN3); not a 2026 forecast
+rn3_heat_curves,Berlin,hot,45846,451520,0.279806,0.125714,0.939886,1.136017,21.6,Historical corpus HTW-by-band for Berlin (RN3); not a 2026 forecast
+rn3_heat_curves,Berlin,mild,199341,451520,0.201825,0.090758,0.862146,1.089393,13.0573,Historical corpus HTW-by-band for Berlin (RN3); not a 2026 forecast
+rn3_heat_curves,Berlin,warm,119890,451520,0.254934,0.104918,0.880324,1.106619,16.0653,Historical corpus HTW-by-band for Berlin (RN3); not a 2026 forecast
