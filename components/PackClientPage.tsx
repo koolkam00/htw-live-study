@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getPackInfo, isEnrichment, isParked } from '@/lib/packs';
-import { usePackMeta } from '@/hooks/usePackMeta';
+import { usePackMeta, type PackMeta } from '@/hooks/usePackMeta';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
@@ -25,11 +25,19 @@ function formatVal(v: unknown): string {
   return String(v);
 }
 
-export default function PackClientPage({ params }: { params: { packId: string } }) {
+export default function PackClientPage({
+  params,
+  initialMeta,
+  initialSummary,
+}: {
+  params: { packId: string };
+  initialMeta?: PackMeta | null;
+  initialSummary?: Record<string, unknown> | null;
+}) {
   const packId = params.packId;
   const info = getPackInfo(packId);
-  const { meta, loading } = usePackMeta(packId);
-  const [summary, setSummary] = useState<Record<string, unknown> | null>(null);
+  const { meta, loading } = usePackMeta(packId, initialMeta ?? null);
+  const [summary, setSummary] = useState<Record<string, unknown> | null>(initialSummary ?? null);
   const [tables, setTables] = useState<{ name: string; headers: string[]; rows: string[][] }[]>([]);
   const [dataError, setDataError] = useState<string | null>(null);
 
@@ -139,6 +147,19 @@ export default function PackClientPage({ params }: { params: { packId: string } 
           <div className="placeholder">{loading ? 'Loading…' : 'Waiting for live pack data'}</div>
         )}
         {dataError && <div className="placeholder">{dataError}</div>}
+
+        {isReady && (meta as any)?.answer_prose && (
+          <div className="stack" style={{ marginTop: '0.75rem' }}>
+            <div className="figure-title">Answer</div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{String((meta as any).answer_prose)}</div>
+            {(meta as any)?.methodology_prose && (
+              <>
+                <div className="figure-title" style={{ marginTop: '0.75rem' }}>How computed</div>
+                <div style={{ whiteSpace: 'pre-wrap' }}>{String((meta as any).methodology_prose)}</div>
+              </>
+            )}
+          </div>
+        )}
 
         {isReady && summary && (
           <div className="stats" role="status" style={{ marginTop: '0.75rem' }}>
