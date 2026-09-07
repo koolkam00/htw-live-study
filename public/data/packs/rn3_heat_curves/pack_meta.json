@@ -1,0 +1,78 @@
+{
+  "pack_id": "rn3_heat_curves",
+  "slug": "rn3_heat_curves",
+  "display_id": "RN3",
+  "title": "Heat decomposition / heat curves",
+  "status": "ready",
+  "readiness": "ready",
+  "as_of": "2026-09-07T01:26:29Z",
+  "n_features": 3167990,
+  "n_rows_used": 2315085,
+  "maps_to": "S9 / R15",
+  "source_features": "/workspace/gap-substrate/artifacts/c1/features_v2_wx.parquet",
+  "weather_band_thresholds": {
+    "cool": "< 10 \u00b0C",
+    "mild": "[10, 15) \u00b0C",
+    "warm": "[15, 21) \u00b0C",
+    "hot": "\u2265 21 \u00b0C"
+  },
+  "weather_band_thresholds_detail": [
+    {
+      "band": "cool",
+      "lo_c": null,
+      "hi_c": 10.0,
+      "lo_inclusive": true,
+      "hi_exclusive": true
+    },
+    {
+      "band": "mild",
+      "lo_c": 10.0,
+      "hi_c": 15.0,
+      "lo_inclusive": true,
+      "hi_exclusive": true
+    },
+    {
+      "band": "warm",
+      "lo_c": 15.0,
+      "hi_c": 21.0,
+      "lo_inclusive": true,
+      "hi_exclusive": true
+    },
+    {
+      "band": "hot",
+      "lo_c": 21.0,
+      "hi_c": null,
+      "lo_inclusive": true,
+      "hi_exclusive": false
+    }
+  ],
+  "weather_temp_priority": [
+    "wx_temp_c_05",
+    "wx_mean_temp_c"
+  ],
+  "notes": "Heat decomposition on full features_v2_wx. C3 cool/mild/warm/hot from wx_temp_c_05\u2192wx_mean_temp_c. Null weather never invented as zero. api vs local_fallback reported in coverage. Melbourne elev N/A irrelevant.",
+  "method": "Streaming aggregates from features_v2_wx; valid_splits + resolvable weather; C3 WEATHER_BANDS; Smyth HTW + severity + splits + finish quantiles; no race_records writes",
+  "tables": [
+    "tables/wx_coverage.csv",
+    "tables/weather_band_counts.csv",
+    "tables/htw_severity_by_band_sex.csv",
+    "tables/splits_by_weather_band.csv",
+    "tables/finish_quantiles_by_weather_band.csv",
+    "tables/late_wx_vs_fade.csv",
+    "tables/by_city_weather_band.csv",
+    "summary.json"
+  ],
+  "canonical": true,
+  "deprecated": false,
+  "answer_prose": "Among 2,315,085 valid-split finishers with resolvable race weather (wx_temp_c_05\u2192wx_mean_temp_c; C3 bands cool<10 / mild[10,15) / warm[15,21) / hot\u226521 \u00b0C), HTW by band: cool 26.3% (n=881,673), mild 31.6% (n=1,117,386), warm 34.6% (n=228,884), hot 31.1% (n=87,142) \u2014 peak in warm, with hot smaller-n and mixed city mix. Mean severity still climbs with heat (0.108 \u2192 0.121 \u2192 0.130 \u2192 0.132). Positive-split rate: cool 87.8%, hot 93.4%; mean split_ratio cool 1.1039 vs hot 1.1413. Finish median (p50 min): cool 241.0, mild 250.3, warm 255.1, hot 282.0. Men\u2019s hot HTW 37.7% vs women\u2019s 20.5%. Weather coverage on full corpus: wx_mean_temp_c nonnull 88.2%, wx_source=api 89.9%, local_fallback 10.1% (nulls never treated as zero).",
+  "methodology_prose": "Source: features_v2_wx.parquet (n_features=3,167,990). Analysis rows: valid_splits==True and resolvable weather temp (priority wx_temp_c_05 then wx_mean_temp_c; race_morning_temp_c/temp_c absent on this file). C3 weather bands (\u00b0C): cool <10; mild [10,15); warm [15,21); hot \u226521; null if missing \u2014 never invented. n_rows_used=2,315,085; of those, valid+hourly+temp=2,315,085. HTW = Smyth binary flag (unchanged). Severity = features_v2 continuous wall severity. positive_split is the signed float on the dump (rate = share >0); split_ratio = second/first half pace. Finish quantiles in minutes. Late-race table bands mean of wx_temp_c_35/40/42 vs gap_dos_*/severity. City table keeps cities with \u22655,000 banded rows. wx_source distinguished api vs local_fallback in coverage. Maps to S9/R15. No race_records writes.",
+  "prose_as_of": "2026-09-07T01:27:03Z",
+  "ux": {
+    "requires": [
+      "answer_prose",
+      "methodology_prose",
+      "viz"
+    ],
+    "note": "Sight must not invent copy; numbers from Analyst dumps only."
+  }
+}
