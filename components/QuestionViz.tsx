@@ -29,11 +29,11 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
   const axisValue = (v: unknown) => {
     const n = finite(v);
     if (n === null) return String(v);
-    if (spec.unit === '%' || spec.unit === 'finish' || spec.unit === 'min/km') return formatNumber(n, spec.unit);
+    if (spec.unit === '%' || spec.unit === '% pace' || spec.unit === 'finish' || spec.unit === 'min/km') return formatNumber(n, spec.unit);
     return formatNumber(n);
   };
   const units: Record<string, string> = {
-    '%': 'Percent (%)', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
+    '%': 'Percent (%)', '% pace': 'Pace difference (%) · below zero is faster', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
     'min': 'Minutes', 'runners': 'Number of finishes', 'correlation': 'Correlation, from 0 to 1', 'sec/km': 'Change in seconds per kilometer',
   };
 

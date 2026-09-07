@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { getLive, getStudyAnswer } from '@/lib/research-data';
+import { QUESTIONS } from '@/lib/question-catalog';
 
-export const metadata = { title: 'Methodology | HTW Live Study' };
+export const metadata = { title: 'Methodology | Marathon Pacing Study' };
 
 const additions = [
   { name: 'Hourly weather', fields: 'Temperature, dew point, humidity, rain, wind, cloud cover, and solar radiation.', benefit: 'Match conditions to the time each runner reaches a segment. Use a consistent historical model across years.', href: 'https://open-meteo.com/en/docs/historical-weather-api', source: 'Open-Meteo historical weather', coverage: 'Broad historical coverage; modeled grid estimates, not conditions measured at the runner.' },
@@ -18,27 +19,46 @@ export default function MethodologyPage() {
   const study = getStudyAnswer();
   const live = getLive();
   return <article className="prose">
-    <h1>How to read the results</h1>
-    <p className="answer">Each question pairs a finding with the data behind it. Some results are descriptive; others need more information before the full question can be answered.</p>
-    <h2>What counts as hitting the wall?</h2>
-    <p>{study.method[0]}</p>
-    <p>A sustained slowdown is observable in the splits. Its cause is not. The method follows the pacing-based approach in <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">Smyth’s 2021 study</a>.</p>
-    <h2>What is in this snapshot?</h2>
-    {live?.corpus && <p>{new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Coverage is uneven: this is not every runner at every marathon in every year.</p>}
-    <p>A finish is one race performance. A runner can contribute several finishes. Age and weather analyses can have smaller samples because the necessary fields are missing for some records.</p>
-    <h2>What do the chart numbers mean?</h2>
+    <h1>How we study marathon pacing</h1>
+    <p className="answer">The study follows the whole race: how runners start, distribute their speed, respond to the course, finish, and improve over time.</p>
+    <h2>Four things we want to understand</h2>
     <ul>
-      <li><strong>Wall rate:</strong> the percentage of eligible finishes meeting the sustained-slowdown definition.</li>
-      <li><strong>Second-half slowing:</strong> second-half pace divided by first-half pace, minus one. A value of 10% means the second half was run at a pace 10% slower.</li>
-      <li><strong>Sample size:</strong> the observations behind a particular value. Open “View exact values” for counts where the source provides them.</li>
+      <li><strong>Performance:</strong> finish time relative to a runner’s previous ability and race conditions.</li>
+      <li><strong>Execution:</strong> the distribution of pace across the full distance, including consistency, changes between halves, and finishing acceleration.</li>
+      <li><strong>Adaptation:</strong> how pace changes with terrain, weather, congestion, and other runners.</li>
+      <li><strong>Development:</strong> how the same runner’s approach and results change across marathons.</li>
+    </ul>
+    <h2>What is available now?</h2>
+    {live?.corpus && <p>{new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Coverage is uneven across courses, years, and fields.</p>}
+    <p>The site currently uses published summary tables. Some support a finding; others answer only part of a question. A “Next analysis” section specifies the additional measures, comparison, and data needed. It is a research plan, not a completed result.</p>
+    <p>A finish is one performance, so a runner can contribute several. Individual tables can have smaller samples or earlier publication dates than the main snapshot. Each question links its source and reports counts where available.</p>
+    <h2>How to read the pacing charts</h2>
+    <ul>
+      <li><strong>Full-course profile:</strong> section mean pace divided by the course’s distance-weighted mean pace, minus one. Zero is the full-course average; below zero is faster and above zero is slower.</li>
+      <li><strong>Second-half pace change:</strong> second-half pace divided by first-half pace, minus one. Positive values mean a slower second half. Negative values mean a faster second half, also called a negative split.</li>
+      <li><strong>Pattern shares:</strong> the percentage of eligible finishes assigned to a published pacing category. The thresholds behind those categories need fuller documentation.</li>
+      <li><strong>Exceptional-performance frequency:</strong> exceptional finishes divided by all classified finishes within a pacing pattern. This differs from asking what share of exceptional races used that pattern.</li>
       <li><strong>Missing values:</strong> unknown measurements stay missing. They are never plotted as zero.</li>
     </ul>
+    <p>A course-average line is not an individual runner’s path or the typical curve for a pacing-pattern group. Individual splits are required for runner-normalized median profiles and uncertainty bands.</p>
+    <p>Every section must be compared as pace or weighted by its distance. The final 2.195 km is shorter than a 5 km section. Twenty kilometers is before halfway, which is 21.0975 km.</p>
+    <h2>What counts as a good performance?</h2>
+    <p>The intended benchmark is an expectation established before the race, using only earlier performances and the relevant course and conditions. The existing “exceptional” labels are supplied by a summary table; their threshold is not documented well enough to treat them as that validated benchmark.</p>
+    <p>Finishing-time groups are useful for describing race shapes. Strategy comparisons need ability known before the race, so that the result is not also used to define the comparison group.</p>
     <h2>What can these comparisons establish?</h2>
-    <p>They describe associations in observed race results. Comparing different runners, courses, or years does not by itself isolate a pacing strategy’s effect.</p>
-    <p>Some available exports answer only part of the proposed question. For example, an age-group comparison is not a study of the same runners aging, and a fastest-city table is not a personal course conversion. Each question explains the remaining gap.</p>
-    <p>Five-kilometer splits identify an interval of slowdown, not an exact onset point. The final segment is 2.195 km and must be converted to pace before comparison. A 20 km checkpoint is before halfway, which is 21.0975 km.</p>
-    <h2>How the question lists fit together</h2>
-    <p>The original 26 questions retain their numbers. The first list adds question 27, the course-by-course wall map; question 28, personal pacing versus a difficult race day; and question 29, what happens when a goal slips away. Personal course translation is included in question 12.</p>
+    <p>They describe associations. Runners selecting different strategies can also differ in fitness, experience, goals, or conditions. Comparisons should account for these differences and report sample sizes and uncertainty.</p>
+    <p>Predictions must use information available at the checkpoint being studied and be tested on unseen race editions. Declared goals should be distinguished from inferred time landmarks. An absence from the database does not establish that a runner stopped racing.</p>
+    <p>Splits measure time and pace. Physiological effort, fueling, intentions, and training need additional evidence. Terrain-adjusted pace is an estimated proxy, especially when a 5 km section contains both climbs and descents.</p>
+    <h2>How the questions fit together</h2>
+    <p>The {QUESTIONS.length} questions are organized around race strategy, courses and conditions, goals and finishing, runner differences, and learning over time. The original question lists are incorporated, alongside six additions about successful strategies, personal-best gains, congestion, consistency, and course adaptation.</p>
+    <details className="methodology">
+      <summary>Focused analysis: hitting the wall</summary>
+      <div className="methodology-content">
+        <p>{study.method[0]}</p>
+        <p>This definition identifies sustained slowing. It cannot determine whether the cause was fuel depletion, injury, fatigue, walking, or another factor. It is one outcome within the wider pacing study.</p>
+        <p>The approach follows <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">Smyth’s 2021 study</a>. <Link href="/htw">Explore the focused wall analysis</Link>.</p>
+      </div>
+    </details>
     <details className="methodology" id="additional-data">
       <summary>Additional web data that could strengthen the study</summary>
       <div className="methodology-content">

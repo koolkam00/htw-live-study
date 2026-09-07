@@ -58,7 +58,13 @@ summary::marker { color: var(--course); font-size: .8em; }
 .question { padding-block: 2.5rem; border-top: 1px solid var(--rule); min-width: 0; }
 .question:first-child { padding-top: 0; border-top: 0; }
 .question-number { display: block; font-size: .875rem; color: var(--slate); margin-bottom: .5rem; }
-.question h2 { font-size: clamp(1.5rem, 4.5vw, 2rem); max-width: 42rem; text-wrap: pretty; }
+.question .question-title { font-size: clamp(1.5rem, 4.5vw, 2rem); max-width: 42rem; text-wrap: pretty; }
+.theme-nav { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-bottom: .75rem; }
+.theme-nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: .9375rem; }
+.theme-title { font-size: .9375rem; letter-spacing: 0; color: var(--course); font-weight: 600; padding: 1rem 0 .25rem; }
+.research-theme + .research-theme { margin-top: 1rem; }
+.research-theme > .question:nth-child(2) { border-top: 0; padding-top: 1rem; }
+.analysis-plan { margin-top: 1rem; padding-top: .25rem; border-top: 1px solid var(--rule); }
 .answer { font-size: 1.125rem; line-height: 1.65; margin-top: 1rem; max-width: 42rem; }
 .answer strong { color: var(--ink); font-weight: 650; }
 .answer-detail { margin-top: .65rem; color: var(--slate); max-width: 42rem; font-size: 1rem; }

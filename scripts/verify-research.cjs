@@ -11,9 +11,9 @@ require.extensions['.ts'] = (module, filename) => module._compile(
 );
 
 const { parseCsv, finite, formatNumber } = require('../lib/csv.ts');
-const { getQuestions, getStudyAnswer, getExtraAnswer, liveRows, getLive, table } = require('../lib/research-data.ts');
+const { getQuestions, getStudyAnswer, getExtraAnswer, getWallTimingAnswer, getCoursePacingChart, liveRows, getLive, table } = require('../lib/research-data.ts');
 const { getStudyFigures } = require('../lib/study-figures.ts');
-const { EXTRA_TITLES, QUESTIONS } = require('../lib/question-catalog.ts');
+const { EXTRA_TITLES, QUESTIONS, THEMES } = require('../lib/question-catalog.ts');
 const { PACKS } = require('../lib/packs.ts');
 
 assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a line"\r\nBoston,0,NaN\r\nnone,1,none'), [
@@ -25,11 +25,40 @@ for (const value of [null, undefined, '', ' ', 'NaN']) assert.equal(finite(value
 assert.equal(finite(0), 0);
 
 const questions = getQuestions();
-const extras = Object.keys(EXTRA_TITLES).map(getExtraAnswer);
+const extras = [...Object.keys(EXTRA_TITLES).map(getExtraAnswer), getWallTimingAnswer()];
 const figures = getStudyFigures();
 const ids = QUESTIONS.flatMap(question => [question.id, ...(question.aliases || [])]);
 assert.equal(new Set(ids).size, ids.length, 'Question anchors must be unique');
 for (const pack of PACKS) assert.ok(ids.includes(pack.id) || EXTRA_TITLES[pack.id], `${pack.id}: missing from the question catalog`);
+for (const question of questions) assert.ok(THEMES.some(theme => theme.id === question.theme), `${question.id}: inaccessible research theme`);
+
+// The course profile must integrate to zero over distance, including the short finish segment.
+const profiles = getCoursePacingChart();
+assert.ok(profiles.rows.length, 'Complete course profiles must be available');
+for (const city of new Set(profiles.rows.map(row => row.city))) {
+  let previous = 0, weightedChange = 0;
+  for (const row of profiles.rows.filter(row => row.city === city)) {
+    weightedChange += row.value * (row.label - previous); previous = row.label;
+  }
+  assert.equal(previous, 42.195, `${city}: incomplete full-course profile`);
+  assert.ok(Math.abs(weightedChange) < 1e-8, `${city}: profile was not weighted by actual section distance`);
+}
+
+// P(exceptional | pattern) uses the eligible count within that pattern.
+// Its weighted average must recover the overall exceptional rate.
+const classification = table('r05_exceptional_vs_prior', 'fade_type_exceptional.csv').filter(row => ['True', 'False'].includes(row.exceptional));
+const eligibleN = classification.reduce((sum, row) => sum + row.n, 0);
+const exceptionalN = classification.filter(row => row.exceptional === 'True').reduce((sum, row) => sum + row.n, 0);
+const patternRates = questions.find(question => question.id === 'r30_negative_split_success').charts[0].rows;
+assert.equal(patternRates.reduce((sum, row) => sum + row.n_value, 0), eligibleN);
+assert.ok(Math.abs(patternRates.reduce((sum, row) => sum + row.value / 100 * row.n_value, 0) - exceptionalN) < 1e-8);
+const patternMix = questions.find(question => question.id === 'r31_multiple_good_strategies').charts[0].rows;
+for (const group of ['exceptional', 'ordinary']) assert.ok(Math.abs(patternMix.reduce((sum, row) => sum + row[group], 0) - 100) < 1e-8);
+for (const id of ['r32_where_pbs_are_gained', 'r33_start_congestion', 'r34_pacing_risk_reward', 'r35_course_adaptation']) {
+  const question = questions.find(question => question.id === id);
+  assert.equal(question.charts.length, 0, `${id}: uncomputed research must not have fabricated chart values`);
+  assert.ok(question.nextAnalysis?.measure && question.nextAnalysis?.compare && question.nextAnalysis?.needs, `${id}: missing research specification`);
+}
 
 const live = getLive();
 assert.ok(['ready', 'ok'].includes(live?.status), 'This check requires a published study snapshot');
