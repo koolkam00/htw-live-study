@@ -291,6 +291,31 @@ export default function QuestionsHome() {
   const def = live?.definition || {};
   const lastPublishUtc = formatUtcPretty(live?.as_of ?? null);
 
+  // Derive HTW answer from live.json (prefer t2 coverage)
+  function computeHtwAnswerFromLive(l: LiveJson | null): string | null {
+    const t2 = l?.tables?.t2;
+    if (!t2 || !Array.isArray(t2.columns) || !Array.isArray(t2.rows)) return null;
+    const idxN = t2.columns.findIndex((c: string) => /^n$/i.test(c));
+    const idxPct = t2.columns.findIndex((c: string) => /^pct_htw$/i.test(c));
+    if (idxN === -1 || idxPct === -1) return null;
+    let totalN = 0;
+    let sumWeighted = 0;
+    for (const row of t2.rows) {
+      const n = Number(row[idxN]);
+      const pct = Number(row[idxPct]);
+      if (Number.isFinite(n) && Number.isFinite(pct)) {
+        totalN += n;
+        sumWeighted += pct * n;
+      }
+    }
+    if (totalN <= 0) return null;
+    const overall = sumWeighted / totalN; // fraction 0..1
+    if (!Number.isFinite(overall)) return null;
+    const pctStr = (overall * 100).toFixed(1);
+    return `Overall HTW proportion (all runners): ${pctStr}%`;
+  }
+  const htwDerivedAnswer = computeHtwAnswerFromLive(live);
+
   // Build grouped contents
   const groupOf = (id: string): 'study' | 'S' | 'RN' | 'P' | 'R' => {
     if (id === 'smyth_htw') return 'study';
@@ -322,8 +347,8 @@ export default function QuestionsHome() {
           <div className="running-head">HTW Live Study</div>
           <nav className="tabs" aria-label="On-page">
             <a href="#contents">Contents</a>
-            <a href="#method">Method</a>
-            <a href="#data">Data</a>
+            <a href="/methodology">Method</a>
+            <a href="/data/live.json">Data</a>
           </nav>
         </div>
       </div>
@@ -355,10 +380,13 @@ export default function QuestionsHome() {
           return (
             <div key={g.key}>
               <div className="toc-group">{g.title}</div>
-              <ul className="toc-list">
+              <ul className="toc-list two-col">
                 {arr.map((q) => {
                   const title = `${q.title}`;
-                  const statusReady = (q.status === 'ready' || q.status === 'ok') && (!!q.answerProse || q.isHTW);
+                  const metaReady = q.status === 'ready' || q.status === 'ok';
+                  const statusReady = q.isHTW
+                    ? metaReady && !!htwDerivedAnswer
+                    : metaReady && !!q.answerProse;
                   return (
                     <li key={q.id}>
                       <a href={`#q-${q.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -375,16 +403,14 @@ export default function QuestionsHome() {
         })}
       </section>
 
-      {/* Method and Data anchors for sticky bar */}
-      <div id="method" className="reading-col" style={{ height: 0 }} />
-      <div id="data" className="reading-col" style={{ height: 0 }} />
-
       {/* Question blocks */}
       <div className="stack reading-col" style={{ display: 'grid', gap: '1.25rem' }}>
         {items.map((q) => {
           const title = `${q.title}`;
           const ready = q.status === 'ready' || q.status === 'ok';
-          const hasAnswer = !!(q.answerProse && q.answerProse.trim().length > 0);
+          const hasAnswer = q.isHTW
+            ? !!htwDerivedAnswer && ready
+            : !!(q.answerProse && q.answerProse.trim().length > 0);
           const showMethod =
             (q.methodologyProse && q.methodologyProse.trim().length > 0) ||
             (q.methodFallback && q.methodFallback.trim().length > 0);
@@ -405,15 +431,15 @@ export default function QuestionsHome() {
                   {q.displayId ? <div className="display-id">{q.displayId}</div> : null}
                   <h2 className="question-title" style={{ margin: 0 }}>{title}</h2>
                 </header>
-                {hasAnswer ? (
-                  <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{q.answerProse}</p>
+                {hasAnswer && htwDerivedAnswer ? (
+                  <p className="prose text-col" style={{ marginTop: '0.5rem' }}>{htwDerivedAnswer}</p>
                 ) : (
                   <p className="site-subtitle text-col" style={{ marginTop: '0.5rem' }}>
                     {blockedReason(q)}
                   </p>
                 )}
-                {/* How it was computed (+ Source under) */}
-                {htwShowMethod && (
+                {/* How it was computed */}
+                {hasAnswer && htwShowMethod && (
                   <section className="method-col" style={{ marginTop: '0.5rem' }}>
                     <h3 className="question-section">How it was computed</h3>
                     <p className="prose">
@@ -423,13 +449,16 @@ export default function QuestionsHome() {
                             ? q.methodologyProse
                             : q.methodFallback || '')}
                     </p>
-                    <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
-                      <code>public/data/live.json</code> — Published {lastPublishUtc ?? '—'}
-                    </div>
                   </section>
                 )}
+                {/* Source always for READY */}
+                {hasAnswer && (
+                  <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+                    <code>public/data/live.json</code> — Published {lastPublishUtc ?? '—'}
+                  </div>
+                )}
                 {/* Visualization from live.json (prefer t2 age table) */}
-                {hasT2 ? (
+                {hasAnswer && hasT2 ? (
                   <section style={{ marginTop: '0.5rem' }}>
                     <div style={{ overflowX: 'auto' }}>
                       <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
@@ -460,9 +489,11 @@ export default function QuestionsHome() {
                     </div>
                   </section>
                 ) : null}
-                <p style={{ marginTop: '0.5rem' }}>
-                  <Link href="/htw">Explore the HTW dashboard</Link>
-                </p>
+                {hasAnswer && (
+                  <p style={{ marginTop: '0.5rem' }}>
+                    <Link href="/htw">Explore the HTW dashboard</Link>
+                  </p>
+                )}
               </article>
             );
           }
@@ -486,12 +517,13 @@ export default function QuestionsHome() {
                           ? q.methodologyProse
                           : q.methodFallback}
                       </p>
-                      <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
-                        <code style={{ fontFamily: 'monospace' }}>{`public/data/packs/${q.id}/`}</code>
-                        {` — Published ${pubUtc ?? '—'}`}
-                      </div>
                     </section>
                   )}
+                  {/* Source: always show for READY even if method prose missing */}
+                  <div className="site-subtitle" style={{ marginTop: '0.25rem' }}>
+                    <code style={{ fontFamily: 'monospace' }}>{`public/data/packs/${q.id}/`}</code>
+                    {` — Published ${pubUtc ?? '—'}`}
+                  </div>
 
                   <section style={{ marginTop: '0.5rem' }}>
                     <h3 className="question-section">Visualization</h3>
