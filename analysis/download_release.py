@@ -1,4 +1,4 @@
-"""Download and verify a private CORE export outside the site checkout.
+"""Download and verify a private CORE or FULL export outside the site checkout.
 
 Uses the authenticated GitHub CLI. Never prints credentials or runner records.
 """
@@ -40,6 +40,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tag")
+    parser.add_argument("--bundle", choices=["CORE", "FULL"], default="CORE")
     args = parser.parse_args()
     config = json.loads(Path(__file__).with_name("release.json").read_text())
     repo, tag = config["repository"], args.tag or config["tag"]
@@ -53,11 +54,12 @@ def main():
     release = json.loads(subprocess.check_output([
         "gh", "api", f"repos/{repo}/releases/tags/{tag}",
     ]))
-    assets = [a for a in release["assets"] if "-CORE-" in a["name"] and a["name"].endswith(".tar.gz")]
+    expected = EXPECTED | ({"features.parquet"} if args.bundle == "FULL" else set())
+    assets = [a for a in release["assets"] if f"-{args.bundle}-" in a["name"] and a["name"].endswith(".tar.gz")]
     if len(assets) != 1:
-        raise ValueError("Expected exactly one CORE archive in the release.")
+        raise ValueError(f"Expected exactly one {args.bundle} archive in the release.")
     asset = assets[0]
-    archive = root / "core.tar.gz"
+    archive = root / f"{args.bundle.lower()}.tar.gz"
     download_asset(repo, asset, archive)
     seen = set()
     with tarfile.open(archive, "r:gz") as tar:
@@ -68,26 +70,27 @@ def main():
                 continue
             if not member.isfile() or Path(member.name).is_absolute() or ".." in Path(member.name).parts:
                 raise ValueError("Archive contains an unsafe member.")
-            if name not in EXPECTED or name in seen:
+            if name not in expected or name in seen:
                 raise ValueError(f"Unexpected or duplicate export file: {name}")
             total += member.size
             if total > 8 * 1024 ** 3:
-                raise ValueError("CORE archive exceeds the extraction size limit.")
+                raise ValueError("Private archive exceeds the extraction size limit.")
             with tar.extractfile(member) as source, (root / name).open("wb") as target:
                 shutil.copyfileobj(source, target)
             seen.add(name)
-    if seen != EXPECTED:
-        raise ValueError(f"Missing CORE files: {sorted(EXPECTED - seen)}")
+    if seen != expected:
+        raise ValueError(f"Missing {args.bundle} files: {sorted(expected - seen)}")
     brief = next((a for a in release["assets"] if a["name"] == "OUTSIDE-AGENT-PASTE-BRIEF.md"), None)
     if brief:
         download_asset(repo, brief, root / brief["name"])
     provenance = {
         "repository": repo, "release_tag": tag, "release_published_at": release["published_at"],
         "asset": asset["name"], "asset_sha256": asset["digest"][7:],
+        "bundle": args.bundle,
         "manifest_sha256": sha256(root / "MANIFEST.json"),
     }
     (root / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
-    print(f"Verified CORE export {tag}; extracted {len(seen)} files outside the checkout.")
+    print(f"Verified {args.bundle} export {tag}; extracted {len(seen)} files outside the checkout.")
 
 
 if __name__ == "__main__":
