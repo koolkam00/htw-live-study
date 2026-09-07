@@ -99,7 +99,7 @@ export default function PackClientPage({ params }: { params: { packId: string } 
         <div className="figure-title">{info.title}</div>
         <div className="site-subtitle">This pack surfaces the HTW Smyth 2021 paper dashboard.</div>
         <div style={{ marginTop: '0.75rem' }}>
-          <Link href="/">Open the HTW dashboard</Link>
+          <Link href="/htw">Open the HTW dashboard</Link>
         </div>
       </div>
     );

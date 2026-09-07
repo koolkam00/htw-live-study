@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import { getPackInfo, isEnrichment } from '@/lib/packs';
@@ -44,72 +44,6 @@ function readMeta(id: string): any | null {
 }
 
 export default function PacksIndexPage() {
-  const ids = readPackIds();
-  const paper = ids.filter((id) => id === 'smyth_htw');
-  const sPacks = ids.filter((id) => /^s\d+_/.test(id));
-  const rPacks = ids.filter((id) => /^r\d+_/.test(id));
-  const rnPacks = ids.filter((id) => /^rn\d+_/.test(id));
-  const pPacks = ids.filter((id) => /^p\d+_/.test(id));
-
-  const renderCard = (id: string) => {
-    const info = getPackInfo(id);
-    const meta = readMeta(id);
-    const title = info?.title ?? id;
-    const isEnrich = isEnrichment(id);
-    return (
-      <div key={id} className="panel figure-card">
-        <div className="figure-header">
-          <div className="figure-title">{title}</div>
-          <StatusBadge id={id} meta={meta} />
-        </div>
-        {isEnrich && (meta?.status !== 'ready' && meta?.status !== 'ok') && (
-          <div className="site-subtitle">Needs weather/elevation overlays</div>
-        )}
-        <div>
-          {id === 'smyth_htw' ? (
-            <Link href={`/packs/${id}`}>Open</Link>
-          ) : (
-            <Link href={`/packs/${id}`}>Open</Link>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="stack" style={{ display: 'grid', gap: '1rem' }}>
-      <div className="panel">
-        <div className="figure-header">
-          <div>
-            <div className="figure-title">Live-study packs</div>
-            <div className="site-subtitle">
-              Explore shipping questions (S1–S12) and research questions (R1–R26).
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid">{paper.map(renderCard)}</div>
-
-      <div className="panel">
-        <div className="figure-title">Shipping S1–S12</div>
-      </div>
-      <div className="grid">{sPacks.map(renderCard)}</div>
-
-      <div className="panel">
-        <div className="figure-title">Research RN (new)</div>
-      </div>
-      <div className="grid">{rnPacks.map(renderCard)}</div>
-
-      <div className="panel">
-        <div className="figure-title">Presentation P (new)</div>
-      </div>
-      <div className="grid">{pPacks.map(renderCard)}</div>
-
-      <div className="panel">
-        <div className="figure-title">Research R1–R26</div>
-      </div>
-      <div className="grid">{rPacks.map(renderCard)}</div>
-    </div>
-  );
+  // Reading UI lives on '/', keep /packs as a convenience redirect to Contents
+  redirect('/#contents');
 }
