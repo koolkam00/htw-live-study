@@ -287,6 +287,7 @@ export default function QuestionsHome() {
     .filter((x): x is QuestionItem => !!x);
 
   const live = readLiveJson();
+  const liveReady = (live?.status === 'ready' || live?.status === 'ok');
   const corpus = live?.corpus || {};
   const def = live?.definition || {};
   const lastPublishUtc = formatUtcPretty(live?.as_of ?? null);
@@ -314,7 +315,7 @@ export default function QuestionsHome() {
     const pctStr = (overall * 100).toFixed(1);
     return `Overall HTW proportion (all runners): ${pctStr}%`;
   }
-  const htwDerivedAnswer = computeHtwAnswerFromLive(live);
+  const htwDerivedAnswer = liveReady ? computeHtwAnswerFromLive(live) : null;
 
   // Build grouped contents
   const groupOf = (id: string): 'study' | 'S' | 'RN' | 'P' | 'R' => {
@@ -357,7 +358,8 @@ export default function QuestionsHome() {
       <section className="reading-col" style={{ marginBottom: '1.25rem' }}>
         <h1 style={{ marginTop: 0, fontFamily: 'var(--font-serif)' }}>HTW Live Study</h1>
         <p className="site-subtitle text-col" style={{ marginTop: '0.25rem' }}>
-          {typeof corpus.n_records === 'number' &&
+          {liveReady &&
+          typeof corpus.n_records === 'number' &&
           typeof corpus.n_runners === 'number' &&
           typeof corpus.n_races === 'number' &&
           typeof corpus.n_cities === 'number' &&
@@ -421,10 +423,17 @@ export default function QuestionsHome() {
           if (q.isHTW) {
             const t2 = live?.tables?.t2;
             const hasT2 = t2 && Array.isArray(t2.columns) && Array.isArray(t2.rows);
+            const defHasFields =
+              def &&
+              (def.dos !== undefined ||
+                def.los_km !== undefined ||
+                def.after_km !== undefined ||
+                def.base_pace_from_km !== undefined ||
+                def.base_pace_to_km !== undefined);
             const htwShowMethod =
               (q.methodologyProse && q.methodologyProse.trim().length > 0) ||
               (q.methodFallback && q.methodFallback.trim().length > 0) ||
-              !!def;
+              !!defHasFields;
             return (
               <article key={q.id} id={`q-${q.id}`} className="readable">
                 <header style={{ marginBottom: '0.25rem' }}>
