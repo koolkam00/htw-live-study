@@ -1,0 +1,43 @@
+{
+  "pack_id": "p4_even_effort_gap",
+  "n_features": 3167990,
+  "n_rows_used": 2512860,
+  "n_valid_splits": 2512860,
+  "n_live_gap_covered": 2512465,
+  "n_live_gap_split_computable": 2512465,
+  "live_gap_coverage_rate_among_valid": 0.999843,
+  "n_cities": 33,
+  "n_cities_with_live_gap": 27,
+  "n_course_segments_elev_cities": 32,
+  "null_elev_cities": [
+    "Melbourne"
+  ],
+  "cities_elev_but_zero_valid_splits": [
+    "Athens",
+    "Honolulu",
+    "Mexico City",
+    "Cologne",
+    "Frankfurt"
+  ],
+  "overall_positive_vs_live_gap_split": {
+    "scope": "ALL_valid",
+    "n_positive_split": 2512860,
+    "mean_positive_split": 0.11472,
+    "n_live_gap_positive_split": 2512465,
+    "mean_live_gap_positive_split": 0.038507,
+    "delta_live_gap_minus_obs": -0.076212,
+    "gap_source": "live_v2_curve_x_course_segments",
+    "stored_gap_pace_ignored": true
+  },
+  "curve_version": "v2_27cities",
+  "curve_md5": "5bc86aa1714d5c31689539b6ce6d7f09",
+  "curve_as_of": "2026-09-07T00:31:38Z",
+  "curve_changed_mid_run": false,
+  "stored_gap_pace_ignored": true,
+  "stored_gap_pace_note": "features_v2.gap_pace_* / gap_dos_* were computed with v1_6majors curve; this pack recomputes live via gap_multiplier(grade,mid_km,post20) \u00d7 observed pace_* using v2_27cities (5bc86aa1\u2026).",
+  "caveat": "C2 GAP caveat (v2_27cities): published Huber coef_grade\u22481.579 differs in magnitude vs grade-only OLS coef_grade\u22482.97 (both same sign; controls shrink/shift grade effect) (aux.grade_only_ols in gap_curve.json). Cause: mid_km+post20 collinearity / course-structure confound. Prefer grade-only slope for intuitive GAP sensitivity; full model for fatigue-adjusted prediction. See docs/C2-GAP-FIT.md. PRIOR v1_6majors Huber coef_grade\u2248-0.586 DID flip vs grade-only OLS \u2248+5.68.",
+  "method": "Filter valid_splits==True. LIVE GAP: gap_pace=pace/gap_multiplier(avg_grade,mid_km,post20) from course_segments + CURRENT gap_curve.json. IGNORE stored gap_pace_*. Segment means observed vs live GAP by city. GAP-adjusted split = DW(live_gap second)/DW(live_gap first). Even-effort recommended paces from live multipliers. Elev null cities listed honestly; never invent. No race_records writes.",
+  "source_features": "/workspace/gap-substrate/artifacts/c1/features_v2.parquet",
+  "gap_curve": "/workspace/gap-substrate/artifacts/c2/gap_curve.json",
+  "units": "pace min/km; grade rise/run; split dimensionless"
+}
