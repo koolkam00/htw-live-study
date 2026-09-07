@@ -114,6 +114,7 @@ function buildQuestionItem(id: string): QuestionItem | null {
 const PRIORITY: string[] = [
   'smyth_htw',
   'rn1_wall_severity',
+  'rn3_heat_curves',
   'rn4_reference_dependence',
   'p4_even_effort_gap',
   'p2_halfway_calculator',

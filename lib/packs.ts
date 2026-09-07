@@ -14,6 +14,7 @@ export interface PackInfo {
 export const PACKS: PackInfo[] = [
   { id: 'smyth_htw', title: 'HTW — Smyth 2021', status: 'ready', group: 'paper' },
   { id: 'rn1_wall_severity', title: 'RN1 — Wall severity spectrum', status: 'ready', group: 'RN' },
+  { id: 'rn3_heat_curves', title: 'RN3 — Heat curves', status: 'ready', group: 'RN' },
   { id: 'rn4_reference_dependence', title: 'RN4 — Reference dependence', status: 'ready', group: 'RN' },
   { id: 'p4_even_effort_gap', title: 'P4 — Even-effort GAP splits', status: 'ready', group: 'P' },
   { id: 'p1_pace_band_planner', title: 'P1 — Pace band planner', status: 'ready', group: 'P' },
