@@ -17,19 +17,20 @@ export function usePackMeta(packId: string, initialMeta?: PackMeta | null) {
     let cancelled = false;
     async function load() {
       setLoading(true);
-    try {
+      try {
         const res = await fetch(`${BASE_PATH}/data/packs/${packId}/pack_meta.json`, {
           cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) {
-          setMeta(null);
+          // Keep SSR/ready seed if a refresh fails — never flash Waiting over known-ready.
+          if (!cancelled && !initialMeta) setMeta(null);
         } else {
           const json = (await res.json()) as PackMeta;
           if (!cancelled) setMeta(json);
         }
       } catch {
-        if (!cancelled) setMeta(null);
+        if (!cancelled && !initialMeta) setMeta(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -38,7 +39,7 @@ export function usePackMeta(packId: string, initialMeta?: PackMeta | null) {
     return () => {
       cancelled = true;
     };
-  }, [packId]);
+  }, [packId, initialMeta]);
 
   return { meta, loading };
 }
