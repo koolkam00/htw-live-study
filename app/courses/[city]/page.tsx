@@ -25,8 +25,7 @@ function slugifyCity(name: string): string {
 }
 
 function parseYearRange(years: string): number[] {
-  // Accept forms like "2012–2025" (en dash) or "2012-2025"
-  const m = years.match(/(19|20)\\d{2}\\s*[–-]\\s*(19|20)\\d{2}/);
+  const m = years.match(/(19|20)\d{2}\s*[–-]\s*(19|20)\d{2}/);
   if (!m) return [];
   const parts = years.split(/[–-]/).map((s) => parseInt(s.trim(), 10)).filter((n) => Number.isFinite(n));
   if (parts.length !== 2) return [];
@@ -46,6 +45,14 @@ async function readLiveJson(): Promise<LiveJsonShape | null> {
   }
 }
 
+export async function generateStaticParams() {
+  const json = await readLiveJson();
+  const cities = Array.isArray(json?.filters?.cities) ? json!.filters!.cities! : [];
+  return cities
+    .filter((c) => typeof c === 'string' && c.trim().length > 0)
+    .map((c) => ({ city: slugifyCity(c) }));
+}
+
 export async function generateMetadata({ params }: { params: { city: string } }): Promise<Metadata> {
   const json = await readLiveJson();
   const cities = Array.isArray(json?.filters?.cities) ? json!.filters!.cities! : [];
@@ -59,7 +66,6 @@ export default async function CityCoursePage({ params }: { params: { city: strin
   const json = await readLiveJson();
   const cities = Array.isArray(json?.filters?.cities) ? json!.filters!.cities! : [];
 
-  // Resolve slug to canonical city name, if possible
   const cityName = cities.find((c) => slugifyCity(c) === params.city) ?? null;
 
   if (!cityName) {
@@ -74,7 +80,6 @@ export default async function CityCoursePage({ params }: { params: { city: strin
     );
   }
 
-  // Attempt to extract available editions (years) for this city from tables.t1
   const t1 = json?.tables?.t1 ?? null;
   let editionYears: number[] = [];
   if (t1?.columns && Array.isArray(t1.rows)) {
@@ -103,7 +108,6 @@ export default async function CityCoursePage({ params }: { params: { city: strin
         </div>
       </div>
 
-      {/* Edition strip (horizontal chips) */}
       <div className="panel">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontWeight: 600 }}>Editions</div>
@@ -132,7 +136,6 @@ export default async function CityCoursePage({ params }: { params: { city: strin
         )}
       </div>
 
-      {/* Wall Map placeholder */}
       <div className="panel" style={{ minHeight: 280, display: 'grid', placeItems: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Wall Map</div>
@@ -148,4 +151,3 @@ export default async function CityCoursePage({ params }: { params: { city: strin
     </div>
   );
 }
-
