@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>HTW Live Study</Link>
             </div>
             <nav style={{ display: 'flex', gap: '1rem' }}>
-              <Link href="/" style={{ color: 'inherit' }}>Dashboard</Link>
+              <Link href="/" style={{ color: 'inherit' }}>Home</Link>
               <Link href="/courses" style={{ color: 'inherit' }}>Courses</Link>
               <Link href="/packs" style={{ color: 'inherit' }}>Packs</Link>
               <Link href="/methodology" style={{ color: 'inherit' }}>Methodology</Link>

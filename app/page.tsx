@@ -1,6 +1,5 @@
-'use client';
-import HTWDashboard from '@/components/HTWDashboard';
+import QuestionsHome from '@/components/QuestionsHome';
 
 export default function Page() {
-  return <HTWDashboard />;
+  return <QuestionsHome />;
 }
