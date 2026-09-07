@@ -49,6 +49,7 @@ export default function PacksIndexPage() {
   const sPacks = ids.filter((id) => /^s\d+_/.test(id));
   const rPacks = ids.filter((id) => /^r\d+_/.test(id));
   const rnPacks = ids.filter((id) => /^rn\d+_/.test(id));
+  const pPacks = ids.filter((id) => /^p\d+_/.test(id));
 
   const renderCard = (id: string) => {
     const info = getPackInfo(id);
@@ -99,6 +100,11 @@ export default function PacksIndexPage() {
         <div className="figure-title">Research RN (new)</div>
       </div>
       <div className="grid">{rnPacks.map(renderCard)}</div>
+
+      <div className="panel">
+        <div className="figure-title">Presentation P (new)</div>
+      </div>
+      <div className="grid">{pPacks.map(renderCard)}</div>
 
       <div className="panel">
         <div className="figure-title">Research R1–R26</div>
