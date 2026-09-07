@@ -15,6 +15,8 @@ const { getQuestions, getStudyAnswer, getExtraAnswer, getWallTimingAnswer, getCo
 const { getStudyFigures } = require('../lib/study-figures.ts');
 const { EXTRA_TITLES, QUESTIONS, THEMES } = require('../lib/question-catalog.ts');
 const { PACKS } = require('../lib/packs.ts');
+const { getExtensions } = require('../lib/extension-data.ts');
+const { getCourseNames, getIndividualCourseAnswer, slugifyCity } = require('../lib/course-data.ts');
 
 assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a line"\r\nBoston,0,NaN\r\nnone,1,none'), [
   { name: 'New York, NY', n: null, note: 'A "quote"\nand a line' },
@@ -25,12 +27,50 @@ for (const value of [null, undefined, '', ' ', 'NaN']) assert.equal(finite(value
 assert.equal(finite(0), 0);
 
 const questions = getQuestions();
-const extras = [...Object.keys(EXTRA_TITLES).map(getExtraAnswer), getWallTimingAnswer()];
+const extensions = getExtensions();
+const extras = [...Object.keys(EXTRA_TITLES).map(getExtraAnswer), getWallTimingAnswer(), ...extensions.map(pack => getExtraAnswer(pack.id))];
 const figures = getStudyFigures();
 const ids = QUESTIONS.flatMap(question => [question.id, ...(question.aliases || [])]);
 assert.equal(new Set(ids).size, ids.length, 'Question anchors must be unique');
 for (const pack of PACKS) assert.ok(ids.includes(pack.id) || EXTRA_TITLES[pack.id], `${pack.id}: missing from the question catalog`);
 for (const question of questions) assert.ok(THEMES.some(theme => theme.id === question.theme), `${question.id}: inaccessible research theme`);
+
+assert.equal(extensions.length, 8, 'The initial private export supplies eight complete extension packs');
+for (const extension of extensions) {
+  assert.ok(QUESTIONS.some(question => question.id === extension.questionId));
+  const question = questions.find(question => question.id === extension.questionId);
+  assert.equal(question.dataset.exportId, extension.exportId);
+  assert.equal(question.answer, extension.answer.answer, 'Question must use its verified extension result');
+  const metadata = JSON.parse(fs.readFileSync(`public/data/packs/${extension.id}/pack_meta.json`, 'utf8'));
+  for (const key of ['input_asset_sha256', 'input_manifest_sha256', 'analysis_script_sha256']) assert.match(metadata[key], /^[a-f0-9]{64}$/);
+  assert.ok(Number.isFinite(Date.parse(metadata.live_json_as_of)));
+  const c = metadata.cohort;
+  assert.equal(c.raw, c.duplicates_removed + c.missing_or_unparsed + c.non_increasing + c.outside_quality_bounds + c.eligible);
+  assert.ok(metadata.n <= c.eligible);
+}
+const newShapes = table('ext_pacing_shapes', 'patterns.csv');
+assert.ok(Math.abs(newShapes.reduce((sum, row) => sum + row.value, 0) - 100) < 1e-8);
+assert.equal(newShapes.reduce((sum, row) => sum + row.count, 0), newShapes[0].n_value);
+for (const row of newShapes) assert.ok(Math.abs(row.value - 100 * row.count / row.n_value) < 1e-8);
+for (const row of table('ext_checkpoint_outcomes', 'goal_rates.csv')) {
+  assert.ok(row.hits >= 0 && row.hits <= row.n_value);
+  assert.ok(Math.abs(row.value - 100 * row.hits / row.n_value) < 1e-8);
+}
+const newProfiles = table('ext_course_pacing_profiles', 'course_profiles.csv');
+for (const city of new Set(newProfiles.map(row => row.city))) {
+  const rows = newProfiles.filter(row => row.city === city);
+  assert.deepEqual(rows.map(row => row.label), [5,10,15,20,25,30,35,40,42.195]);
+  assert.equal(new Set(rows.map(row => row.n_value)).size, 1, 'Course checkpoints need the same eligible cohort');
+  assert.equal(getIndividualCourseAnswer(city).dataset.n, rows[0].n_value);
+}
+assert.equal(new Set(getCourseNames().map(slugifyCity)).size, getCourseNames().length, 'Course URLs must be unique');
+assert.equal(formatNumber(2026, 'year'), '2026');
+for (const chart of questions.find(q => q.id === 'r26_pacing_over_20y').charts) {
+  for (const city of new Set(chart.rows.map(row => row.city))) {
+    const rows = chart.rows.filter(row => row.city === city);
+    for (let i = 1; i < rows.length; i++) assert.equal(rows[i].label - rows[i-1].label, 1, 'Missing years must break the chart line');
+  }
+}
 
 // The course profile must integrate to zero over distance, including the short finish segment.
 const profiles = getCoursePacingChart();

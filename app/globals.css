@@ -45,6 +45,7 @@ pre { max-width: 100%; overflow: auto; font-size: .875rem; }
 .study-intro { margin-bottom: 1.5rem; }
 .study-intro p { color: var(--slate); margin-top: .75rem; max-width: 42rem; }
 .study-meta { font-size: .875rem; line-height: 1.6; color: var(--slate); }
+.method-summary { font-size: 1rem; line-height: 1.7; color: var(--slate); margin-top: 1.25rem; }
 .question-index { margin: 0 0 1.75rem; border-block: 1px solid var(--rule); }
 summary { cursor: pointer; min-height: 48px; padding-block: .7rem; font-size: .9375rem; font-weight: 550; }
 summary::marker { color: var(--course); font-size: .8em; }

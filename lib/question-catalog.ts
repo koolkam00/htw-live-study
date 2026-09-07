@@ -39,12 +39,12 @@ const definitions: Omit<QuestionDefinition, 'number'>[] = [
   { theme: 'goals', id: 'r25_huge_kick_next', title: 'Does a strong finish suggest unused capacity?' },
   { theme: 'differences', id: 'r07_wall_clock_vs_distance', title: 'Do pacing changes follow distance or elapsed time?', aliases: ['s6_wall_distance_vs_time'] },
   { theme: 'differences', id: 'r20_pacing_personalities', title: 'Do runners have persistent pacing habits?' },
-  { theme: 'differences', id: 'r22_aging_changes', title: 'What changes first as runners age: speed or endurance?', aliases: ['s8_age_speed_vs_endurance'] },
-  { theme: 'differences', id: 'r23_gender_pacing', title: 'Where do gender differences in pacing originate?' },
+  { theme: 'differences', id: 'r22_aging_changes', title: 'How do speed and pace retention vary by age?', aliases: ['s8_age_speed_vs_endurance'] },
+  { theme: 'differences', id: 'r23_gender_pacing', title: 'How does pacing differ across recorded gender groups?' },
   { theme: 'learning', id: 'r19_near_miss_return', title: 'Does a near miss bring people back?' },
   { theme: 'learning', id: 'r21_learn_from_blowup', title: 'What changes as runners gain experience?', aliases: ['s7_learn_after_blowup'] },
   { theme: 'learning', id: 'r24_interval_after_pb', title: 'How does the previous marathon affect the next one?' },
-  { theme: 'learning', id: 'r26_pacing_over_20y', title: 'Have runners become faster or better at holding their speed?', aliases: ['s12_pacing_over_20y'] },
+  { theme: 'learning', id: 'r26_pacing_over_20y', title: 'How have marathon speed and pacing changed over time?', aliases: ['s12_pacing_over_20y'] },
   { theme: 'learning', id: 'r32_where_pbs_are_gained', title: 'Where do runners gain the time that produces a personal best?' },
 ];
 

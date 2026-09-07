@@ -3,14 +3,18 @@ import { notFound } from 'next/navigation';
 import ResearchQuestion from '@/components/ResearchQuestion';
 import { getLive, liveRows, table, readJson, getCoursePacingChart, type ResearchAnswer } from '@/lib/research-data';
 import { finite, formatNumber } from '@/lib/csv';
+import { getCourseNames, getIndividualCourseAnswer, slugifyCity } from '@/lib/course-data';
 
-function slugify(name: string) { return name.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
-export function generateStaticParams() { return (getLive()?.filters?.cities || []).map((city: string) => ({ city: slugify(city) })); }
+const slugify = slugifyCity;
+export function generateStaticParams() { return getCourseNames().map(city => ({ city: slugify(city) })); }
 export function generateMetadata({ params }: { params: { city: string } }) {
-  const row = liveRows('t1').find(row => slugify(String(row.city)) === params.city);
-  return { title: `${row?.city || 'Course'} | Marathon Pacing Study` };
+  const city = getCourseNames().find(city => slugify(city) === params.city);
+  return { title: `${city || 'Course'} | Marathon Pacing Study` };
 }
 export default function CityPage({ params }: { params: { city: string } }) {
+  const name = getCourseNames().find(city => slugify(city) === params.city);
+  const individual = name && getIndividualCourseAnswer(name);
+  if (individual) return <><ResearchQuestion question={individual} standalone /><p><Link href="/courses">All courses</Link></p></>;
   const row = liveRows('t1').find(row => slugify(String(row.city)) === params.city);
   if (!row) notFound();
   const city = String(row.city);

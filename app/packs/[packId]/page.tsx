@@ -4,8 +4,9 @@ import { PACK_IDS } from '@/lib/packs';
 import { getExtraAnswer } from '@/lib/research-data';
 import ResearchQuestion from '@/components/ResearchQuestion';
 import { QUESTIONS } from '@/lib/question-catalog';
+import { getExtensions } from '@/lib/extension-data';
 
-const routes = [...new Set([...PACK_IDS, ...QUESTIONS.map(question => question.id)])];
+const routes = [...new Set([...PACK_IDS, ...QUESTIONS.map(question => question.id), ...getExtensions().map(pack => pack.id)])];
 
 export default function Page({ params }: { params: { packId: string } }) {
   if (!routes.includes(params.packId)) notFound();

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getLive, getStudyAnswer } from '@/lib/research-data';
 import { QUESTIONS } from '@/lib/question-catalog';
+import { getExtensions } from '@/lib/extension-data';
 
 export const metadata = { title: 'Methodology | Marathon Pacing Study' };
 
@@ -18,6 +19,7 @@ const additions = [
 export default function MethodologyPage() {
   const study = getStudyAnswer();
   const live = getLive();
+  const extension = getExtensions()[0];
   return <article className="prose">
     <h1>How we study marathon pacing</h1>
     <p className="answer">The study follows the whole race: how runners start, distribute their speed, respond to the course, finish, and improve over time.</p>
@@ -29,22 +31,25 @@ export default function MethodologyPage() {
       <li><strong>Development:</strong> how the same runner’s approach and results change across marathons.</li>
     </ul>
     <h2>What is available now?</h2>
-    {live?.corpus && <p>{new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Coverage is uneven across courses, years, and fields.</p>}
-    <p>The site currently uses published summary tables. Some support a finding; others answer only part of a question. A “Next analysis” section specifies the additional measures, comparison, and data needed. It is a research plan, not a completed result.</p>
+    {extension && <p>The latest analyzed export contains {new Intl.NumberFormat('en-US').format(extension.corpus.n_records)} race records across {extension.corpus.n_cities} cities and {extension.corpus.n_race_years} race editions. Individual splits are analyzed privately; only aggregate results appear here.</p>}
+    {live?.corpus && <p>The original wall study has its own snapshot: {new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Its counts are separate from the newer pacing analyses.</p>}
+    <p>The site combines newly calculated pacing results with earlier published summary tables. Each answer identifies its sources and eligible sample. Some questions remain research plans; their “Next analysis” sections describe work still to be done.</p>
     <p>A finish is one performance, so a runner can contribute several. Individual tables can have smaller samples or earlier publication dates than the main snapshot. Each question links its source and reports counts where available.</p>
     <h2>How to read the pacing charts</h2>
     <ul>
-      <li><strong>Full-course profile:</strong> section mean pace divided by the course’s distance-weighted mean pace, minus one. Zero is the full-course average; below zero is faster and above zero is slower.</li>
-      <li><strong>Second-half pace change:</strong> second-half pace divided by first-half pace, minus one. Positive values mean a slower second half. Negative values mean a faster second half, also called a negative split.</li>
-      <li><strong>Pattern shares:</strong> the percentage of eligible finishes assigned to a published pacing category. The thresholds behind those categories need fuller documentation.</li>
+      <li><strong>New full-course profiles:</strong> normalize each runner’s section pace by that runner’s full-marathon average, then take the median across runners. Below zero means faster than the individual marathon average. Earlier supporting charts based on course means retain their own labels.</li>
+      <li><strong>Equal-distance pace retention:</strong> compare 20–40 km with 0–20 km. Positive values mean the second 20 km was slower. The final 2.195 km is separate. This is not a half-marathon split; CORE does not provide a 21.0975 km checkpoint.</li>
+      <li><strong>New pattern shares:</strong> a faster second 20 km means more than 2% faster; similar means within 2%; moderate slowing is more than 2% through 10%; pronounced slowing is more than 10%. Older classifications have different, incompletely documented definitions.</li>
       <li><strong>Exceptional-performance frequency:</strong> exceptional finishes divided by all classified finishes within a pacing pattern. This differs from asking what share of exceptional races used that pattern.</li>
       <li><strong>Missing values:</strong> unknown measurements stay missing. They are never plotted as zero.</li>
     </ul>
-    <p>A course-average line is not an individual runner’s path or the typical curve for a pacing-pattern group. Individual splits are required for runner-normalized median profiles and uncertainty bands.</p>
+    <p>A median profile is a summary across runners, not one runner’s race or an optimal strategy. These initial results describe the observed dataset; confidence intervals accounting for repeated runners and race editions have not yet been calculated.</p>
     <p>Every section must be compared as pace or weighted by its distance. The final 2.195 km is shorter than a 5 km section. Twenty kilometers is before halfway, which is 21.0975 km.</p>
     <h2>What counts as a good performance?</h2>
+    <p>The new analyses require complete, strictly increasing checkpoints, a 90-minute to 12-hour finish, and section paces of 2–20 minutes per km. Missing or invalid readings are excluded, never repaired by guessing. These filters may exclude genuine unusual performances; sample counts and exclusions are recorded with each analysis.</p>
     <p>The intended benchmark is an expectation established before the race, using only earlier performances and the relevant course and conditions. The existing “exceptional” labels are supplied by a summary table; their threshold is not documented well enough to treat them as that validated benchmark.</p>
     <p>Finishing-time groups are useful for describing race shapes. Strategy comparisons need ability known before the race, so that the result is not also used to define the comparison group.</p>
+    <p>CORE contains runner names but no verified identity key spanning races. Personal-best and learning analyses need reliable linkage before they can be recalculated. Exact-age analyses exclude records with only age-group labels. Course overlays lack validity years, so historical terrain has not been assigned to the new runner-level analyses.</p>
     <h2>What can these comparisons establish?</h2>
     <p>They describe associations. Runners selecting different strategies can also differ in fitness, experience, goals, or conditions. Comparisons should account for these differences and report sample sizes and uncertainty.</p>
     <p>Predictions must use information available at the checkpoint being studied and be tested on unseen race editions. Declared goals should be distinguished from inferred time landmarks. An absence from the database does not establish that a runner stopped racing.</p>

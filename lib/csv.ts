@@ -39,6 +39,7 @@ export function finite(value: unknown): number | null {
 }
 
 export function formatNumber(value: number, unit = ''): string {
+  if (unit === 'year') return String(Math.round(value));
   if (unit === 'min/km') {
     const seconds = Math.round(value * 60);
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}/km`;

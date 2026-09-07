@@ -1,0 +1,23 @@
+{
+  "answer_prose": "For 26.0% of eligible finishes, relative ranking shifted by more than five percentile points between 30 km and the finish.",
+  "detail_prose": "These are changes in elapsed-time rankings, not a count of physical overtakes.",
+  "charts": [
+    {
+      "title": "How much elapsed-time position changes after 30 km",
+      "table": "rank_changes.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "How much elapsed-time position changes after 30 km"
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "n": 2739828,
+    "moved": 25.989587667547013,
+    "median_positions": 652.5
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "answer_prose": "The most common pattern is pronounced slowing: 45.7% of eligible finishes. The full-course profile also shows how pace changes within those broad blocks.",
+  "detail_prose": "Calculated directly from 2,739,842 complete, plausible split records in the private export.",
+  "charts": [
+    {
+      "title": "The typical pace profile",
+      "table": "profile.csv",
+      "unit": "% pace",
+      "xLabel": "Distance (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "The typical pace profile"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "note": "Median of individually normalized section paces. Below zero is faster than the runner\u2019s own marathon average."
+    },
+    {
+      "title": "How the second 20 km compares with the first",
+      "table": "patterns.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "How the second 20 km compares with the first"
+        }
+      ],
+      "note": "The final 2.195 km is excluded from this equal-distance comparison."
+    }
+  ],
+  "statistics": {},
+  "audit": {
+    "cohort": {
+      "deduplicated": 3451055,
+      "complete": 2961462,
+      "increasing": 2744217,
+      "eligible": 2739842,
+      "raw": 3451055,
+      "duplicates_removed": 0,
+      "missing_or_unparsed": 489593,
+      "non_increasing": 217245,
+      "outside_quality_bounds": 4375
+    },
+    "packs": [
+      {
+        "id": "ext_pacing_shapes",
+        "n": 2739842,
+        "question_id": "r10_unravel_typology"
+      },
+      {
+        "id": "ext_course_pacing_profiles",
+        "n": 2739842,
+        "question_id": "s3_course_breaks"
+      },
+      {
+        "id": "ext_checkpoint_outcomes",
+        "n": 2739842,
+        "question_id": "r04_on_pace_goal_hits"
+      },
+      {
+        "id": "ext_pace_trend_at_20k",
+        "n": 1502890,
+        "question_id": "r03_accel_vs_decel_20k"
+      },
+      {
+        "id": "ext_late_rank_changes",
+        "n": 2739828,
+        "question_id": "r06_decided_after_30k"
+      },
+      {
+        "id": "ext_age_pacing",
+        "n": 814779,
+        "question_id": "r22_aging_changes"
+      },
+      {
+        "id": "ext_gender_pacing",
+        "n": 2225913,
+        "question_id": "r23_gender_pacing"
+      },
+      {
+        "id": "ext_pacing_over_time",
+        "n": 2479058,
+        "question_id": "r26_pacing_over_20y"
+      }
+    ],
+    "source_editions_with_eligible_records": 162,
+    "validation": {
+      "exclusion_counts_reconcile": true,
+      "individual_normalization_integrates_to_zero": true,
+      "rank_changes_sum_to_zero": true,
+      "pattern_shares_sum_to_100": true
+    }
+  }
+}

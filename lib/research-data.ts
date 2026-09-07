@@ -3,6 +3,7 @@ import path from 'node:path';
 import { parseCsv, finite, formatNumber, type DataRow } from './csv';
 import { QUESTIONS, EXTRA_TITLES, questionForPack, type QuestionDefinition, type ThemeId } from './question-catalog';
 import { ANALYSIS_PLANS, type AnalysisPlan } from './analysis-plans';
+import { extensionForQuestion, extensionForPack } from './extension-data';
 
 export type ChartSpec = {
   title: string;
@@ -22,6 +23,7 @@ export type ResearchAnswer = {
   answer: string; detail?: string; method: string[]; charts: ChartSpec[];
   sources: { href: string; label: string }[]; published: string | null;
   available: boolean; related?: { href: string; label: string }[]; nextAnalysis?: AnalysisPlan;
+  dataset?: { n: number; exportId: string; asOf: string };
 };
 
 const root = path.join(process.cwd(), 'public', 'data');
@@ -162,6 +164,8 @@ export function getWallTimingAnswer(): ResearchAnswer {
 
 export function getResearchAnswer(def: QuestionDefinition): ResearchAnswer {
   const pack = def.id;
+  const extension = extensionForQuestion(pack);
+  if (extension) return { id: pack, number: def.number, title: def.title, theme: def.theme, aliases: def.aliases || [], ...extension.answer };
   const meta = readJson(`packs/${pack}/pack_meta.json`);
   const result: ResearchAnswer = { id: pack, number: def.number, title: def.title, theme: def.theme, aliases: def.aliases || [], nextAnalysis: ANALYSIS_PLANS[pack],
     answer: 'An answer is not available in the current results.', method: [], charts: [], sources: [], published: meta?.as_of || null, available: false };
@@ -408,6 +412,8 @@ export function getResearchAnswer(def: QuestionDefinition): ResearchAnswer {
 export function getQuestions() { return QUESTIONS.map(getResearchAnswer); }
 
 export function getExtraAnswer(id: string): ResearchAnswer {
+  const extension = extensionForPack(id);
+  if (extension) return { id, title: extension.title, aliases: [], ...extension.answer };
   if (id === 'smyth_htw') return getStudyAnswer();
   const canonical = questionForPack(id);
   if (canonical) return getResearchAnswer(canonical);

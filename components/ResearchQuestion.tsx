@@ -14,10 +14,12 @@ export default function ResearchQuestion({ question, standalone = false, heading
     </header>
     <p className={question.available ? 'answer' : 'answer-state'}>{question.answer}</p>
     {question.detail && <p className="answer-detail">{question.detail}</p>}
+    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} eligible finishes · Data through {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}</p>}
+    {question.method[0] && <p className="method-summary"><strong>How we measured it.</strong> {question.method[0]}</p>}
     <details className="methodology">
-      <summary>Methodology &amp; sources</summary>
+      <summary>Full methodology &amp; sources</summary>
       <div className="methodology-content">
-        {question.method.length ? question.method.map((paragraph, i) => <p key={i}>{paragraph}</p>) : <p>The method for this result has not yet been documented.</p>}
+        {question.method.length ? question.method.slice(1).map((paragraph, i) => <p key={i}>{paragraph}</p>) : <p>The method for this result has not yet been documented.</p>}
         {question.nextAnalysis && <section className="analysis-plan">
           <h3>Next analysis</h3>
           <p><strong>Measure:</strong> {question.nextAnalysis.measure}</p>
@@ -25,6 +27,7 @@ export default function ResearchQuestion({ question, standalone = false, heading
           <p><strong>Data needed:</strong> {question.nextAnalysis.needs}</p>
         </section>}
         {published && <p className="study-meta">Results published {published}.</p>}
+        {question.dataset && <p className="study-meta">Source export: {question.dataset.exportId}. Chart samples may be smaller than the eligible analysis cohort.</p>}
         <div className="source-links">
           {question.sources.map((source, i) => <a href={source.href} key={`${source.href}-${i}`}>{source.label}</a>)}
           <Link href="/methodology">Study methodology</Link>

@@ -61,7 +61,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
             <LineChart data={rows} margin={{ top: 20, right: 16, bottom: 24, left: 0 }} accessibilityLayer>
               <CartesianGrid vertical={false} stroke="#dfe5ee" />
               <XAxis dataKey="label" type={spec.xNumeric ? 'number' : 'category'} domain={spec.xNumeric ? ['dataMin', 'dataMax'] : undefined} tickCount={5} tickLine={false} axisLine={false} minTickGap={28} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={v => typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v)} label={{ value: spec.xLabel, position: 'insideBottom', offset: -18, fontSize: 14, fill: '#526078' }} />
-              <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={axisValue} domain={signed ? ['auto', 'auto'] : [0, 'auto']} />
+              <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={axisValue} domain={signed || spec.unit === 'min/km' ? ['auto', 'auto'] : [0, 'auto']} />
               {signed && <ReferenceLine y={0} stroke="#526078" />}
               <Tooltip formatter={v => value(v)} labelFormatter={v => `${spec.xLabel}: ${label(v)}`} contentStyle={{ fontSize: 14, border: '1px solid #dfe5ee', borderRadius: 4, maxWidth: 250 }} />
               {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={COLORS[i % COLORS.length]} strokeWidth={2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={{ r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}

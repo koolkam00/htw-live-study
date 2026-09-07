@@ -1,19 +1,24 @@
 import ResearchQuestion from './ResearchQuestion';
 import { getLive, getQuestions } from '@/lib/research-data';
 import { THEMES } from '@/lib/question-catalog';
+import { getExtensions } from '@/lib/extension-data';
 
 export default function QuestionsHome() {
   const questions = getQuestions();
   const live = getLive();
   const corpus = live?.corpus;
   const ready = ['ready', 'ok'].includes(live?.status);
+  const extension = getExtensions()[0];
   return (
     <div className="questions">
       <section className="study-intro">
         <h1>Marathon pacing,<br />split by split.</h1>
-        <p>{ready && typeof corpus?.n_records === 'number'
+        <p>{extension
+          ? `${new Intl.NumberFormat('en-US').format(extension.corpus.n_records)} race records · ${extension.corpus.n_cities} cities · ${extension.corpus.n_race_years} race editions`
+          : ready && typeof corpus?.n_records === 'number'
           ? `${new Intl.NumberFormat('en-US').format(corpus.n_records)} recorded finishes · ${corpus.n_cities} cities · ${corpus.year_min}–${corpus.year_max}`
           : 'Research on how runners start, adapt, finish, and improve.'}</p>
+        {extension && <p className="study-meta">Coverage varies by question. Each answer shows its eligible sample and data date.</p>}
       </section>
       <nav className="theme-nav" aria-label="Research themes">
         {THEMES.map(theme => <a key={theme.id} href={`#theme-${theme.id}`}>{theme.title}</a>)}
