@@ -1,0 +1,236 @@
+{
+  "version": "c4-quantile-lookup-v1",
+  "as_of": "2026-09-06",
+  "city": "Tokyo",
+  "slug": "tokyo",
+  "never_writes_race_records": true,
+  "method": {
+    "finish_time_unit": "minutes",
+    "cum_20_unit": "minutes (cumulative clock at 20 km \u2248 halfway proxy)",
+    "pace_first_half_unit": "min/km",
+    "quantiles": [
+      0.1,
+      0.25,
+      0.5,
+      0.75,
+      0.9
+    ],
+    "quantile_keys": [
+      "p10",
+      "p25",
+      "p50",
+      "p75",
+      "p90"
+    ],
+    "numpy_method": "linear",
+    "min_n": 50,
+    "bins": "half-open [lo, hi); open edges outside clip",
+    "filter": "finish_time > 0 finite; cum_20/pace_first_half > 0 for conditional",
+    "sparse_policy": "cells with n < min_n marked sparse; omitted from bin lists",
+    "source": "/workspace/wall-analyst/output-api-dump-2026-09-06/features.parquet"
+  },
+  "n": {
+    "rows": 353,
+    "finish": 353,
+    "cum20_positive": 353,
+    "years": [
+      2026
+    ]
+  },
+  "unconditional": {
+    "all": {
+      "n": 353,
+      "sparse": false,
+      "finish_time": {
+        "p10": 130.79666666666665,
+        "p25": 137.7,
+        "p50": 147.23333333333332,
+        "p75": 152.91666666666666,
+        "p90": 155.53
+      },
+      "pace_first_half": {
+        "p10": 2.9969999999999994,
+        "p25": 3.2075000000000005,
+        "p50": 3.3950000000000005,
+        "p75": 3.543333333333333,
+        "p90": 3.6206666666666667
+      }
+    },
+    "by_sex": {
+      "M": {
+        "n": 353,
+        "sparse": false,
+        "finish_time": {
+          "p10": 130.79666666666665,
+          "p25": 137.7,
+          "p50": 147.23333333333332,
+          "p75": 152.91666666666666,
+          "p90": 155.53
+        }
+      }
+    }
+  },
+  "conditional_cum20": {
+    "predictor": "cum_20",
+    "unit": "minutes",
+    "bin_width": 5.0,
+    "clip": {
+      "lo": 60.0,
+      "hi": 200.0
+    },
+    "bins": [
+      {
+        "lo": 60.0,
+        "hi": 65.0,
+        "label": "60-65",
+        "edge": "closed",
+        "n": 72,
+        "sparse": false,
+        "finish_time": {
+          "p10": 132.27,
+          "p25": 134.49166666666667,
+          "p50": 136.29166666666669,
+          "p75": 138.45833333333334,
+          "p90": 143.035
+        }
+      },
+      {
+        "lo": 65.0,
+        "hi": 70.0,
+        "label": "65-70",
+        "edge": "closed",
+        "n": 119,
+        "sparse": false,
+        "finish_time": {
+          "p10": 141.45,
+          "p25": 143.78333333333333,
+          "p50": 146.63333333333333,
+          "p75": 149.24166666666667,
+          "p90": 152.46333333333334
+        }
+      },
+      {
+        "lo": 70.0,
+        "hi": 75.0,
+        "label": "70-75",
+        "edge": "closed",
+        "n": 118,
+        "sparse": false,
+        "finish_time": {
+          "p10": 149.395,
+          "p25": 151.1875,
+          "p50": 153.79166666666669,
+          "p75": 155.39166666666668,
+          "p90": 156.31
+        }
+      }
+    ]
+  },
+  "conditional_pace_first_half": {
+    "predictor": "pace_first_half",
+    "unit": "min_per_km",
+    "bin_width": 0.25,
+    "clip": {
+      "lo": 3.0,
+      "hi": 10.0
+    },
+    "bins": [
+      {
+        "lo": 3.0,
+        "hi": 3.25,
+        "label": "3-3.25",
+        "edge": "closed",
+        "n": 72,
+        "sparse": false,
+        "finish_time": {
+          "p10": 132.27,
+          "p25": 134.49166666666667,
+          "p50": 136.29166666666669,
+          "p75": 138.45833333333334,
+          "p90": 143.035
+        }
+      },
+      {
+        "lo": 3.25,
+        "hi": 3.5,
+        "label": "3.25-3.5",
+        "edge": "closed",
+        "n": 119,
+        "sparse": false,
+        "finish_time": {
+          "p10": 141.45,
+          "p25": 143.78333333333333,
+          "p50": 146.63333333333333,
+          "p75": 149.24166666666667,
+          "p90": 152.46333333333334
+        }
+      },
+      {
+        "lo": 3.5,
+        "hi": 3.75,
+        "label": "3.5-3.75",
+        "edge": "closed",
+        "n": 118,
+        "sparse": false,
+        "finish_time": {
+          "p10": 149.395,
+          "p25": 151.1875,
+          "p50": 153.79166666666669,
+          "p75": 155.39166666666668,
+          "p90": 156.31
+        }
+      }
+    ]
+  },
+  "conditional_cum20_by_sex": {
+    "M": {
+      "bins": [
+        {
+          "lo": 60.0,
+          "hi": 65.0,
+          "label": "60-65",
+          "edge": "closed",
+          "n": 72,
+          "sparse": false,
+          "finish_time": {
+            "p10": 132.27,
+            "p25": 134.49166666666667,
+            "p50": 136.29166666666669,
+            "p75": 138.45833333333334,
+            "p90": 143.035
+          }
+        },
+        {
+          "lo": 65.0,
+          "hi": 70.0,
+          "label": "65-70",
+          "edge": "closed",
+          "n": 119,
+          "sparse": false,
+          "finish_time": {
+            "p10": 141.45,
+            "p25": 143.78333333333333,
+            "p50": 146.63333333333333,
+            "p75": 149.24166666666667,
+            "p90": 152.46333333333334
+          }
+        },
+        {
+          "lo": 70.0,
+          "hi": 75.0,
+          "label": "70-75",
+          "edge": "closed",
+          "n": 118,
+          "sparse": false,
+          "finish_time": {
+            "p10": 149.395,
+            "p25": 151.1875,
+            "p50": 153.79166666666669,
+            "p75": 155.39166666666668,
+            "p90": 156.31
+          }
+        }
+      ]
+    }
+  }
+}
