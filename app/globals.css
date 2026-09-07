@@ -1,13 +1,16 @@
 :root {
-  --bg: #0b0f14;
-  --panel: #121821;
-  --muted: #8b9bb4;
-  --text: #e6edf3;
-  --accent: #3da9fc;
-  --accent-muted: #264f78;
-  --border: #223047;
-  --danger: #ff6b6b;
-  --success: #59d38c;
+  /* Design tokens (Supervisor law) */
+  --paper: #ffffff;
+  --ink: #111111;
+  --slate: #5b6676;
+  --course: #0f6ad9;
+  --wall: #c2432f;
+  --border: #e5e7eb;
+  --muted: var(--slate);
+  --text: var(--ink);
+  --accent: var(--course);
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; /* replaced by next/font */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; /* replaced by next/font */
 }
 
 *,
@@ -20,9 +23,9 @@ html,
 body {
   padding: 0;
   margin: 0;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  font-family: var(--font-sans);
 }
 
 a {
@@ -41,11 +44,7 @@ a:hover {
 
 header.site-header {
   border-bottom: 1px solid var(--border);
-  background: rgba(18, 24, 33, 0.7);
-  position: sticky;
-  top: 0;
-  backdrop-filter: blur(8px);
-  z-index: 10;
+  background: var(--paper);
 }
 .site-title {
   display: flex;
@@ -72,10 +71,9 @@ header.site-header {
 }
 
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem;
+  background: transparent; /* no cards */
+  border: none;            /* no card borders */
+  padding: 0;
 }
 
 .filters {
@@ -84,11 +82,11 @@ header.site-header {
   gap: 0.75rem;
 }
 select, button, input {
-  background: #0d131c;
+  background: var(--paper);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 0; /* no radius */
 }
 label {
   font-size: 0.85rem;
@@ -101,10 +99,9 @@ label {
   flex-wrap: wrap;
 }
 .stat {
-  background: #0d131c;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0;
   min-width: 140px;
 }
 .stat .label { color: var(--muted); font-size: 0.8rem; }
@@ -138,17 +135,17 @@ label {
 .badge {
   font-size: 0.75rem;
   color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 999px;
-  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  padding: 0.1rem 0.35rem;
 }
 .placeholder {
   display: grid;
   place-items: center;
   height: 280px;
-  background: #0d131c;
+  background: transparent;
   border: 1px dashed var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--muted);
   text-align: center;
   padding: 1rem;
@@ -172,6 +169,7 @@ label {
 .question-title {
   font-weight: 700;
   font-size: 1.25rem;
+  font-family: var(--font-serif);
 }
 .question-section {
   margin: 0.25rem 0 0.5rem;

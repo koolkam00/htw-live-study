@@ -1,5 +1,6 @@
 import './globals.css';
 import Link from 'next/link';
+import { Newsreader, Schibsted_Grotesk } from 'next/font/google';
 
 export const metadata = {
   title: 'HTW Live Study',
@@ -7,21 +8,31 @@ export const metadata = {
     'Public live-study recreation of Smyth 2021 (PLOS ONE) — How recreational marathon runners hit the wall.',
 };
 
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+});
+const schibsted = Schibsted_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={`${newsreader.variable} ${schibsted.variable}`}>
+      <body style={{ fontFamily: 'var(--font-sans)' }}>
         <header className="site-header">
           <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', padding: '0.9rem 1.25rem' }}>
-            <div className="site-title">
-              <span aria-hidden>🏃‍♂️</span>
+            <div className="site-title" style={{ fontFamily: 'var(--font-serif)' }}>
               <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>HTW Live Study</Link>
             </div>
-            <nav style={{ display: 'flex', gap: '1rem' }}>
-              <Link href="/" style={{ color: 'inherit' }}>Home</Link>
+            <nav aria-label="Secondary" style={{ display: 'flex', gap: '1rem', fontSize: '0.95rem' }}>
               <Link href="/courses" style={{ color: 'inherit' }}>Courses</Link>
               <Link href="/packs" style={{ color: 'inherit' }}>Packs</Link>
               <Link href="/methodology" style={{ color: 'inherit' }}>Methodology</Link>
+              <Link href="/htw" style={{ color: 'inherit' }}>HTW</Link>
             </nav>
           </div>
         </header>

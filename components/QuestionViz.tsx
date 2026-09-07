@@ -196,25 +196,19 @@ export default function QuestionViz({
       <ResponsiveContainer width="100%" height="100%">
         {xIsNumber ? (
           <AreaChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-            <defs>
-              <linearGradient id="vizColor" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3da9fc" stopOpacity={0.7} />
-                <stop offset="95%" stopColor="#3da9fc" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#223047" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis dataKey={xKey!} tick={{ fill: '#8b9bb4' }} />
             <YAxis tick={{ fill: '#8b9bb4' }} />
             <Tooltip />
-            <Area type="monotone" dataKey={yKey!} stroke="#3da9fc" fill="url(#vizColor)" />
+            <Area type="monotone" dataKey={yKey!} stroke="#0f6ad9" fill="#0f6ad9" fillOpacity={0.15} />
           </AreaChart>
         ) : (
           <BarChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#223047" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis dataKey={xKey!} tick={{ fill: '#8b9bb4' }} interval={0} angle={-20} textAnchor="end" height={50} />
             <YAxis tick={{ fill: '#8b9bb4' }} />
             <Tooltip />
-            <Bar dataKey={yKey!} fill="#3da9fc" />
+            <Bar dataKey={yKey!} fill="#0f6ad9" />
           </BarChart>
         )}
       </ResponsiveContainer>
