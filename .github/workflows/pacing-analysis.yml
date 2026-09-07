@@ -34,6 +34,8 @@ jobs:
           python-version: '3.12'
       - name: Install analysis dependency
         run: python -m pip install -r analysis/requirements.txt
+      - name: Check timing and cohort calculations
+        run: python -m unittest discover -s analysis -p 'test_*.py'
       - name: Download verified private CORE export
         env:
           GH_TOKEN: ${{ github.token }}
@@ -41,6 +43,18 @@ jobs:
         run: python analysis/download_release.py --output "$RUNNER_TEMP/pacing-private" --tag "$PACING_RELEASE_TAG"
       - name: Inspect available fields and coverage
         run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-inspection"
+      - name: Read current public snapshot date
+        run: |
+          curl --fail --silent --show-error https://htw-live-study.vercel.app/data/live.json > "$RUNNER_TEMP/pacing-live.json"
+          python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"]+"/pacing-live.json")); assert d["status"] in ("ready","ok"); print("PACING_LIVE_AS_OF="+d["as_of"])' >> "$GITHUB_ENV"
+      - name: Calculate aggregate pacing packs
+        run: python analysis/build_pacing.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --live-as-of "$PACING_LIVE_AS_OF"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pacing-aggregate-packs
+          path: ${{ runner.temp }}/pacing-aggregates/
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: pacing-export-inspection
