@@ -39,7 +39,7 @@ def filter_for(key, label, preferred):
     return [{"key": key, "label": label, "preferred": preferred}]
 
 
-def prepare(db, source):
+def prepare(db, source, keep_record_id=False):
     # Parse elapsed durations, never wall-clock timestamps. Invalid strings become NULL.
     db.execute(r"""CREATE MACRO seconds(s) AS (
       CASE WHEN regexp_full_match(trim(s), '[0-9]{1,3}:[0-5][0-9]:[0-5][0-9](\.[0-9]+)?')
@@ -52,9 +52,10 @@ def prepare(db, source):
       ELSE NULL END)""")
     # Names are used only to avoid collapsing different people with identical splits.
     fields = ', '.join(['race', 'year', 'city', 'runner', 'sex', 'age', 'age_group', 'age_or_group'] + FIELDS)
-    db.execute(f"CREATE TEMP TABLE unique_records AS SELECT DISTINCT {fields} FROM read_parquet(?)", [str(source / 'race_records.parquet')])
+    query = f'SELECT min(id) AS rid, {fields} FROM read_parquet(?) GROUP BY ALL' if keep_record_id else f'SELECT DISTINCT {fields} FROM read_parquet(?)'
+    db.execute('CREATE TEMP TABLE unique_records AS '+query, [str(source / 'race_records.parquet')])
     parsed = ', '.join(f'seconds({field}) AS t{i}' for i, field in enumerate(FIELDS))
-    db.execute(f"""CREATE TEMP TABLE parsed AS SELECT city, race, year, age,
+    db.execute(f"""CREATE TEMP TABLE parsed AS SELECT {'rid,' if keep_record_id else ''} city, race, year, age,
       CASE WHEN lower(trim(sex)) IN ('f','female','woman','women') THEN 'Women'
            WHEN lower(trim(sex)) IN ('m','male','man','men') THEN 'Men'
            ELSE 'Other / not recorded' END AS gender,
@@ -104,11 +105,13 @@ def prepare(db, source):
 
 
 class Publisher:
-    def __init__(self, output, provenance, manifest, counts, live_as_of):
+    def __init__(self, output, provenance, manifest, counts, live_as_of, common_method=None, script=None):
         self.output, self.provenance, self.manifest = output, provenance, manifest
         self.counts, self.live_as_of = counts, live_as_of
         self.as_of = datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
         self.packs = []
+        self.common_method = COMMON_METHOD if common_method is None else common_method
+        self.script = Path(script or __file__)
 
     def publish(self, slug, question_id, title, answer, detail, methods, charts, tables, n, statistics=None):
         pack = 'ext_' + slug
@@ -137,10 +140,10 @@ class Publisher:
             'input_as_of': self.manifest['created_at'], 'live_json_as_of': self.live_as_of,
             'input_asset_sha256': self.provenance['asset_sha256'],
             'input_manifest_sha256': self.provenance['manifest_sha256'],
-            'analysis_script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'analysis_script_sha256': hashlib.sha256(self.script.read_bytes()).hexdigest(),
             'analysis_version': 1, 'engine': f'DuckDB {duckdb.__version__}',
             'corpus': {k:self.manifest[k] for k in ['n_records','n_cities','n_race_years']},
-            'cohort': self.counts, 'methodology_prose': methods + COMMON_METHOD,
+            'cohort': self.counts, 'methodology_prose': methods + self.common_method,
             'observational': True, 'minimum_public_cell': MIN_CELL,
         }
         summary = {'answer_prose': answer, 'detail_prose': detail, 'charts': charts, 'statistics': statistics or {}}

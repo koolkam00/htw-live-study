@@ -1,0 +1,53 @@
+"""Hand-checkable linkage and no-future-information cases."""
+import tempfile
+import unittest
+from pathlib import Path
+import duckdb
+from build_pacing import FIELDS, POINTS, prepare
+from build_extended import prepare_history
+
+
+def clock(seconds):
+    return f'{int(seconds//3600)}:{int(seconds%3600//60):02}:{seconds%60:06.3f}'
+
+
+class HistoryValidation(unittest.TestCase):
+    def test_natural_link_and_strictly_prior_benchmark(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder);db=duckdb.connect()
+            db.execute('CREATE TABLE raw (id BIGINT,race VARCHAR,year INTEGER,city VARCHAR,runner VARCHAR,sex VARCHAR,age DOUBLE,age_group VARCHAR,age_or_group VARCHAR,'+','.join(f'{f} VARCHAR' for f in FIELDS)+')')
+            segment_names=['05','10','15','20','25','30','35','40','42']
+            db.execute('CREATE TABLE feature (record_id BIGINT,city VARCHAR,year INTEGER,race VARCHAR,runner_name VARCHAR,runner_id VARCHAR,is_ambiguous BOOLEAN,sex VARCHAR,yob DOUBLE,finish_time DOUBLE,'+','.join(f'seg_{s} DOUBLE' for s in segment_names)+')')
+            cases=[('A',2017,170,'Alpha'),('A',2020,200,'Alpha'),('A',2021,190,'Alpha'),
+                   ('A',2021,180,'Beta'),('A',2022,185,'Alpha'),
+                   ('B',2020,210,'Alpha'),('B',2022,205,'Alpha'),
+                   ('Unmatched',2022,220,'Alpha')]
+            for rid,(uid,year,finish,city) in enumerate(cases,1):
+                times=[finish*60*km/42.195 for km in POINTS]
+                raw=[rid,city+' Marathon',year,city,'Fixture '+uid,'F',year-1980,'35-44',str(year-1980)]+[clock(t) for t in times]
+                db.execute('INSERT INTO raw VALUES ('+','.join('?' for _ in raw)+')',raw)
+                rounded=[round(t,3) for t in times]
+                segments=[(t-(rounded[i-1] if i else 0))/60 for i,t in enumerate(rounded)]
+                if uid=='Unmatched': segments[0]+=1
+                feature=[rid+9000,city,year,city+' Marathon','Fixture '+uid,uid,False,'F',1980,rounded[-1]/60]+segments
+                db.execute('INSERT INTO feature VALUES ('+','.join('?' for _ in feature)+')',feature)
+            db.execute('CREATE TABLE weather_fixture (city VARCHAR,year INTEGER,race_date VARCHAR,temp_c DOUBLE,dewpoint_c DOUBLE,wind_mps DOUBLE,precip_mm DOUBLE)')
+            for city,year in sorted(set((x[3],x[1]) for x in cases)):
+                db.execute('INSERT INTO weather_fixture VALUES (?,?,?,10,5,2,0)',[city,year,f'{year}-10-01' if city=='Alpha' else f'{year}-05-01'])
+            for table,file in [('raw','race_records'),('feature','features'),('weather_fixture','race_conditions')]:
+                db.execute(f'COPY {table} TO ? (FORMAT PARQUET)',[str(source/(file+'.parquet'))])
+            prepare(db,source,keep_record_id=True)
+            audit=prepare_history(db,source)
+            self.assertEqual(audit['linked_eligible_finishes'],7,'All matching splits join despite deliberately unrelated record IDs; the changed section is excluded')
+            row=db.execute("SELECT recent_best/60,earlier_best/60,prior_count FROM history WHERE uid='A' AND year=2022").fetchone()
+            self.assertAlmostEqual(row[0],180,places=4)
+            self.assertAlmostEqual(row[1],170,places=4)
+            self.assertEqual(row[2],4)
+            rows=db.execute("SELECT recent_best/60 FROM history WHERE uid='A' AND year=2021").fetchall()
+            self.assertEqual(len(rows),2)
+            for row in rows: self.assertAlmostEqual(row[0],200,places=4,msg='Same-year faster outcomes must never enter the pre-race benchmark')
+            self.assertEqual(db.execute("SELECT count(*) FROM pairs WHERE uid='A'").fetchone()[0],1,'Pairs touching a multiple-race year must be excluded')
+
+
+if __name__=='__main__':
+    unittest.main()
