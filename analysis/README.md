@@ -49,6 +49,19 @@ Fetch `https://htw-live-study.vercel.app/data/live.json` first and use its actua
 `as_of`. CORE is verified against the release asset's size and SHA-256 digest.
 The full archive is not needed for these eight calculations.
 
+## Inspecting the additional FULL data
+
+`download_release.py --bundle FULL` verifies and extracts the complete release,
+including `features.parquet`, outside the checkout. The separate **Inspect
+complete private marathon export** workflow does the same on relevant PR changes
+or a manual run. It returns table schemas, non-null counts, aggregate identifier
+coverage, and export documentation in `pacing-full-export-inspection`.
+
+All columns remain queryable inside the private job. It does not upload the
+archive or individual rows as artifacts. Inspecting a derived feature confirms
+its availability, not the validity of its definition or identity-matching method.
+Compare its coverage with raw CORE before using it for longitudinal analyses.
+
 ## Analysis contract
 
 Each pack contains `pack_meta.json`, `summary.json`, and `tables/*.csv`.

@@ -44,6 +44,29 @@ def main():
             if 'year' in available:
                 scope['year_min'], scope['year_max'] = db.execute('SELECT min(try_cast(year AS INTEGER)),max(try_cast(year AS INTEGER)) FROM read_parquet(?)',[str(path)]).fetchone()
             report[path.name]['coverage'] = scope
+            if {'split_mode_in','runner_id','is_ambiguous','is_repeater','runner_race_seq','ability','finish_time','pb_time'} <= available:
+                mode_rows = db.execute('SELECT split_mode_in,count(*) FROM read_parquet(?) GROUP BY split_mode_in ORDER BY count(*) DESC',[str(path)]).fetchall()
+                report[path.name]['split_modes'] = [{'mode':mode,'rows':n} for mode,n in mode_rows]
+                names = ['ambiguous_rows','linked_rows','repeater_rows','first_observed_rows_with_ability','ability_equals_current_finish','pb_equals_current_finish']
+                values = db.execute('''SELECT
+                  count(*) FILTER(WHERE is_ambiguous),
+                  count(*) FILTER(WHERE runner_id IS NOT NULL),
+                  count(*) FILTER(WHERE is_repeater),
+                  count(*) FILTER(WHERE runner_race_seq=1 AND ability IS NOT NULL),
+                  count(*) FILTER(WHERE abs(ability-finish_time)<1e-8),
+                  count(*) FILTER(WHERE abs(pb_time-finish_time)<1e-8)
+                  FROM read_parquet(?)''',[str(path)]).fetchone()
+                report[path.name]['history_diagnostics'] = dict(zip(names,values))
+            conditions = args.input / 'race_conditions.parquet'
+            if conditions.exists() and {'city','year'} <= available:
+                # The supplied brief explicitly defines the overlay join by city/year.
+                dates = db.execute('''WITH dates AS (
+                  SELECT city,year,min(try_cast(race_date AS DATE)) AS race_date
+                  FROM read_parquet(?) GROUP BY city,year
+                  HAVING count(DISTINCT try_cast(race_date AS DATE))=1
+                ) SELECT count(*),count(*) FILTER(WHERE dates.race_date IS NOT NULL)
+                  FROM read_parquet(?) f LEFT JOIN dates USING(city,year)''',[str(conditions),str(path)]).fetchone()
+                report[path.name]['date_join_coverage'] = {'feature_rows':dates[0],'rows_with_unambiguous_overlay_date':dates[1]}
     (args.output / "schema-coverage.json").write_text(json.dumps(report, indent=2) + "\n")
     # These documentation files stay in a private workflow artifact, never in public/.
     for name in ["README.md", "MANIFEST.json", "OUTSIDE-AGENT-PASTE-BRIEF.md", "provenance.json"]:
