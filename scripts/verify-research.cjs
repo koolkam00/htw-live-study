@@ -18,6 +18,7 @@ const { PACKS } = require('../lib/packs.ts');
 const { getExtensions } = require('../lib/extension-data.ts');
 const { getCourseNames, getIndividualCourseAnswer, slugifyCity } = require('../lib/course-data.ts');
 const { resolveSelection, filterOptions } = require('../lib/chart-selection.ts');
+const { sectionLabel, MARATHON_SECTION_ENDS } = require('../lib/section-labels.ts');
 
 assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a line"\r\nBoston,0,NaN\r\nnone,1,none'), [
   { name: 'New York, NY', n: null, note: 'A "quote"\nand a line' },
@@ -27,6 +28,9 @@ assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a li
 for (const value of [null, undefined, '', ' ', 'NaN']) assert.equal(finite(value), null);
 assert.equal(finite(0), 0);
 assert.equal(formatNumber(-1.5, '% change'), '-1.5%');
+assert.equal(sectionLabel(5), '0–5 km');
+assert.equal(sectionLabel(40), '35–40 km');
+assert.equal(sectionLabel(42.195), '40–42.195 km');
 
 const questions = getQuestions();
 const extensions = getExtensions();
@@ -73,6 +77,8 @@ for (const row of table('ext_checkpoint_outcomes', 'goal_rates.csv')) {
   assert.ok(Math.abs(row.value - 100 * row.hits / row.n_value) < 1e-8);
 }
 const newProfiles = table('ext_course_pacing_profiles', 'course_profiles.csv');
+assert.deepEqual(questions.find(question => question.id === 's3_course_breaks').charts[0].sectionEnds, MARATHON_SECTION_ENDS);
+assert.ok(questions.find(question => question.id === 'r08_early_blowup_signal').charts.every(chart => !chart.sectionEnds), 'Checkpoint forecasts are not interval pace averages');
 for (const city of new Set(newProfiles.map(row => row.city))) {
   const rows = newProfiles.filter(row => row.city === city);
   assert.deepEqual(rows.map(row => row.label), [5,10,15,20,25,30,35,40,42.195]);

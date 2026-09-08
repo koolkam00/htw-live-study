@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseCsv } from './csv';
 import type { ChartSpec, ResearchAnswer } from './research-data';
+import { MARATHON_SECTION_ENDS } from './section-labels';
 
 const root = path.join(process.cwd(), 'public/data/packs');
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
@@ -50,6 +51,12 @@ export function getExtensions(): Extension[] {
       const href = `${basePath}/data/packs/${entry.name}/tables/${spec.table}`;
       if (!sources.some(source => source.href === href)) sources.push({ href, label: `${spec.title} (CSV)` });
       const { table: _table, ...chart } = spec;
+      // Whole-race pace profiles contain interval averages, not instantaneous
+      // measurements at their end checkpoints. Forecast checkpoint charts retain
+      // their separate checkpoint labels.
+      const profile = chart.kind === 'line' && chart.unit === '% pace' && chart.xLabel === 'Distance (km)'
+        && MARATHON_SECTION_ENDS.every(end => rows.some(row => row.label === end));
+      if (profile) return { ...chart, rows, xLabel: 'Section end (km)', sectionEnds: MARATHON_SECTION_ENDS };
       // Include explicit null years so a line cannot bridge an unobserved season.
       if (chart.kind === 'line' && chart.xLabel === 'Race year') {
         const withGaps = [];

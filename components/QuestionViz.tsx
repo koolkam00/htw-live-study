@@ -5,6 +5,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { finite, formatNumber } from '@/lib/csv';
 import type { ChartSpec } from '@/lib/research-data';
 import { filterOptions, resolveSelection } from '@/lib/chart-selection';
+import { sectionLabel } from '@/lib/section-labels';
 
 const COLORS = ['#0758c7', '#ad492e', '#526078'];
 
@@ -23,7 +24,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
     const n = finite(number);
     return n === null ? 'Not available' : formatNumber(n, spec.unit);
   };
-  const label = (v: unknown) => spec.xUnit && typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v ?? 'Not recorded');
+  const label = (v: unknown) => spec.sectionEnds ? sectionLabel(v, spec.sectionEnds) : spec.xUnit && typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v ?? 'Not recorded');
   const axisValue = (v: unknown) => {
     const n = finite(v);
     if (n === null) return String(v);
@@ -31,7 +32,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
     return formatNumber(n);
   };
   const units: Record<string, string> = {
-    '%': 'Percent (%)', '% pace': 'Pace difference (%) · below zero is faster', '% change': 'Finish-time change (%) · below zero is faster', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
+    '%': 'Percent (%)', '% pace': 'Pace difference (%) · higher is slower', '% change': 'Finish-time change (%) · below zero is faster', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
     'min': 'Minutes', 'runners': 'Number of finishes', 'correlation': 'Correlation, from −1 to 1', 'sec/km': 'Change in seconds per kilometer',
   };
 
@@ -39,6 +40,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
     <figure className="study-figure" aria-labelledby={`${id}-title`}>
       <h3 id={`${id}-title`} className="chart-title">{spec.title}</h3>
       <p className="chart-unit">{units[spec.unit] || spec.unit}</p>
+      {spec.sectionEnds && <p className="study-meta">Each point averages the preceding section: 40 km means 35–40 km. The last point covers 40–42.195 km. Connecting lines do not locate a change within a section.</p>}
       {filters.length > 0 && <div className="chart-controls">
         {filters.map((filter, index) => {
           const options = filterOptions(spec, index, selected);
@@ -61,7 +63,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
               <XAxis dataKey="label" type={spec.xNumeric ? 'number' : 'category'} domain={spec.xNumeric ? ['dataMin', 'dataMax'] : undefined} tickCount={5} tickLine={false} axisLine={false} minTickGap={28} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={v => typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v)} label={{ value: spec.xLabel, position: 'insideBottom', offset: -18, fontSize: 14, fill: '#526078' }} />
               <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={axisValue} domain={signed || spec.unit === 'min/km' ? ['auto', 'auto'] : [0, 'auto']} />
               {signed && <ReferenceLine y={0} stroke="#526078" />}
-              <Tooltip formatter={v => value(v)} labelFormatter={v => `${spec.xLabel}: ${label(v)}`} contentStyle={{ fontSize: 14, border: '1px solid #dfe5ee', borderRadius: 4, maxWidth: 250 }} />
+              <Tooltip formatter={v => value(v)} labelFormatter={v => spec.sectionEnds ? `Average over ${label(v)}` : `${spec.xLabel}: ${label(v)}`} contentStyle={{ fontSize: 14, border: '1px solid #dfe5ee', borderRadius: 4, maxWidth: 250 }} />
               {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={COLORS[i % COLORS.length]} strokeWidth={2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={{ r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}
             </LineChart>
           </ResponsiveContainer>
@@ -82,7 +84,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
         <summary>View exact values{hasCounts ? ' and sample sizes' : ''}</summary>
         <div className="table-scroll" role="region" aria-label={`Values for ${spec.title}`} tabIndex={0}>
           <table className="data-table">
-            <thead><tr><th scope="col">{spec.xLabel}</th>{spec.series.map(series => <th scope="col" key={series.key}>{series.label}</th>)}{hasCounts && spec.series.map(series => <th scope="col" key={`n-${series.key}`}>{spec.series.length > 1 ? `${series.label}: ` : ''}Observations</th>)}</tr></thead>
+            <thead><tr><th scope="col">{spec.sectionEnds ? 'Course section' : spec.xLabel}</th>{spec.series.map(series => <th scope="col" key={series.key}>{series.label}</th>)}{hasCounts && spec.series.map(series => <th scope="col" key={`n-${series.key}`}>{spec.series.length > 1 ? `${series.label}: ` : ''}Observations</th>)}</tr></thead>
             <tbody>{rows.map((row, index) => <tr key={index}><th scope="row">{label(row.label)}</th>{spec.series.map(series => <td key={series.key}>{value(row[series.key])}</td>)}{hasCounts && spec.series.map(series => <td key={`n-${series.key}`}>{finite(row[`n_${series.key}`]) === null ? 'Not available' : formatNumber(Number(row[`n_${series.key}`]), 'runners')}</td>)}</tr>)}</tbody>
           </table>
         </div>

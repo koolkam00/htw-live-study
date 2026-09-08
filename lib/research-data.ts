@@ -4,6 +4,7 @@ import { parseCsv, finite, formatNumber, type DataRow } from './csv';
 import { QUESTIONS, EXTRA_TITLES, questionForPack, type QuestionDefinition, type ThemeId } from './question-catalog';
 import { ANALYSIS_PLANS, type AnalysisPlan } from './analysis-plans';
 import { extensionForQuestion, extensionForPack } from './extension-data';
+import { MARATHON_SECTION_ENDS } from './section-labels';
 
 export type ChartSpec = {
   title: string;
@@ -12,6 +13,7 @@ export type ChartSpec = {
   kind?: 'bars' | 'line';
   xNumeric?: boolean;
   xUnit?: string;
+  sectionEnds?: number[];
   rows: DataRow[];
   series: { key: string; label: string }[];
   filters?: { key: string; label: string; preferred?: string }[];
@@ -114,7 +116,7 @@ export function getCoursePacingChart(city?: string): ChartSpec {
     for (const segment of segments) rows.push({ label: segment.seg_to_km, value: (Number(segment.mean_pace) / average - 1) * 100, city: name, n_value: num(segment, 'n') });
   }
   return {
-    title: 'Pace through the full course', unit: '% pace', xLabel: 'Distance (km)', kind: 'line', xNumeric: true,
+    title: 'Pace through the full course', unit: '% pace', xLabel: 'Section end (km)', kind: 'line', xNumeric: true, sectionEnds: MARATHON_SECTION_ENDS,
     rows, series: [{ key: 'value', label: 'Difference from course-average pace' }],
     filters: city ? undefined : [{ key: 'city', label: 'Course', preferred: 'New York' }],
     note: 'Zero is the distance-weighted average pace for the full course. Below zero is faster; above zero is slower. These are course averages, not individual race shapes or pacing targets.',
