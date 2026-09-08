@@ -113,6 +113,11 @@ class ExtendedPublisher(Publisher):
         meta=json.loads(target.read_text())
         meta.update({'analysis_version':2,'observation_unit':unit,'evidence_scope':scope,
           'supporting_script_sha256':hashlib.sha256(Path(__file__).with_name('build_pacing.py').read_bytes()).hexdigest()})
+        if meta['question_id']=='r18_bq_rule_changes':
+            meta['source_links']=[{'href':'https://www.baa.org/races/boston-marathon/qualify/','label':'B.A.A. historical qualifying standards'},
+              {'href':'https://www.baa.org/news/2020-boston-marathon-qualifier-acceptances-announced/','label':'B.A.A. 2020 standards and acceptance announcement'}]
+        if meta['question_id']=='r15_weather_penalty_who':
+            meta['source_links']=[{'href':'https://open-meteo.com/en/docs/historical-weather-api','label':'Open-Meteo historical weather methods'}]
         target.write_text(json.dumps(meta,indent=2,allow_nan=False)+'\n')
 
 
@@ -363,11 +368,11 @@ def course_analyses(db,pub):
       CASE WHEN city<next_city THEN (next_finish-previous_finish)/60 ELSE (previous_finish-next_finish)/60 END AS difference
       FROM pairs WHERE city<>next_city''')
     translation=records(db,'''WITH cells AS (SELECT course_a,course_b,race_order,count(*) AS n,avg(difference) AS value
-      FROM course_pairs GROUP BY ALL HAVING count(*)>=20), both AS (
+      FROM course_pairs GROUP BY ALL HAVING count(*)>=20), balanced_orders AS (
       SELECT course_a,course_b,avg(value) AS value,sum(n)::BIGINT AS n_value
       FROM cells GROUP BY ALL HAVING count(*)=2 AND sum(n)>=100)
-      SELECT course_a AS origin,course_b AS label,value,n_value FROM both
-      UNION ALL SELECT course_b AS origin,course_a AS label,-value,n_value FROM both ORDER BY origin,label''')
+      SELECT course_a AS origin,course_b AS label,value,n_value FROM balanced_orders
+      UNION ALL SELECT course_b AS origin,course_a AS label,-value,n_value FROM balanced_orders ORDER BY origin,label''')
     pub.publish('paired_course_comparisons','r12_fastest_by_ability','What changes when the same runners change course?',
       'Runners who completed both courses provide a more useful comparison than unrelated course averages. The chart balances which course came first.',
       'These are observed time differences across consecutive recorded races, not a personalized equivalent-time calculator.',
