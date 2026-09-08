@@ -5,6 +5,7 @@ on:
     paths:
       - 'analysis/download_release.py'
       - 'analysis/inspect_export.py'
+      - 'analysis/audit_expanded.py'
       - '.github/workflows/inspect-full-export.yml'
   workflow_dispatch:
     inputs:
@@ -38,6 +39,8 @@ jobs:
         run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-full-private" --tag "$PACING_RELEASE_TAG"
       - name: Inspect every table and column without exporting runner rows
         run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-full-private" --output "$RUNNER_TEMP/pacing-full-inspection"
+      - name: Audit linked histories and supplied race overlays
+        run: python analysis/audit_expanded.py --input "$RUNNER_TEMP/pacing-full-private" --output "$RUNNER_TEMP/pacing-full-inspection"
       - uses: actions/upload-artifact@v4
         with:
           name: pacing-full-export-inspection
