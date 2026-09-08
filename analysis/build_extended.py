@@ -580,7 +580,7 @@ def qualifying_analysis(db,pub):
       {'thresholds.csv':rules},sum(r['n_value'] for r in rules),scope='partial comparison')
 
 
-def run(source,output,live_as_of):
+def run(source,output,live_as_of,personalized_output=None):
     db=duckdb.connect()
     db.execute("SET memory_limit='4GB'")
     db.execute('SET threads=2')
@@ -604,6 +604,9 @@ def run(source,output,live_as_of):
         target.write_text(json.dumps(meta,indent=2,allow_nan=False)+'\n')
     assert len(pub.packs)==25, 'Incomplete extended question set'
     print('Completed 25 extended packs. Only aggregate tables were written.',flush=True)
+    if personalized_output is not None:
+        from build_personalized import generate
+        generate(db,source,personalized_output,provenance,manifest,counts,diagnostics,live_as_of)
 
 
 if __name__=='__main__':
@@ -611,5 +614,6 @@ if __name__=='__main__':
     parser.add_argument('--input',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--live-as-of',required=True)
+    parser.add_argument('--personalized-output',type=Path)
     args=parser.parse_args()
-    run(args.input,args.output,args.live_as_of)
+    run(args.input,args.output,args.live_as_of,args.personalized_output)

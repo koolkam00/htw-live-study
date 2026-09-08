@@ -24,7 +24,7 @@ jobs:
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
       (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'private-export-'))
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,7 +51,7 @@ jobs:
       - name: Calculate aggregate pacing packs
         run: python analysis/build_pacing.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --live-as-of "$PACING_LIVE_AS_OF"
       - name: Calculate full-race, forecast and linked-history analyses
-        run: python analysis/build_extended.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --live-as-of "$PACING_LIVE_AS_OF"
+        run: python analysis/build_extended.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --personalized-output "$RUNNER_TEMP/pacing-personalized" --live-as-of "$PACING_LIVE_AS_OF"
       - name: Write numerical findings from verified aggregates
         run: python analysis/write_findings.py --output "$RUNNER_TEMP/pacing-aggregates"
       - uses: actions/upload-artifact@v4
@@ -66,3 +66,9 @@ jobs:
           path: ${{ runner.temp }}/pacing-inspection/
           if-no-files-found: error
           retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pacing-personalized-aggregates
+          path: ${{ runner.temp }}/pacing-personalized/
+          if-no-files-found: error
+          retention-days: 30
