@@ -11,16 +11,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-PACKS = {
-    'ext_pacing_shapes': 'r10_unravel_typology',
-    'ext_course_pacing_profiles': 's3_course_breaks',
-    'ext_checkpoint_outcomes': 'r04_on_pace_goal_hits',
-    'ext_pace_trend_at_20k': 'r03_accel_vs_decel_20k',
-    'ext_late_rank_changes': 'r06_decided_after_30k',
-    'ext_age_pacing': 'r22_aging_changes',
-    'ext_gender_pacing': 'r23_gender_pacing',
-    'ext_pacing_over_time': 'r26_pacing_over_20y',
-}
+PACKS = json.loads(Path(__file__).with_name('pack_registry.json').read_text())
 
 
 def validate_archive(archive, expected_export):
@@ -39,7 +30,7 @@ def validate_archive(archive, expected_export):
             files[file] = bundle.read(info).decode('utf-8')
     found = {name.split('/')[0] for name in files}
     if found != set(PACKS):
-        raise ValueError('Expected all eight pacing packs; incomplete refresh is not imported.')
+        raise ValueError(f'Expected all {len(PACKS)} pacing packs; incomplete refresh is not imported.')
     for pack, question in PACKS.items():
         meta = json.loads(files[f'{pack}/pack_meta.json'])
         summary = json.loads(files[f'{pack}/summary.json'])
@@ -50,6 +41,9 @@ def validate_archive(archive, expected_export):
         for key in ['input_asset_sha256','input_manifest_sha256','analysis_script_sha256']:
             if not re.fullmatch('[a-f0-9]{64}', meta[key]):
                 raise ValueError('Missing provenance checksum.')
+        for key in ['narrative_script_sha256','supporting_script_sha256']:
+            if key in meta and not re.fullmatch('[a-f0-9]{64}',meta[key]):
+                raise ValueError('Invalid supporting-script checksum.')
         cohort = meta['cohort']
         if sum(cohort[key] for key in ['duplicates_removed','missing_or_unparsed','non_increasing','outside_quality_bounds','eligible']) != cohort['raw']:
             raise ValueError('Cohort exclusions do not reconcile.')
@@ -59,7 +53,7 @@ def validate_archive(archive, expected_export):
         for chart in summary['charts']:
             filename = f"{pack}/tables/{chart['table']}"
             rows = list(csv.DictReader(io.StringIO(files[filename])))
-            if not rows or set(rows[0]) & {'runner','name','id','bib','source_url'}:
+            if not rows or any(re.search(r'(^|_)(runner|name|uid|id|bib|email)($|_)', key) for key in rows[0]):
                 raise ValueError('Expected aggregate chart rows without identifiers.')
             for row in rows:
                 if not row.get('label'):

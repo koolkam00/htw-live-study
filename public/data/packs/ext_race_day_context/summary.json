@@ -1,0 +1,34 @@
+{
+  "answer_prose": "Compare a performance with how the field did against its own earlier results. A race-wide shortfall and an individual shortfall answer different questions.",
+  "detail_prose": "The chart supplies a race-day benchmark. It cannot divide a runner\u2019s lost time into weather, pacing, illness or other causes.",
+  "charts": [
+    {
+      "title": "How the field performed against its earlier benchmarks",
+      "table": "race_days.csv",
+      "unit": "% change",
+      "xLabel": "Race year",
+      "series": [
+        {
+          "key": "p10",
+          "label": "10th percentile"
+        },
+        {
+          "key": "median",
+          "label": "Median"
+        },
+        {
+          "key": "p90",
+          "label": "90th percentile"
+        }
+      ],
+      "filters": [
+        {
+          "key": "city",
+          "label": "Course",
+          "preferred": "Boston"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

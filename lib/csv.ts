@@ -49,5 +49,5 @@ export function formatNumber(value: number, unit = ''): string {
     return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
   }
   const formatted = new Intl.NumberFormat('en-US', { maximumFractionDigits: unit === 'correlation' ? 2 : unit === 'runners' ? 0 : 1 }).format(value);
-  return unit === '%' || unit === '% pace' ? `${formatted}%` : unit === 'runners' || unit === 'correlation' || !unit ? formatted : `${formatted} ${unit}`;
+  return unit === '%' || unit === '% pace' || unit === '% change' ? `${formatted}%` : unit === 'runners' || unit === 'correlation' || !unit ? formatted : `${formatted} ${unit}`;
 }

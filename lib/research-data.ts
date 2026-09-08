@@ -23,7 +23,7 @@ export type ResearchAnswer = {
   answer: string; detail?: string; method: string[]; charts: ChartSpec[];
   sources: { href: string; label: string }[]; published: string | null;
   available: boolean; related?: { href: string; label: string }[]; nextAnalysis?: AnalysisPlan;
-  dataset?: { n: number; exportId: string; asOf: string };
+  dataset?: { n: number; exportId: string; asOf: string; unit?: string; scope?: string };
 };
 
 const root = path.join(process.cwd(), 'public', 'data');

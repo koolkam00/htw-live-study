@@ -1,18 +1,21 @@
 # Marathon pacing analyses
 
-This pipeline reads the private CORE Parquet export and produces eight aggregate
-analysis packs. It does not scrape races, change the database, overwrite core
-packs, link runner identities, or publish individual records.
+This pipeline reads the private FULL export (including CORE tables) and produces
+33 aggregate question packs: eight foundation analyses and 25 whole-race,
+forecast, course and linked-history analyses. Some answers are explicitly partial
+or proxy comparisons. Group running and congestion cannot be calculated without
+absolute timing and start-offset data. It does not scrape races, change the
+database, overwrite core packs or publish individual records.
 
 ## Access and refresh
 
 The private source is a GitHub Release in `koolkam00/htw-live-study`.
 `release.json` pins the default release for reproducibility.
 
-The **Private marathon pacing analysis** workflow downloads and verifies CORE,
+The **Private marathon pacing analysis** workflow downloads and verifies FULL,
 runs the calculations privately, and returns `pacing-aggregate-packs` containing
 only JSON and CSV aggregates. The workflow has read-only repository permission.
-It does not upload CORE or runner records to Actions artifacts.
+It does not upload either private archive or runner records to Actions artifacts.
 
 After this workflow is merged into the default branch, publishing a new
 `private-export-*` release triggers a recalculation. It can also be run manually
@@ -41,13 +44,15 @@ locally. Use Python 3.12 and an input directory outside this checkout:
 
 ```bash
 python -m pip install -r analysis/requirements.txt
-python analysis/download_release.py --output /private/path/pacing-input
+python analysis/download_release.py --bundle FULL --output /private/path/pacing-input
 python analysis/build_pacing.py --input /private/path/pacing-input --output /private/path/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/build_extended.py --input /private/path/pacing-input --output /private/path/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/write_findings.py --output /private/path/pacing-aggregates
 ```
 
 Fetch `https://htw-live-study.vercel.app/data/live.json` first and use its actual
-`as_of`. CORE is verified against the release asset's size and SHA-256 digest.
-The full archive is not needed for these eight calculations.
+`as_of`. FULL is verified against the release asset's size and SHA-256 digest.
+The import requires every pack in `pack_registry.json`; partial refreshes fail.
 
 ## Inspecting the additional FULL data
 
@@ -75,6 +80,8 @@ The site discovers ready extension packs at build time. Each declares a
 methodology, and charts. Original routes and core files remain available. An
 invalid ready pack fails the build rather than silently rendering incorrect data.
 
+The eight foundation packs remain:
+
 | Extension | Measure |
 | --- | --- |
 | `ext_pacing_shapes` | Median runner-normalized section pace and equal-distance pacing categories |
@@ -85,6 +92,12 @@ invalid ready pack fails the build rather than silently rendering incorrect data
 | `ext_age_pacing` | Opening speed and pace retention by exact age and recorded gender |
 | `ext_gender_pacing` | Pooled and race/20 km time-matched pace retention |
 | `ext_pacing_over_time` | City-specific yearly medians of opening speed and pace retention |
+
+The additional 25 owned packs are registered in `pack_registry.json`. Their
+actual formulas, cohort definitions and limits live in each `pack_meta.json` and
+are rendered both on the question and the site's Methodology page. Narrative
+findings are regenerated from the aggregate CSVs by `write_findings.py`, with a
+separate narrative-script checksum. They do not introduce new numerical inputs.
 
 ## Definitions and limits
 
@@ -101,13 +114,29 @@ invalid ready pack fails the build rather than silently rendering incorrect data
 - Matching uses the same city, year, race, and floored minute at 20 km, with at
   least 20 observations per group. The smallest group supplies a common weight
   for all groups in each stratum. Published sample counts are actual observations.
-- Public chart estimates require at least 100 observations. Race finish counts
-  are not unique runner counts. These initial results have no clustered
-  confidence intervals and no out-of-sample prediction validation.
-- CORE has names but no verified cross-race identity key. Do not manufacture
-  personal-best histories from names alone. Exact-age results exclude age-group
-  labels. Course overlays have no validity years; no historical terrain has been
-  assigned. Weather and elevation are neither invented nor newly scraped.
+- Public chart estimates require at least 100 observations. Finish counts are not
+  unique runner counts. The opening comparison has a 500-draw edition-clustered
+  bootstrap (seed 20260908); it does not also cluster repeated runners. Other
+  outcome percentiles describe variation, not uncertainty in estimates.
+- The checkpoint forecast holds out the latest three observed years. All factors,
+  fallbacks and prediction intervals use only training years and checkpoint-known
+  features. Median/90th-percentile absolute error, interval width and actual 80%
+  interval coverage are published. It describes complete eligible finishers.
+- CORE and FULL record IDs do not correspond. Join edition, normalized name and
+  all section/finish durations, require one-to-one matches, and use only supplied
+  non-ambiguous identities passing gender, birth-year and duplicate-edition checks.
+  Do not invent cross-race identities from names alone.
+- Prior performance is the best in the two strictly earlier calendar years;
+  supplied PB/ability fields and same-year performances never enter that benchmark.
+  Earlier-best gains compare with the best in all earlier years, so are not a claim
+  of a lifetime PB. Day intervals use the separate complete/unique supplied-date
+  cohort. Recorded-return analysis excludes recent index years and requires
+  subsequent home-city edition coverage; absence is not retirement.
+- Exact-age results exclude age-group labels. Route validity years are absent;
+  terrain is explicitly a supplied-route proxy. Weather is the modeled archive
+  hour nearest the scheduled start, not personal exposure. Neither is invented
+  or newly scraped. The narrow qualifying comparison uses dated B.A.A. standards,
+  not inferred individual qualification or acceptance.
 
 The original Smyth wall definition and `live.json` remain owned by the core study.
 
@@ -120,4 +149,6 @@ python -m unittest discover -s analysis -p 'test_*.py'
 The calculation additionally checks that cohort exclusions reconcile, normalized
 individual profiles integrate to zero, pattern shares sum to 100%, and signed
 rank changes sum to zero within each edition. The site verification checks pack
-provenance, table denominators, all routes, null handling, and source links.
+provenance, table denominators, all routes, null handling, source links, same-cohort
+forecast comparisons, prediction coverage, mirrored course comparisons, transition
+probabilities and exact reconciliation of personal-best section gains.

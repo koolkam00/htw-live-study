@@ -1,0 +1,26 @@
+{
+  "answer_prose": "Runners who completed both courses provide a more useful comparison than unrelated course averages. The chart balances which course came first.",
+  "detail_prose": "These are observed time differences across consecutive recorded races, not a personalized equivalent-time calculator.",
+  "charts": [
+    {
+      "title": "Observed time difference at the destination",
+      "table": "course_pairs.csv",
+      "unit": "min",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Observed time difference at the destination"
+        }
+      ],
+      "filters": [
+        {
+          "key": "origin",
+          "label": "Compared with",
+          "preferred": "Boston"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

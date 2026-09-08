@@ -1,0 +1,41 @@
+{
+  "answer_prose": "Across 13 eligible editions at 15\u201319.9\u00b0C, the average edition-median finish was 2.5% slower than the earlier benchmark; across 45 editions below 10\u00b0C, it was 0.7% faster. The course and field mix differs, so this is not a measured temperature penalty.",
+  "detail_prose": "Each race edition receives equal weight. Temperature bands still contain different courses and fields, so these differences are not a temperature penalty.",
+  "charts": [
+    {
+      "title": "Pace through the race by start-hour temperature",
+      "table": "weather_profiles.csv",
+      "unit": "% pace",
+      "xLabel": "Distance (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "Pace through the race by start-hour temperature"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "temperature",
+          "label": "Start-hour temperature",
+          "preferred": "10\u201314.9\u00b0C"
+        }
+      ]
+    },
+    {
+      "title": "Performance relative to earlier races",
+      "table": "weather_outcomes.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Performance relative to earlier races"
+        }
+      ],
+      "note": "Equal weight per eligible edition; at least five editions per band. Descriptive, without a causal weather adjustment."
+    }
+  ],
+  "statistics": {}
+}

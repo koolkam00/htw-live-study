@@ -1,0 +1,34 @@
+{
+  "answer_prose": "Across the displayed race-interval bands, median next-finish change ranged from -0.7% to -0.2%. Individual outcomes were much more variable than those medians. The data do not identify an optimal recovery interval.",
+  "detail_prose": "These are observed scheduling choices, not recommendations for a recovery interval.",
+  "charts": [
+    {
+      "title": "Next performance by recorded race interval",
+      "table": "spacing.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "p10",
+          "label": "10th percentile"
+        },
+        {
+          "key": "median",
+          "label": "Median"
+        },
+        {
+          "key": "p90",
+          "label": "90th percentile"
+        }
+      ],
+      "filters": [
+        {
+          "key": "sample",
+          "label": "Starting race",
+          "preferred": "All dated pairs"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

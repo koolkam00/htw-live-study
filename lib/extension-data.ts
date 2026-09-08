@@ -7,7 +7,7 @@ const root = path.join(process.cwd(), 'public/data/packs');
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 type Extension = {
   id: string; questionId: string; title: string; asOf: string;
-  n: number; exportId: string; inputAsOf: string;
+  n: number; exportId: string; inputAsOf: string; scope: string;
   corpus: { n_records: number; n_cities: number; n_race_years: number };
   answer: Pick<ResearchAnswer, 'answer' | 'detail' | 'method' | 'charts' | 'sources' | 'published' | 'available' | 'dataset'>;
 };
@@ -35,6 +35,9 @@ export function getExtensions(): Extension[] {
     const sources: ResearchAnswer['sources'] = [
       { href: `${basePath}/data/packs/${entry.name}/pack_meta.json`, label: 'Method and data coverage (JSON)' },
     ];
+    if (Array.isArray(meta.source_links)) for (const source of meta.source_links) {
+      if (typeof source.href === 'string' && source.href.startsWith('https://') && typeof source.label === 'string') sources.push(source);
+    }
     const charts: ChartSpec[] = summary.charts.map((spec: ChartSpec & { table: string }) => {
       if (!/^[a-z0-9_]+\.csv$/.test(spec.table) || !Array.isArray(spec.series) || !spec.series.length) throw new Error(`Invalid chart in ${entry.name}`);
       const rows = parseCsv(fs.readFileSync(path.join(folder, 'tables', spec.table), 'utf8'));
@@ -61,10 +64,10 @@ export function getExtensions(): Extension[] {
       return { ...chart, rows };
     });
     extensions.push({ id: entry.name, questionId: meta.question_id, title: meta.title, asOf: meta.as_of,
-      n: meta.n, exportId: meta.input_export_id, inputAsOf: meta.input_as_of, corpus: meta.corpus,
+      n: meta.n, exportId: meta.input_export_id, inputAsOf: meta.input_as_of, corpus: meta.corpus, scope: meta.evidence_scope || 'descriptive',
       answer: { answer: summary.answer_prose, detail: summary.detail_prose, method: meta.methodology_prose,
         charts, sources, published: meta.as_of, available: true,
-        dataset: { n: meta.n, exportId: meta.input_export_id, asOf: meta.input_as_of } },
+        dataset: { n: meta.n, exportId: meta.input_export_id, asOf: meta.input_as_of, unit: meta.observation_unit || 'eligible finishes', scope: meta.evidence_scope || 'descriptive' } },
     });
   }
   // Newer input vintages take precedence, with calculation date as a tie-breaker.

@@ -1,0 +1,46 @@
+{
+  "answer_prose": "For runners with an earlier best of 3:30\u20134 hours, the middle 80% of outcomes spans 16.2 percentage points in the faster-opening group and 28.0 in the slower-opening group. These are outcome ranges, not confidence intervals or causal strategy effects.",
+  "detail_prose": "The spread is grouped by prior performance, while the second chart records finishes more than 5% slower than that prior benchmark.",
+  "charts": [
+    {
+      "title": "Outcome spread by prior performance",
+      "table": "spread.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "p10",
+          "label": "10th percentile"
+        },
+        {
+          "key": "median",
+          "label": "Median"
+        },
+        {
+          "key": "p90",
+          "label": "90th percentile"
+        }
+      ],
+      "filters": [
+        {
+          "key": "ability_band",
+          "label": "Earlier best",
+          "preferred": "3:30\u20134 hours"
+        }
+      ]
+    },
+    {
+      "title": "Finishes more than 5% slower than the earlier benchmark",
+      "table": "shortfalls.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Finishes more than 5% slower than the earlier benchmark"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

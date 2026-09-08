@@ -14,7 +14,7 @@ export default function ResearchQuestion({ question, standalone = false, heading
     </header>
     <p className={question.available ? 'answer' : 'answer-state'}>{question.answer}</p>
     {question.detail && <p className="answer-detail">{question.detail}</p>}
-    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} eligible finishes · Data through {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}</p>}
+    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} {question.dataset.unit || 'eligible finishes'} · Exported {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}{question.dataset.scope && question.dataset.scope !== 'descriptive' ? ` · ${question.dataset.scope}` : ''}</p>}
     {question.method[0] && <p className="method-summary"><strong>How we measured it.</strong> {question.method[0]}</p>}
     <details className="methodology">
       <summary>Full methodology &amp; sources</summary>

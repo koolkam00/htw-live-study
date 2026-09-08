@@ -1,0 +1,34 @@
+{
+  "answer_prose": "In the prior-best band of 3:30\u20134 hours, median finishes were 0.9% slower than that benchmark in Boston and 0.2% faster in Chicago. The charts show the much wider spread within each course; these are different fields, not a course ranking.",
+  "detail_prose": "Prior-time bands improve comparability, but this is still a comparison of different people and race days.",
+  "charts": [
+    {
+      "title": "Performance and spread on each course",
+      "table": "course_spread.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "p10",
+          "label": "10th percentile"
+        },
+        {
+          "key": "median",
+          "label": "Median"
+        },
+        {
+          "key": "p90",
+          "label": "90th percentile"
+        }
+      ],
+      "filters": [
+        {
+          "key": "ability_band",
+          "label": "Earlier best",
+          "preferred": "3:30\u20134 hours"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

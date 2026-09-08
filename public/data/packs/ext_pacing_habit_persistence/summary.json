@@ -1,0 +1,38 @@
+{
+  "answer_prose": "Pace retention showed a correlation of 0.42 across consecutive recorded races one calendar year apart, and 0.32 three years apart. There is persistence, but a runner\u2019s earlier pacing pattern is not destiny.",
+  "detail_prose": "Persistence may reflect the runner, repeated course choices, or shared conditions. It is not an immutable pacing personality.",
+  "charts": [
+    {
+      "title": "Similarity in pace retention between races",
+      "table": "correlation.csv",
+      "unit": "correlation",
+      "xLabel": "Calendar-year gap",
+      "series": [
+        {
+          "key": "value",
+          "label": "Similarity in pace retention between races"
+        }
+      ]
+    },
+    {
+      "title": "Pattern in the next recorded race",
+      "table": "transitions.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Pattern in the next recorded race"
+        }
+      ],
+      "filters": [
+        {
+          "key": "previous",
+          "label": "Earlier pattern",
+          "preferred": "Moderate slowing"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

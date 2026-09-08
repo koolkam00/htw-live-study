@@ -1,0 +1,17 @@
+previous,label,value,n_value,count
+Faster second 20 km,Faster second 20 km,13.892450411041557,13259,1842
+Faster second 20 km,Moderate slowing,33.863790632777736,13259,4490
+Faster second 20 km,Pronounced slowing,21.193151821404328,13259,2810
+Faster second 20 km,Similar 20 km blocks,31.050607134776378,13259,4117
+Moderate slowing,Faster second 20 km,2.3441421544021686,139454,3269
+Moderate slowing,Moderate slowing,45.80004876159881,139454,63870
+Moderate slowing,Pronounced slowing,35.913634603525175,139454,50083
+Moderate slowing,Similar 20 km blocks,15.942174480473849,139454,22232
+Pronounced slowing,Faster second 20 km,1.673042382962842,171484,2869
+Pronounced slowing,Moderate slowing,26.924960929299527,171484,46172
+Pronounced slowing,Pronounced slowing,64.15525646707565,171484,110016
+Pronounced slowing,Similar 20 km blocks,7.2467402206619855,171484,12427
+Similar 20 km blocks,Faster second 20 km,4.568995860080787,59663,2726
+Similar 20 km blocks,Moderate slowing,42.80709987764611,59663,25540
+Similar 20 km blocks,Pronounced slowing,22.451100346948696,59663,13395
+Similar 20 km blocks,Similar 20 km blocks,30.172803915324405,59663,18002

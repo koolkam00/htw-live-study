@@ -17,6 +17,7 @@ const { EXTRA_TITLES, QUESTIONS, THEMES } = require('../lib/question-catalog.ts'
 const { PACKS } = require('../lib/packs.ts');
 const { getExtensions } = require('../lib/extension-data.ts');
 const { getCourseNames, getIndividualCourseAnswer, slugifyCity } = require('../lib/course-data.ts');
+const { resolveSelection, filterOptions } = require('../lib/chart-selection.ts');
 
 assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a line"\r\nBoston,0,NaN\r\nnone,1,none'), [
   { name: 'New York, NY', n: null, note: 'A "quote"\nand a line' },
@@ -25,6 +26,7 @@ assert.deepEqual(parseCsv('name,n,note\r\n"New York, NY",,"A ""quote""\nand a li
 ]);
 for (const value of [null, undefined, '', ' ', 'NaN']) assert.equal(finite(value), null);
 assert.equal(finite(0), 0);
+assert.equal(formatNumber(-1.5, '% change'), '-1.5%');
 
 const questions = getQuestions();
 const extensions = getExtensions();
@@ -35,7 +37,9 @@ assert.equal(new Set(ids).size, ids.length, 'Question anchors must be unique');
 for (const pack of PACKS) assert.ok(ids.includes(pack.id) || EXTRA_TITLES[pack.id], `${pack.id}: missing from the question catalog`);
 for (const question of questions) assert.ok(THEMES.some(theme => theme.id === question.theme), `${question.id}: inaccessible research theme`);
 
-assert.equal(extensions.length, 8, 'The initial private export supplies eight complete extension packs');
+const registry = JSON.parse(fs.readFileSync('analysis/pack_registry.json', 'utf8'));
+assert.deepEqual(extensions.map(extension => extension.id).sort(), Object.keys(registry).sort(), 'All owned analyses must be present');
+assert.equal(new Set(extensions.map(extension => extension.questionId)).size, 33);
 for (const extension of extensions) {
   assert.ok(QUESTIONS.some(question => question.id === extension.questionId));
   const question = questions.find(question => question.id === extension.questionId);
@@ -47,6 +51,18 @@ for (const extension of extensions) {
   const c = metadata.cohort;
   assert.equal(c.raw, c.duplicates_removed + c.missing_or_unparsed + c.non_increasing + c.outside_quality_bounds + c.eligible);
   assert.ok(metadata.n <= c.eligible);
+  if (metadata.narrative_script_sha256) assert.match(metadata.narrative_script_sha256, /^[a-f0-9]{64}$/);
+  for (const chart of extension.answer.charts) for (const row of chart.rows) {
+    if (typeof row.p10 === 'number' && typeof row.median === 'number' && typeof row.p90 === 'number') assert.ok(row.p10 <= row.median && row.median <= row.p90);
+    if (chart.unit === '%') for (const series of chart.series) if (row[series.key] !== null) assert.ok(row[series.key] >= 0 && row[series.key] <= 100, `${extension.id}: percentage outside 0–100`);
+    if (chart.unit === 'correlation') for (const series of chart.series) assert.ok(Math.abs(row[series.key]) <= 1);
+  }
+  if (metadata.analysis_version >= 2) {
+    assert.ok(Number.isInteger(metadata.linkage_audit.ambiguous_cross_export_matches) && metadata.linkage_audit.ambiguous_cross_export_matches >= 0);
+    assert.ok(metadata.linkage_audit.recent_benchmark_finishes <= metadata.linkage_audit.linked_eligible_finishes);
+    assert.match(metadata.supporting_script_sha256, /^[a-f0-9]{64}$/);
+    assert.ok(metadata.observation_unit && metadata.evidence_scope);
+  }
 }
 const newShapes = table('ext_pacing_shapes', 'patterns.csv');
 assert.ok(Math.abs(newShapes.reduce((sum, row) => sum + row.value, 0) - 100) < 1e-8);
@@ -84,17 +100,38 @@ for (const city of new Set(profiles.rows.map(row => row.city))) {
   assert.ok(Math.abs(weightedChange) < 1e-8, `${city}: profile was not weighted by actual section distance`);
 }
 
-// P(exceptional | pattern) uses the eligible count within that pattern.
-// Its weighted average must recover the overall exceptional rate.
-const classification = table('r05_exceptional_vs_prior', 'fade_type_exceptional.csv').filter(row => ['True', 'False'].includes(row.exceptional));
-const eligibleN = classification.reduce((sum, row) => sum + row.n, 0);
-const exceptionalN = classification.filter(row => row.exceptional === 'True').reduce((sum, row) => sum + row.n, 0);
-const patternRates = questions.find(question => question.id === 'r30_negative_split_success').charts[0].rows;
-assert.equal(patternRates.reduce((sum, row) => sum + row.n_value, 0), eligibleN);
-assert.ok(Math.abs(patternRates.reduce((sum, row) => sum + row.value / 100 * row.n_value, 0) - exceptionalN) < 1e-8);
-const patternMix = questions.find(question => question.id === 'r31_multiple_good_strategies').charts[0].rows;
-for (const group of ['exceptional', 'ordinary']) assert.ok(Math.abs(patternMix.reduce((sum, row) => sum + row[group], 0) - 100) < 1e-8);
-for (const id of ['r32_where_pbs_are_gained', 'r33_start_congestion', 'r34_pacing_risk_reward', 'r35_course_adaptation']) {
+const improved = JSON.parse(fs.readFileSync('public/data/packs/ext_performance_profiles/summary.json', 'utf8')).statistics;
+const patternRates = table('ext_split_pattern_success', 'success_rates.csv');
+assert.equal(patternRates.reduce((sum,row) => sum + row.n_value, 0), improved.denominator);
+assert.equal(patternRates.reduce((sum,row) => sum + row.successes, 0), improved.improved);
+for (const row of patternRates) assert.ok(Math.abs(row.value - 100 * row.successes / row.n_value)<1e-8);
+const patternMix = table('ext_successful_race_shapes', 'pattern_mix.csv');
+assert.ok(patternMix.reduce((sum,row)=>sum+row.value,0)<=100+1e-8);
+for (const row of patternMix) assert.ok(Math.abs(row.value-100*row.successes/improved.improved)<1e-8);
+const gains = table('ext_earlier_best_section_gains', 'gains.csv');
+const gainSummary = JSON.parse(fs.readFileSync('public/data/packs/ext_earlier_best_section_gains/summary.json', 'utf8')).statistics;
+assert.ok(Math.abs(gains.reduce((sum,row)=>sum+row.value,0)-gainSummary.mean_total_gain_min)<1e-7);
+assert.ok(gains.every(row=>row.n_value===gainSummary.pair_count));
+const forecastSummary = JSON.parse(fs.readFileSync('public/data/packs/ext_checkpoint_forecast_validation/summary.json', 'utf8')).statistics;
+assert.equal(forecastSummary.training_before_year,forecastSummary.test_start_year);
+for (const row of table('ext_checkpoint_forecast_validation','errors.csv')) {
+  for (const key of ['even_pace','elapsed','trend']) assert.equal(row[`n_${key}`],forecastSummary.test_n);
+}
+for (const row of table('ext_checkpoint_forecast_validation','calibration.csv')) {
+  assert.ok(row.coverage>=0 && row.coverage<=100 && row.width>=0 && row.error90>=0);
+  assert.ok(row.fallback_count>=0 && row.fallback_count<=forecastSummary.test_n);
+}
+const transitions = table('ext_pacing_habit_persistence','transitions.csv');
+for (const previous of new Set(transitions.map(row=>row.previous))) {
+  assert.ok(Math.abs(transitions.filter(row=>row.previous===previous).reduce((sum,row)=>sum+row.value,0)-100)<1e-8);
+}
+const coursePairs=table('ext_paired_course_comparisons','course_pairs.csv');
+for (const row of coursePairs) {
+  const reverse=coursePairs.find(other=>other.origin===row.label && other.label===row.origin);
+  assert.ok(reverse && Math.abs(reverse.value+row.value)<1e-8 && reverse.n_value===row.n_value);
+}
+for (const row of table('ext_opening_tradeoffs','matched_openings.csv')) assert.ok(row.low<=row.high && row.editions>=2);
+for (const id of ['r16_groups_hold_or_fall', 'r33_start_congestion']) {
   const question = questions.find(question => question.id === id);
   assert.equal(question.charts.length, 0, `${id}: uncomputed research must not have fabricated chart values`);
   assert.ok(question.nextAnalysis?.measure && question.nextAnalysis?.compare && question.nextAnalysis?.needs, `${id}: missing research specification`);
@@ -129,11 +166,12 @@ for (const chart of charts) {
       if (count != null) assert.ok(Number.isInteger(count) && count >= 0, `${chart.title}: invalid sample size`);
     }
   }
-  const selections = Object.fromEntries((chart.filters || []).map(filter => {
-    const options = [...new Set(chart.rows.map(row => String(row[filter.key] ?? '')))].filter(Boolean);
-    return [filter.key, options.includes(filter.preferred) ? filter.preferred : options[0]];
-  }));
+  const selections = resolveSelection(chart);
   assert.ok(chart.rows.some(row => Object.entries(selections).every(([key, value]) => String(row[key]) === value)), `${chart.title}: empty initial selection`);
+  if (chart.filters?.length) for (const first of filterOptions(chart,0,selections)) {
+    const changed = resolveSelection(chart,{...selections,[chart.filters[0].key]:first});
+    assert.ok(chart.rows.some(row=>Object.entries(changed).every(([key,value])=>String(row[key])===value)), `${chart.title}: changing the first filter must retain valid downstream choices`);
+  }
 }
 for (const question of [...questions, ...extras]) for (const source of question.sources) {
   const href = source.href.replace(process.env.NEXT_PUBLIC_BASE_PATH || /^$/, '');

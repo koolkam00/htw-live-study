@@ -4,16 +4,14 @@ import { useId, useMemo, useState } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { finite, formatNumber } from '@/lib/csv';
 import type { ChartSpec } from '@/lib/research-data';
+import { filterOptions, resolveSelection } from '@/lib/chart-selection';
 
 const COLORS = ['#0758c7', '#ad492e', '#526078'];
 
 export default function QuestionViz({ spec }: { spec: ChartSpec }) {
   const id = useId();
   const filters = spec.filters || [];
-  const [selected, setSelected] = useState<Record<string, string>>(() => Object.fromEntries(filters.map(filter => {
-    const options = [...new Set(spec.rows.map(row => String(row[filter.key] ?? '')))].filter(Boolean);
-    return [filter.key, filter.preferred && options.includes(filter.preferred) ? filter.preferred : options[0] || ''];
-  })));
+  const [selected, setSelected] = useState<Record<string, string>>(() => resolveSelection(spec));
   const rows = useMemo(() => spec.rows.filter(row =>
     filters.every(filter => String(row[filter.key] ?? '') === selected[filter.key])
   ), [spec.rows, selected, spec.filters]);
@@ -29,12 +27,12 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
   const axisValue = (v: unknown) => {
     const n = finite(v);
     if (n === null) return String(v);
-    if (spec.unit === '%' || spec.unit === '% pace' || spec.unit === 'finish' || spec.unit === 'min/km') return formatNumber(n, spec.unit);
+    if (spec.unit === '%' || spec.unit === '% pace' || spec.unit === '% change' || spec.unit === 'finish' || spec.unit === 'min/km') return formatNumber(n, spec.unit);
     return formatNumber(n);
   };
   const units: Record<string, string> = {
-    '%': 'Percent (%)', '% pace': 'Pace difference (%) · below zero is faster', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
-    'min': 'Minutes', 'runners': 'Number of finishes', 'correlation': 'Correlation, from 0 to 1', 'sec/km': 'Change in seconds per kilometer',
+    '%': 'Percent (%)', '% pace': 'Pace difference (%) · below zero is faster', '% change': 'Finish-time change (%) · below zero is faster', 'finish': 'Finish time (hours:minutes)', 'min/km': 'Pace (minutes:seconds per km)',
+    'min': 'Minutes', 'runners': 'Number of finishes', 'correlation': 'Correlation, from −1 to 1', 'sec/km': 'Change in seconds per kilometer',
   };
 
   return (
@@ -42,11 +40,11 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
       <h3 id={`${id}-title`} className="chart-title">{spec.title}</h3>
       <p className="chart-unit">{units[spec.unit] || spec.unit}</p>
       {filters.length > 0 && <div className="chart-controls">
-        {filters.map(filter => {
-          const options = [...new Set(spec.rows.map(row => String(row[filter.key] ?? '')))].filter(Boolean);
+        {filters.map((filter, index) => {
+          const options = filterOptions(spec, index, selected);
           return <label key={filter.key} htmlFor={`${id}-${filter.key}`}>
             {filter.label}
-            <select id={`${id}-${filter.key}`} value={selected[filter.key]} onChange={event => setSelected(current => ({ ...current, [filter.key]: event.target.value }))}>
+            <select id={`${id}-${filter.key}`} value={selected[filter.key]} onChange={event => setSelected(current => resolveSelection(spec, { ...current, [filter.key]: event.target.value }))}>
               {options.map(option => <option key={option} value={option}>{option}</option>)}
             </select>
           </label>;

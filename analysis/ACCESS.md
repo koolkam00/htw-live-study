@@ -29,12 +29,15 @@ unique people.
 The remaining limits concern data and definitions:
 
 - FULL has 69,055 fewer feature rows than raw CORE records; do not assume identical
-  cohorts or join by row order.
+  cohorts or join by row order. Its record IDs are a different namespace: only
+  five apparent numeric-ID joins had agreeing runner names. Never use numeric
+  record IDs to join the exports.
 - `features.race_date` is empty throughout. Existing weather-overlay dates may
   provide chronology where the city/year join is unique and dates are verified.
-- Validate historical-feature definitions and temporal ordering before treating
-  them as prior ability. A populated field alone does not establish that it uses
-  only performances before the race being analyzed.
+- Supplied PB/ability fields include current-race information for many rows and
+  are not used as pre-race covariates. The new analysis recomputes benchmarks from
+  strictly earlier calendar years, and date-based intervals from complete,
+  unique supplied calendar coverage.
 - Actual halfway timestamps, gun/chip offsets, waves and corrals are not columns
   in these exports. Derived half-pace fields do not establish measured half splits.
 - Course validity years are absent. Historical route matching remains unverified.
@@ -43,3 +46,18 @@ The remaining limits concern data and definitions:
 
 No further repository invitation is needed. Unfinished analyses should distinguish
 uncomputed results and validation work from genuinely missing measurements.
+
+## Executed linkage audit
+
+The full-split natural join produced 2,366,742 candidate rows. Two ambiguous
+cross-export candidates were excluded, leaving **2,366,740** eligible linked
+finishes. **373,955** have a recent strictly-earlier-year benchmark; **383,860**
+consecutive cross-year pairs pass the endpoint-year requirements. These are
+performances/pairs, not unique people, and supplied identities are not independently
+verified. **2,143,118** linked finishes have a supplied race date.
+
+Weather notes identify Open-Meteo archive values nearest the scheduled local start.
+All 185 supplied weather dates parse and agree with their record year. Most GPX
+profiles describe 2024–2026 routes and lack historical validity ranges. Every raw
+time used in the new calculations is reparsed from CORE; FULL segment units were
+confirmed as minutes and section sums reconcile to supplied finish times.

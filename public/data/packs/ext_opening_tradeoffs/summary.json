@@ -1,0 +1,28 @@
+{
+  "answer_prose": "After matching race edition, recorded gender and prior-time band, faster-opening runners finished 1.5% faster than their earlier benchmark on average; similar-opening runners finished 4.7% slower. Improved fitness could produce both a faster start and a faster finish, so this is not a recommendation to start aggressively.",
+  "detail_prose": "The chart uses a benchmark from earlier years. It does not establish what would happen if an individual changed strategy.",
+  "charts": [
+    {
+      "title": "Performance after matching prior ability and race edition",
+      "table": "matched_openings.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Mean change"
+        },
+        {
+          "key": "low",
+          "label": "95% interval: lower"
+        },
+        {
+          "key": "high",
+          "label": "95% interval: upper"
+        }
+      ],
+      "note": "Negative is faster than the earlier benchmark. Intervals reflect uncertainty in group means, not the range of individual outcomes."
+    }
+  ],
+  "statistics": {}
+}

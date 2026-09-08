@@ -1,0 +1,26 @@
+{
+  "answer_prose": "Only 1 city met both-period sample requirements near the faster standard. Among those close finishes, 54.2% were at or below it in 2016\u20132017 and 58.8% in 2019. This narrow comparison cannot establish that the qualifying-rule change altered pacing.",
+  "detail_prose": "This initial analysis focuses on ages 18\u201331 in 2016\u20132017 and 2019; it does not assign individual Boston eligibility or acceptance.",
+  "charts": [
+    {
+      "title": "At or below the benchmark among nearby finishes",
+      "table": "thresholds.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "At or below the benchmark among nearby finishes"
+        }
+      ],
+      "filters": [
+        {
+          "key": "benchmark",
+          "label": "Time benchmark",
+          "preferred": "Five-minute-faster standard"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}
