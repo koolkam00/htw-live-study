@@ -32,8 +32,8 @@ def prepare_history(db, source):
     assert db.execute('SELECT count(*)=count(DISTINCT record_id) FROM features').fetchone()[0], 'Feature record IDs are not unique'
     db.execute('''CREATE TEMP TABLE safe_ids AS SELECT runner_id FROM features
       WHERE runner_id IS NOT NULL AND NOT is_ambiguous GROUP BY runner_id
-      HAVING count(DISTINCT CASE WHEN lower(trim(sex)) IN ('m','male','men') THEN 'm'
-        WHEN lower(trim(sex)) IN ('f','female','women') THEN 'f' END)<=1
+      HAVING count(DISTINCT CASE WHEN lower(trim(sex)) IN ('m','male','men','man') THEN 'm'
+        WHEN lower(trim(sex)) IN ('f','female','women','woman') THEN 'f' END)<=1
       AND coalesce(max(yob)-min(yob),0)<=2
       AND count(*)=count(DISTINCT (city,year,race))''')
     location = str(source/'race_conditions.parquet').replace("'", "''")

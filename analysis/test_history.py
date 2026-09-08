@@ -21,7 +21,10 @@ class HistoryValidation(unittest.TestCase):
             cases=[('A',2017,170,'Alpha'),('A',2020,200,'Alpha'),('A',2021,190,'Alpha'),
                    ('A',2021,180,'Beta'),('A',2022,185,'Alpha'),
                    ('B',2020,210,'Alpha'),('B',2022,205,'Alpha'),
-                   ('Unmatched',2022,220,'Alpha')]
+                   ('Unmatched',2022,220,'Alpha'),
+                   ('ConflictingMan',2020,210,'Alpha'),('ConflictingMan',2022,205,'Alpha'),
+                   ('ConflictingWoman',2020,210,'Alpha'),('ConflictingWoman',2022,205,'Alpha'),
+                   ('EquivalentWoman',2020,210,'Alpha'),('EquivalentWoman',2022,205,'Alpha')]
             for rid,(uid,year,finish,city) in enumerate(cases,1):
                 times=[finish*60*km/42.195 for km in POINTS]
                 raw=[rid,city+' Marathon',year,city,'Fixture '+uid,'F',year-1980,'35-44',str(year-1980)]+[clock(t) for t in times]
@@ -29,7 +32,9 @@ class HistoryValidation(unittest.TestCase):
                 rounded=[round(t,3) for t in times]
                 segments=[(t-(rounded[i-1] if i else 0))/60 for i,t in enumerate(rounded)]
                 if uid=='Unmatched': segments[0]+=1
-                feature=[rid+9000,city,year,city+' Marathon','Fixture '+uid,uid,False,'F',1980,rounded[-1]/60]+segments
+                sex = {('ConflictingMan',2020):' man ', ('ConflictingWoman',2020):'woman',
+                       ('ConflictingWoman',2022):'M', ('EquivalentWoman',2020):' WOMAN '}.get((uid,year),'F')
+                feature=[rid+9000,city,year,city+' Marathon','Fixture '+uid,uid,False,sex,1980,rounded[-1]/60]+segments
                 db.execute('INSERT INTO feature VALUES ('+','.join('?' for _ in feature)+')',feature)
             db.execute('CREATE TABLE weather_fixture (city VARCHAR,year INTEGER,race_date VARCHAR,temp_c DOUBLE,dewpoint_c DOUBLE,wind_mps DOUBLE,precip_mm DOUBLE)')
             for city,year in sorted(set((x[3],x[1]) for x in cases)):
@@ -38,7 +43,9 @@ class HistoryValidation(unittest.TestCase):
                 db.execute(f'COPY {table} TO ? (FORMAT PARQUET)',[str(source/(file+'.parquet'))])
             prepare(db,source,keep_record_id=True)
             audit=prepare_history(db,source)
-            self.assertEqual(audit['linked_eligible_finishes'],7,'All matching splits join despite deliberately unrelated record IDs; the changed section is excluded')
+            self.assertEqual(audit['linked_eligible_finishes'],9,'Matching splits join despite unrelated IDs; changed sections and conflicting gender identities are excluded')
+            self.assertEqual(db.execute("SELECT count(*) FROM linked WHERE uid LIKE 'Conflicting%'").fetchone()[0],0,'man and woman labels must participate in identity conflict checks')
+            self.assertEqual(db.execute("SELECT count(*) FROM linked WHERE uid='EquivalentWoman'").fetchone()[0],2,'Equivalent woman and F labels must identify the same recorded category')
             row=db.execute("SELECT recent_best/60,earlier_best/60,prior_count FROM history WHERE uid='A' AND year=2022").fetchone()
             self.assertAlmostEqual(row[0],180,places=4)
             self.assertAlmostEqual(row[1],170,places=4)
