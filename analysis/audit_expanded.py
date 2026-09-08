@@ -12,7 +12,8 @@ def audit(source, output):
     db.execute('SET threads=2')
     db.execute('SET temp_directory=?', [str(source / 'audit-temp')])
     for view, file in [('f','features'),('r','race_records'),('w','race_conditions'),('c','course_segments'),('cp','course_profiles')]:
-        db.execute(f'CREATE VIEW {view} AS SELECT * FROM read_parquet(?)', [str(source / (file+'.parquet'))])
+        location = str(source / (file+'.parquet')).replace("'", "''")
+        db.execute(f"CREATE VIEW {view} AS SELECT * FROM read_parquet('{location}')")
     report = {}
     report['feature_values'] = records(db, '''SELECT count(*) AS n,count(DISTINCT record_id) AS unique_record_ids,
       count(*) FILTER(WHERE valid_splits) AS valid_flag,
