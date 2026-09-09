@@ -3,6 +3,7 @@ import path from 'node:path';
 import { parseCsv } from './csv';
 import type { ChartSpec, ResearchAnswer } from './research-data';
 import { MARATHON_SECTION_ENDS } from './section-labels';
+import { screenEditions } from './edition-coverage';
 
 const root = path.join(process.cwd(), 'public/data/packs');
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
@@ -62,19 +63,25 @@ export function getExtensions(): Extension[] {
       // Include explicit null years so a line cannot bridge an unobserved season.
       if (chart.kind === 'line' && chart.xLabel === 'Race year') {
         const withGaps = [];
+        const partialRows = [];
         for (const city of new Set(rows.map(row => row.city))) {
           const cityRows = rows.filter(row => row.city === city).sort((a, b) => Number(a.label) - Number(b.label));
+          const screened = screenEditions(cityRows, `n_${spec.series[0].key}`);
+          partialRows.push(...screened.partial);
           for (let year = Number(cityRows[0].label); year <= Number(cityRows[cityRows.length - 1].label); year++) {
-            withGaps.push(cityRows.find(row => row.label === year) || { city, label: year, ...Object.fromEntries(spec.series.flatMap(series => [[series.key, null], [`n_${series.key}`, null]])) });
+            withGaps.push(screened.retained.find(row => row.label === year) || { city, label: year, ...Object.fromEntries(spec.series.flatMap(series => [[series.key, null], [`n_${series.key}`, null]])) });
           }
         }
-        return { ...chart, rows: withGaps, xUnit: 'year' };
+        return { ...chart, rows: withGaps, partialRows, xUnit: 'year', note: `${chart.note || ''} Editions below 25% of the city’s median eligible edition size are omitted from the trend and retained in the exact-value table. This sample-size screen cannot establish that the other editions are complete.`.trim() };
       }
       return { ...chart, rows };
     });
+    const method = [...meta.methodology_prose];
+    if (meta.question_id === 'r06_decided_after_30k') method.push(`The ranking analysis requires at least 100 eligible finishes within a city, year and race. This excludes ${(meta.cohort.eligible - meta.n).toLocaleString('en-US')} otherwise eligible finishes in small fields. Tied times receive average ranks and are retained.`);
+    if (meta.question_id === 'r26_pacing_over_20y') method.push('The chart applies an additional display screen: city-years below 25% of the city’s median eligible edition size are omitted from trend lines and labeled in the exact-value tables. Counts still describe the original calculated cohort. This flags possible partial coverage without certifying the other editions as complete.');
     extensions.push({ id: entry.name, questionId: meta.question_id, title: meta.title, asOf: meta.as_of,
       n: meta.n, exportId: meta.input_export_id, inputAsOf: meta.input_as_of, corpus: meta.corpus, scope: meta.evidence_scope || 'descriptive',
-      answer: { answer: summary.answer_prose, detail: summary.detail_prose, method: meta.methodology_prose,
+      answer: { answer: summary.answer_prose, detail: summary.detail_prose, method,
         charts, sources, published: meta.as_of, available: true,
         dataset: { n: meta.n, exportId: meta.input_export_id, asOf: meta.input_as_of, unit: meta.observation_unit || 'eligible finishes', scope: meta.evidence_scope || 'descriptive' } },
     });

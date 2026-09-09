@@ -1,4 +1,4 @@
-import { getLive, type ChartSpec } from './research-data';
+import { getLive, liveRows, type ChartSpec } from './research-data';
 import { finite, type DataRow } from './csv';
 
 export type StudyFigureData = { id: string; title: string; answer: string; method: string[]; charts: ChartSpec[] };
@@ -13,9 +13,9 @@ const definitions = [
   },
   {
     id: 'fig2', title: 'How does wall frequency vary by age and ability?',
-    answer: 'Wall rates differ across age and recorded ability groups. These comparisons describe the runners in each group; they do not isolate the effect of age or fitness.',
-    method: ['Use the published age and recent-personal-best group summaries. These views have different coverage because an age or linked performance history may be missing.'],
-    titles: ['Wall rate by age group', 'Wall rate by recorded recent best'],
+    answer: 'These wall rates describe the repeaters subset: runners with multiple linked races. Its age-group percentages differ from the original-dataset age chart above because it contains different finishes.',
+    method: ['Use the published repeaters age table (t4) and recent-personal-best group figure. These are linked-history subsets, not the original-dataset age table (t2). A reported age or linked performance history may be missing. These comparisons do not isolate age or fitness effects.'],
+    titles: ['Wall rate by age group · repeaters subset', 'Wall rate by recorded recent best · linked histories'],
   },
   {
     id: 'fig3', title: 'What happens around a personal best?',
@@ -64,6 +64,10 @@ export function getStudyFigures(): StudyFigureData[] {
           const point = points.get(x) || { label };
           const y = finite(curve.y[i]);
           point[`s${seriesIndex}`] = y === null ? null : y * (percent ? 100 : 1);
+          if (definition.id === 'fig2' && index === 0) {
+            const sample = liveRows('t4').find(row => row.age_group === x && row.sex === (curve.sex || curve.label));
+            point[`n_s${seriesIndex}`] = finite(sample?.n);
+          }
           points.set(x, point);
         });
       }
@@ -74,7 +78,7 @@ export function getStudyFigures(): StudyFigureData[] {
         title: definition.titles[index], kind: panel.xLabel === 'period' || panel.xLabel === 'age group' ? 'bars' : 'line', xNumeric, xLabel,
         xUnit: ability ? 'finish' : '', unit: percent ? '%' : definition.id === 'fig6' && index < 2 ? 'finish' : panel.yLabel,
         rows: [...points.values()], series: series.map((curve, i) => ({ key: `s${i}`, label: ({ F: 'Women', M: 'Men', all: 'All runners' } as Record<string, string>)[curve.sex || curve.label] || curve.label })),
-        note: ability ? 'Ability labels are the lower edges of the source’s time groups. Implausibly fast groups and sparsely populated extremes need validation; point counts are not supplied.' : 'Percentages and means use each published group. Point counts and uncertainty intervals are not supplied in this figure export.',
+        note: definition.id === 'fig2' && index === 0 ? 'Repeaters subset, using the published t4 counts. A runner can contribute several finishes. This is a different cohort from the original-dataset age chart above. Uncertainty intervals are not supplied.' : ability ? 'Linked performance histories with a recorded recent best. Labels are the lower edges of the source’s time groups. Implausibly fast groups and sparsely populated extremes need validation; point counts are not supplied.' : 'Percentages and means use each published group. Point counts and uncertainty intervals are not supplied in this figure export.',
       }];
     });
     return charts.length ? [{ id: definition.id, title: definition.title, answer: definition.answer, method: definition.method, charts }] : [];

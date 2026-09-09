@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import QuestionViz from './QuestionViz';
+import QuestionCharts from './QuestionCharts';
 import type { ResearchAnswer } from '@/lib/research-data';
 
 export default function ResearchQuestion({ question, standalone = false, headingLevel = 2 }: { question: ResearchAnswer; standalone?: boolean; headingLevel?: 2 | 3 }) {
@@ -14,7 +14,7 @@ export default function ResearchQuestion({ question, standalone = false, heading
     </header>
     <p className={question.available ? 'answer' : 'answer-state'}>{question.answer}</p>
     {question.detail && <p className="answer-detail">{question.detail}</p>}
-    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} {question.dataset.unit || 'eligible finishes'} · Exported {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}{question.dataset.scope && question.dataset.scope !== 'descriptive' ? ` · ${question.dataset.scope}` : ''}</p>}
+    {question.dataset && <p className="study-meta">{question.charts.some(chart => chart.filters?.length) ? 'Full analysis cohort: ' : ''}{new Intl.NumberFormat('en-US').format(question.dataset.n)} {question.dataset.unit || 'eligible finishes'} · Exported {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}{question.dataset.scope && question.dataset.scope !== 'descriptive' ? ` · ${question.dataset.scope}` : ''}</p>}
     {question.method[0] && <p className="method-summary"><strong>How we measured it.</strong> {question.method[0]}</p>}
     <details className="methodology">
       <summary>Full methodology &amp; sources</summary>
@@ -30,11 +30,11 @@ export default function ResearchQuestion({ question, standalone = false, heading
         {question.dataset && <p className="study-meta">Source export: {question.dataset.exportId}. Chart samples may be smaller than the eligible analysis cohort.</p>}
         <div className="source-links">
           {question.sources.map((source, i) => <a href={source.href} key={`${source.href}-${i}`}>{source.label}</a>)}
-          <Link href="/methodology">Study methodology</Link>
+          <Link prefetch={false} href={`/methodology#${question.number ? `method-${question.id}` : ['smyth_htw', 'wall-timing'].includes(question.id) ? 'method-smyth_htw' : 'question-methods'}`}>Study methodology</Link>
         </div>
         {question.related?.length ? <div className="source-links">{question.related.map(link => <Link key={link.href} href={link.href}>{link.label}</Link>)}</div> : null}
       </div>
     </details>
-    {question.charts.map((spec, i) => <QuestionViz key={`${question.id}-${i}`} spec={spec} />)}
+    <QuestionCharts charts={question.charts} sharedCourse={question.id === 'r26_pacing_over_20y'} />
   </article>;
 }

@@ -2,6 +2,7 @@ import ResearchQuestion from './ResearchQuestion';
 import Link from 'next/link';
 import { getLive, getQuestions } from '@/lib/research-data';
 import { THEMES } from '@/lib/question-catalog';
+import { getPersonalSummary } from '@/lib/personalized-data';
 import { getExtensions } from '@/lib/extension-data';
 
 export default function QuestionsHome() {
@@ -10,6 +11,7 @@ export default function QuestionsHome() {
   const corpus = live?.corpus;
   const ready = ['ready', 'ok'].includes(live?.status);
   const extension = getExtensions()[0];
+  const guide = getPersonalSummary();
   return (
     <div className="questions">
       <section className="study-intro">
@@ -19,7 +21,7 @@ export default function QuestionsHome() {
           : ready && typeof corpus?.n_records === 'number'
           ? `${new Intl.NumberFormat('en-US').format(corpus.n_records)} recorded finishes · ${corpus.n_cities} cities · ${corpus.year_min}–${corpus.year_max}`
           : 'Research on how runners start, adapt, finish, and improve.'}</p>
-        {extension && <p className="study-meta">Coverage varies by question. Each answer shows its eligible sample and data date.</p>}
+        {extension && <p className="study-meta">{guide ? `${guide.cities.length - 1} courses have usable complete splits (${extension.corpus.n_cities} cities ingested). ` : ''}Coverage varies by question; samples may include partial race fields.</p>}
         <p><Link href="/your-race" className="guide-entry">Explore 12 questions for your course, age and target time</Link></p>
       </section>
       <nav className="theme-nav" aria-label="Research themes">

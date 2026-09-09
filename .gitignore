@@ -17,3 +17,6 @@ Thumbs.db
 *.tar.gz
 analysis/private/
 __pycache__/
+
+# Reproducible public transport views generated before the site build.
+public/data/guide/

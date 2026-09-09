@@ -13,11 +13,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">Skip to content</a>
         <header className="site-header">
           <div className="container header-inner">
-            <Link href="/" className="site-title">Marathon Pacing Study</Link>
+            <Link prefetch={false} href="/" className="site-title">Marathon Pacing Study</Link>
             <nav aria-label="Main navigation" className="main-nav">
-              <Link href="/your-race">Your race</Link>
-              <Link href="/">Questions</Link>
-              <Link href="/methodology">Methodology</Link>
+              <Link prefetch={false} href="/your-race">Your race</Link>
+              <Link prefetch={false} href="/">Questions</Link>
+              <Link prefetch={false} href="/methodology">Methodology</Link>
             </nav>
           </div>
         </header>
@@ -25,10 +25,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="container footer">
           <p>How marathons are run, split by split.</p>
           <nav aria-label="More research">
-            <Link href="/courses">By course</Link>
-            <Link href="/packs">All analyses</Link>
-            <Link href="/htw">Hitting the wall</Link>
-            <Link href="/methodology">Sources &amp; methodology</Link>
+            <Link prefetch={false} href="/courses">By course</Link>
+            <Link prefetch={false} href="/packs">All analyses</Link>
+            <Link prefetch={false} href="/htw">Hitting the wall</Link>
+            <Link prefetch={false} href="/methodology">Sources &amp; methodology</Link>
           </nav>
         </footer>
       </body>

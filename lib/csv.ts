@@ -48,6 +48,8 @@ export function formatNumber(value: number, unit = ''): string {
     const minutes = Math.round(value);
     return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
   }
-  const formatted = new Intl.NumberFormat('en-US', { maximumFractionDigits: unit === 'correlation' ? 2 : unit === 'runners' ? 0 : 1 }).format(value);
+  const digits = unit === 'correlation' ? 2 : unit === 'runners' ? 0 : 1;
+  const rounded = Math.round(value * 10 ** digits) / 10 ** digits;
+  const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: unit === 'min' ? 1 : 0, maximumFractionDigits: digits }).format(rounded === 0 ? 0 : rounded);
   return unit === '%' || unit === '% pace' || unit === '% change' ? `${formatted}%` : unit === 'runners' || unit === 'correlation' || !unit ? formatted : `${formatted} ${unit}`;
 }
