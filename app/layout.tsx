@@ -15,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container header-inner">
             <Link href="/" className="site-title">Marathon Pacing Study</Link>
             <nav aria-label="Main navigation" className="main-nav">
+              <Link href="/your-race">Your race</Link>
               <Link href="/">Questions</Link>
               <Link href="/methodology">Methodology</Link>
             </nav>

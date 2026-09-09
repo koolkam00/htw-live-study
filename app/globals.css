@@ -11,6 +11,31 @@
   --accent: var(--course);
   --panel: var(--wash);
 }
+.guide-intro { margin-bottom: 1.5rem; }
+.guide-intro p { margin-top: .8rem; max-width: 40rem; color: var(--slate); }
+.guide-form { margin-block: 1.25rem; }
+.guide-profile { padding: 1.25rem; border: 1px solid var(--rule); border-top: 3px solid var(--course); background: var(--wash); border-radius: 4px; }
+.guide-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.guide-fields label { display: grid; align-content: start; gap: .4rem; min-width: 0; }
+.guide-fields input, .guide-fields select { width: 100%; min-width: 0; }
+.guide-form > .study-meta { margin-top: .8rem; }
+.guide-optional { margin-top: .65rem; }
+.guide-optional .study-meta { margin-top: .65rem; }
+.guide-submit { margin-top: 1rem; color: white; background: var(--course); border-color: var(--course); font-weight: 600; }
+.guide-selection { font-size: 1.0625rem; font-weight: 600; line-height: 1.6; padding-top: .5rem; overflow-wrap: anywhere; }
+.guide-coverage { margin-top: 1rem; }
+.guide-widened { margin-top: .5rem; padding-left: .75rem; border-left: 2px solid var(--course); }
+.guide-index { margin-top: 1.5rem; }
+.guide-error { margin-top: .75rem; color: #923819; }
+.guide-error button { margin-top: .65rem; }
+.guide-source { margin-block: 2rem 1rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.guide-entry { display: inline-block; padding-block: .4rem; font-size: 1rem; }
+.guide-question { scroll-margin-top: 1rem; }
+@media (max-width: 480px) {
+  .guide-fields { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+  .guide-profile { padding: 1rem; }
+  .guide-submit { width: 100%; }
+}
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-padding-top: 1.5rem; -webkit-text-size-adjust: 100%; }
 body {

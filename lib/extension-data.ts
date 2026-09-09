@@ -25,6 +25,8 @@ export function getExtensions(): Extension[] {
     const metaPath = path.join(folder, 'pack_meta.json');
     if (!fs.existsSync(metaPath)) continue;
     const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    // The personalized guide has its own cohort-shard contract and renderer.
+    if (meta.presentation === 'personalized-guide') continue;
     if (meta.status !== 'ready') continue;
     const summary = JSON.parse(fs.readFileSync(path.join(folder, 'summary.json'), 'utf8'));
     const valid = meta.schema_version === 1 && meta.id === entry.name && typeof meta.question_id === 'string'

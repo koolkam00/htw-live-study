@@ -99,7 +99,61 @@ are rendered both on the question and the site's Methodology page. Narrative
 findings are regenerated from the aggregate CSVs by `write_findings.py`, with a
 separate narrative-script checksum. They do not introduce new numerical inputs.
 
-## Definitions and limits
+## Personalized race guide
+
+The `/your-race` page adds 12 personalized questions to the 35 broader questions.
+Visitors select course, exact-age band and a whole-minute threshold from 2:30 to
+4:30, with 15-minute presets, optional recorded gender and previous marathon time.
+Prepare, choose and review reorder the same questions. No historical goals or
+historical route changes are required or inferred.
+
+`build_personalized.py` reuses the validated private tables inside the extended
+calculation. The workflow passes `--personalized-output` and uploads the separate
+**pacing-personalized-aggregates** artifact. It contains only fixed aggregate
+cohorts and checkpoint cells. Import it separately after review:
+
+```bash
+python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260907-1318
+npm run verify:data
+npm run build
+```
+
+The importer validates all cells and provenance before replacing only
+`public/data/packs/ext_personalized_guide`. Public files are readable aggregate JSON,
+validated before import and checked by SHA-256. Only the selected course loads,
+and checkpoint files load only when requested. HTTP compression is left to the
+host and requires no browser-specific decompressor. The original 33-pack importer
+and registry retain their existing ownership boundary.
+
+The guide publishes achieved-time pacing bands, earlier-benchmark opening
+comparisons, exact-threshold near finishes, age contrasts, supplied terrain
+alignment, opening/late-pace comparisons, checkpoint outcomes, course outcome
+spread, edition-weighted weather, threshold distributions, paired returns and
+earlier-best improvement contributions. Each question and the Methodology page
+describe its denominator, conditioning variables and limits.
+
+Exact ages use 18–24 then five-year bands through 85–89; unknown ages remain in
+All only. Optional previous time selects a 15-minute band of recent recorded
+bests, not an exact last-race match. The client tries broader age/gender cohorts
+before dropping prior-time constraints and explicitly labels every relaxation.
+Per-course results never silently substitute another course. Cross-course and
+age-comparison panels deliberately vary the dimension they compare.
+
+Custom threshold counts use strict finish < target at every integer minute from
+150 through 270. No interpolation is used. Achieved-time profile and improvement
+cohorts use the displayed 15-minute bucket centered on the nearest preset. Near
+finishes use [target−5,target) and [target,target+5) minute intervals. Checkpoints
+use two-minute elapsed bands with an exclusive upper endpoint, optional recent
+5 km trend and no prior-time filter. Their historical outcome proportions are
+not validated individual probabilities and exclude non-finishers.
+
+`scripts/verify-personalized.cjs` checks all twelve paths across presets, custom
+targets, optional history, sparse cities, explicit fallbacks, sample counts,
+finite charts, checkpoint boundaries and the actual JSON response decoder.
+`test_personalized.py` tests strict finish boundaries and section reconciliation
+on hand-checkable synthetic data inside the private workflow.
+
+## Shared definitions and limits
 
 - Splits must parse as elapsed H:MM:SS or M:SS and increase strictly. All nine
   checkpoints must exist. The finish distance is 42.195 km despite the source

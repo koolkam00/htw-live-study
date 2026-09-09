@@ -14,6 +14,7 @@ export type ChartSpec = {
   xNumeric?: boolean;
   xUnit?: string;
   sectionEnds?: number[];
+  band?: { lower: string; upper: string };
   rows: DataRow[];
   series: { key: string; label: string }[];
   filters?: { key: string; label: string; preferred?: string }[];

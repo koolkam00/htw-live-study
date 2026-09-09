@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { finite, formatNumber } from '@/lib/csv';
 import type { ChartSpec } from '@/lib/research-data';
 import { filterOptions, resolveSelection } from '@/lib/chart-selection';
@@ -20,6 +20,7 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
   const signed = allValues.some(value => value < 0);
   const max = spec.unit === '%' ? Math.max(100, ...allValues) : spec.unit === 'correlation' ? 1 : Math.max(1, ...allValues.map(Math.abs));
   const hasCounts = rows.some(row => spec.series.some(series => finite(row[`n_${series.key}`]) !== null));
+  const chartRows = spec.band ? rows.map(row => ({ ...row, interval: [row[spec.band!.lower], row[spec.band!.upper]] })) : rows;
   const value = (number: unknown) => {
     const n = finite(number);
     return n === null ? 'Not available' : formatNumber(n, spec.unit);
@@ -53,19 +54,20 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
         })}
       </div>}
       {spec.series.length > 1 && <div className="chart-legend" aria-label="Chart legend">
-        {spec.series.map((series, i) => <span key={series.key} className={`chart-key ${spec.kind === 'line' && i === 1 ? 'dashed' : ''}`} style={{ '--series-color': COLORS[i % COLORS.length] } as React.CSSProperties}>{series.label}</span>)}
+        {spec.series.map((series, i) => <span key={series.key} className={`chart-key ${spec.kind === 'line' && i === 1 ? 'dashed' : ''}`} style={{ '--series-color': spec.band && i > 0 ? '#0758c7' : COLORS[i % COLORS.length] } as React.CSSProperties}>{series.label}</span>)}
       </div>}
       {!allValues.length ? <p className="answer-state" role="status">No published values for this selection.</p>
         : spec.kind === 'line' ? <div className="chart">
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-            <LineChart data={rows} margin={{ top: 20, right: 16, bottom: 24, left: 0 }} accessibilityLayer>
+            <ComposedChart data={chartRows} margin={{ top: 20, right: 16, bottom: 24, left: 0 }} accessibilityLayer>
               <CartesianGrid vertical={false} stroke="#dfe5ee" />
               <XAxis dataKey="label" type={spec.xNumeric ? 'number' : 'category'} domain={spec.xNumeric ? ['dataMin', 'dataMax'] : undefined} tickCount={5} tickLine={false} axisLine={false} minTickGap={28} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={v => typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v)} label={{ value: spec.xLabel, position: 'insideBottom', offset: -18, fontSize: 14, fill: '#526078' }} />
               <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={axisValue} domain={signed || spec.unit === 'min/km' ? ['auto', 'auto'] : [0, 'auto']} />
               {signed && <ReferenceLine y={0} stroke="#526078" />}
+              {spec.band && <Area type="linear" dataKey="interval" stroke="none" fill="#0758c7" fillOpacity={0.12} tooltipType="none" isAnimationActive={false} />}
               <Tooltip formatter={v => value(v)} labelFormatter={v => spec.sectionEnds ? `Average over ${label(v)}` : `${spec.xLabel}: ${label(v)}`} contentStyle={{ fontSize: 14, border: '1px solid #dfe5ee', borderRadius: 4, maxWidth: 250 }} />
-              {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={COLORS[i % COLORS.length]} strokeWidth={2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={{ r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}
-            </LineChart>
+              {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={spec.band && i > 0 ? '#0758c7' : COLORS[i % COLORS.length]} strokeOpacity={spec.band && i > 0 ? 0.35 : 1} strokeWidth={spec.band && i > 0 ? 1 : 2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={spec.band && i > 0 ? false : { r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}
+            </ComposedChart>
           </ResponsiveContainer>
         </div> : <div className="bars">
           {rows.map((row, i) => <div className="bar-item" key={`${row.label}-${i}`}>
