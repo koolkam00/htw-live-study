@@ -1,0 +1,50 @@
+{
+  "answer_prose": "Opening speed and the ability to hold that pace are different trends. Track both within a city to see whether a faster year also had less slowing.",
+  "detail_prose": "The charts show observed yearly medians; they do not isolate changes in training, shoes or fueling.",
+  "charts": [
+    {
+      "title": "Opening speed over time",
+      "table": "yearly_pacing.csv",
+      "unit": "min/km",
+      "xLabel": "Race year",
+      "series": [
+        {
+          "key": "opening",
+          "label": "Median opening pace"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "city",
+          "label": "Course",
+          "preferred": "New York"
+        }
+      ]
+    },
+    {
+      "title": "Pace retention over time",
+      "table": "yearly_pacing.csv",
+      "unit": "% pace",
+      "xLabel": "Race year",
+      "series": [
+        {
+          "key": "retention",
+          "label": "Second 20 km versus first"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "city",
+          "label": "Course",
+          "preferred": "New York"
+        }
+      ],
+      "note": "A lower value means less slowing; negative means a faster second 20 km."
+    }
+  ],
+  "statistics": {}
+}

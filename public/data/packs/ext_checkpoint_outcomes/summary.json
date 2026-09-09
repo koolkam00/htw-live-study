@@ -1,0 +1,26 @@
+{
+  "answer_prose": "Being close to target pace at a checkpoint does not guarantee the target finish. Among runners close to sub-3 pace, 19.4% broke three hours at the 20 km check, versus 52.7% at 40 km.",
+  "detail_prose": "Each checkpoint selects a different group of runners.",
+  "charts": [
+    {
+      "title": "Target achieved among runners close to target pace",
+      "table": "goal_rates.csv",
+      "unit": "%",
+      "xLabel": "Checkpoint (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "Target achieved among runners close to target pace"
+        }
+      ],
+      "filters": [
+        {
+          "key": "target",
+          "label": "Finish target",
+          "preferred": "Under 3 hours"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

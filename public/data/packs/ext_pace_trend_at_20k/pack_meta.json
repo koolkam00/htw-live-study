@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "id": "ext_pace_trend_at_20k",
+  "question_id": "r03_accel_vs_decel_20k",
+  "title": "Can two runners reach 20 km together but have different prospects?",
+  "status": "ready",
+  "as_of": "2026-09-08T13:46:43Z",
+  "n": 1502890,
+  "input_export_id": "private-20260907-1318",
+  "input_as_of": "2026-09-07T13:19:23Z",
+  "live_json_as_of": "2026-09-07T04:44:53Z",
+  "input_asset_sha256": "f042ee689ebbb487cf87abe70dd796fd9362765bca36a7e1b0ecf0f715a00fe7",
+  "input_manifest_sha256": "7d490eb272754e12a67ef686c5ff9a17a62a41b645b15d11065da398585f3e0e",
+  "analysis_script_sha256": "cb6127b7f2824b2aea9b8095b0d6adc5415990e85955b33ff7793f5366e6fd23",
+  "analysis_version": 1,
+  "engine": "DuckDB 1.4.4",
+  "corpus": {
+    "n_records": 3451055,
+    "n_cities": 33,
+    "n_race_years": 203
+  },
+  "cohort": {
+    "deduplicated": 3451055,
+    "complete": 2961462,
+    "increasing": 2744217,
+    "eligible": 2739842,
+    "raw": 3451055,
+    "duplicates_removed": 0,
+    "missing_or_unparsed": 489593,
+    "non_increasing": 217245,
+    "outside_quality_bounds": 4375
+  },
+  "methodology_prose": [
+    "Compare the 15\u201320 km pace with 10\u201315 km. Accelerating is more than 2% faster, slowing more than 2% slower, and steady within 2%. Match within city, year, race and the same floored minute of elapsed time at 20 km.",
+    "Only strata with at least 20 finishes in each of the three groups qualify. Use the smallest group count as each stratum\u2019s common weight for all three groups, then average the within-stratum finish-time differences versus steady. Sample counts are actual observations, not matching weights.",
+    "Runners arrive within the same 60-second band, not at an identical instant. Prior fitness and runner intention are unknown. This is a conditional association, not proof that accelerating causes a better finish or an out-of-sample prediction.",
+    "Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.",
+    "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.",
+    "Each observation is a race finish. The same person can appear in multiple races. No runner identities are linked across races. Public cells require at least 100 observations; matched comparisons additionally require at least 20 per group in each stratum."
+  ],
+  "observational": true,
+  "minimum_public_cell": 100
+}

@@ -1,0 +1,33 @@
+{
+  "answer_prose": "Compare the course-specific race shapes of improved, similar and slower performances. This identifies how their pace distributions differ on the same named course.",
+  "detail_prose": "A stronger finish does not prove better terrain adaptation. Historical route validity and direct effort measurements are still missing.",
+  "charts": [
+    {
+      "title": "Course pacing profile by performance group",
+      "table": "course_responses.csv",
+      "unit": "% pace",
+      "xLabel": "Distance (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "Course pacing profile by performance group"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "city",
+          "label": "Course",
+          "preferred": "Boston"
+        },
+        {
+          "key": "outcome",
+          "label": "Performance",
+          "preferred": "More than 2% faster"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

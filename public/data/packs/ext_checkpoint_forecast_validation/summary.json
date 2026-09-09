@@ -1,0 +1,63 @@
+{
+  "answer_prose": "In unseen 2024\u20132026 race editions, the trend model\u2019s median finish-time error was 6.5 minutes at 20 km and 3.9 minutes at 30 km.",
+  "detail_prose": "All model fitting uses editions before 2024; all checkpoints are evaluated on the same 824,862 complete finishes in the later years.",
+  "charts": [
+    {
+      "title": "Median finish-time error in later race years",
+      "table": "errors.csv",
+      "unit": "min",
+      "xLabel": "Checkpoint (km)",
+      "series": [
+        {
+          "key": "even_pace",
+          "label": "Even-pace extrapolation"
+        },
+        {
+          "key": "elapsed",
+          "label": "Learned from elapsed pace"
+        },
+        {
+          "key": "trend",
+          "label": "Elapsed pace + recent trend"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true
+    },
+    {
+      "title": "Observed coverage of the 80% prediction interval",
+      "table": "calibration.csv",
+      "unit": "%",
+      "xLabel": "Checkpoint (km)",
+      "series": [
+        {
+          "key": "coverage",
+          "label": "Finish inside interval"
+        }
+      ]
+    },
+    {
+      "title": "Prediction width and larger errors",
+      "table": "calibration.csv",
+      "unit": "min",
+      "xLabel": "Checkpoint (km)",
+      "series": [
+        {
+          "key": "width",
+          "label": "Median interval width"
+        },
+        {
+          "key": "error90",
+          "label": "90th percentile absolute error"
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "training_before_year": 2024,
+    "test_start_year": 2024,
+    "test_end_year": 2026,
+    "training_n": 1914980,
+    "test_n": 824862
+  }
+}

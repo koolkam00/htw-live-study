@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "id": "ext_gender_pacing",
+  "question_id": "r23_gender_pacing",
+  "title": "How does pacing differ across recorded gender groups?",
+  "status": "ready",
+  "as_of": "2026-09-08T13:46:43Z",
+  "n": 2225913,
+  "input_export_id": "private-20260907-1318",
+  "input_as_of": "2026-09-07T13:19:23Z",
+  "live_json_as_of": "2026-09-07T04:44:53Z",
+  "input_asset_sha256": "f042ee689ebbb487cf87abe70dd796fd9362765bca36a7e1b0ecf0f715a00fe7",
+  "input_manifest_sha256": "7d490eb272754e12a67ef686c5ff9a17a62a41b645b15d11065da398585f3e0e",
+  "analysis_script_sha256": "cb6127b7f2824b2aea9b8095b0d6adc5415990e85955b33ff7793f5366e6fd23",
+  "analysis_version": 1,
+  "engine": "DuckDB 1.4.4",
+  "corpus": {
+    "n_records": 3451055,
+    "n_cities": 33,
+    "n_race_years": 203
+  },
+  "cohort": {
+    "deduplicated": 3451055,
+    "complete": 2961462,
+    "increasing": 2744217,
+    "eligible": 2739842,
+    "raw": 3451055,
+    "duplicates_removed": 0,
+    "missing_or_unparsed": 489593,
+    "non_increasing": 217245,
+    "outside_quality_bounds": 4375
+  },
+  "methodology_prose": [
+    "Compare average percentage change from the first 20 km to the second 20 km. The pooled chart uses all eligible women\u2019s and men\u2019s records. The matched chart uses only race-edition and one-minute 20 km strata containing at least 20 finishes in each category.",
+    "Use the smaller category count as a common stratum weight. Thus both matched estimates have the same race and opening-time distribution. Opening time is an observed race performance, not an independent measure of prior fitness. Age, experience and other factors remain uncontrolled.",
+    "The export field is sex; labels follow its recorded categories. Other or missing categories remain in the overall pacing analyses but are not included in this two-category comparison.",
+    "Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.",
+    "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.",
+    "Each observation is a race finish. The same person can appear in multiple races. No runner identities are linked across races. Public cells require at least 100 observations; matched comparisons additionally require at least 20 per group in each stratum."
+  ],
+  "observational": true,
+  "minimum_public_cell": 100
+}

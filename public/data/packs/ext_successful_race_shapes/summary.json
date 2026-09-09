@@ -1,0 +1,19 @@
+{
+  "answer_prose": "Improvement did not require a faster second 20 km: 43.0% of improved finishes showed moderate slowing, while 4.3% had a faster second 20 km. The popularity of a successful pattern is different from its success rate.",
+  "detail_prose": "A common successful pattern can simply be a common pattern overall; compare this with the success rate within each pattern in the previous question.",
+  "charts": [
+    {
+      "title": "Race patterns among improved finishes",
+      "table": "pattern_mix.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Race patterns among improved finishes"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

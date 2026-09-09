@@ -1,0 +1,28 @@
+{
+  "answer_prose": "Sections marked uphill, downhill or near level in the supplied course profiles have different observed pacing patterns. This is an exploratory alignment with a route proxy.",
+  "detail_prose": "The route files mostly describe recent editions. Their historical validity is unverified, so this cannot measure the effect of the hills actually run in every year.",
+  "charts": [
+    {
+      "title": "Observed pace alongside supplied terrain classes",
+      "table": "terrain.csv",
+      "unit": "% pace",
+      "xLabel": "Distance (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "Observed pace alongside supplied terrain classes"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "terrain",
+          "label": "Supplied net grade",
+          "preferred": "Net uphill"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

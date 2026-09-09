@@ -1,0 +1,46 @@
+{
+  "answer_prose": "Age groups differ in both opening speed and later pace retention. These records can describe those differences, but they cannot tell us which changes first as an individual ages.",
+  "detail_prose": "This comparison uses 814,779 finishes with an exact age and a recorded women\u2019s or men\u2019s category. Age-group-only records are excluded.",
+  "charts": [
+    {
+      "title": "Opening 20 km pace by age",
+      "table": "age_pacing.csv",
+      "unit": "min/km",
+      "xLabel": "Exact age group",
+      "series": [
+        {
+          "key": "opening",
+          "label": "Median opening pace"
+        }
+      ],
+      "filters": [
+        {
+          "key": "gender",
+          "label": "Recorded gender",
+          "preferred": "Women"
+        }
+      ]
+    },
+    {
+      "title": "Pace retention by age",
+      "table": "age_pacing.csv",
+      "unit": "% pace",
+      "xLabel": "Exact age group",
+      "series": [
+        {
+          "key": "retention",
+          "label": "Second 20 km versus first"
+        }
+      ],
+      "filters": [
+        {
+          "key": "gender",
+          "label": "Recorded gender",
+          "preferred": "Women"
+        }
+      ],
+      "note": "Negative means the second 20 km was faster."
+    }
+  ],
+  "statistics": {}
+}

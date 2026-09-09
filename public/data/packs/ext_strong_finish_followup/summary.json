@@ -1,0 +1,46 @@
+{
+  "answer_prose": "A next-race improvement of more than 2% occurred in 46.8% of pairs after a finishing section more than 5% faster than the preceding section, versus 36.3% after a similar or slower finish. This does not prove unused capacity in the earlier race.",
+  "detail_prose": "The comparison conditions on returning for another recorded race, and the next race may have a different course and conditions.",
+  "charts": [
+    {
+      "title": "Performance in the next race",
+      "table": "kick_followup.csv",
+      "unit": "% change",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "p10",
+          "label": "10th percentile"
+        },
+        {
+          "key": "median",
+          "label": "Median"
+        },
+        {
+          "key": "p90",
+          "label": "90th percentile"
+        }
+      ],
+      "filters": [
+        {
+          "key": "previous_pattern",
+          "label": "Earlier race shape",
+          "preferred": "Moderate slowing"
+        }
+      ]
+    },
+    {
+      "title": "Next finish improved by more than 2%",
+      "table": "kick_success.csv",
+      "unit": "%",
+      "xLabel": "Group",
+      "series": [
+        {
+          "key": "value",
+          "label": "Next finish improved by more than 2%"
+        }
+      ]
+    }
+  ],
+  "statistics": {}
+}

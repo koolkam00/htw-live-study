@@ -1,0 +1,29 @@
+{
+  "answer_prose": "Courses have distinct recorded pacing profiles. Choose a city to see where runners tend to speed up or slow down relative to their own average.",
+  "detail_prose": "Individual split profiles are available for 29 cities with at least 100 eligible finishes each.",
+  "charts": [
+    {
+      "title": "Pace through the selected course",
+      "table": "course_profiles.csv",
+      "unit": "% pace",
+      "xLabel": "Distance (km)",
+      "series": [
+        {
+          "key": "value",
+          "label": "Pace through the selected course"
+        }
+      ],
+      "kind": "line",
+      "xNumeric": true,
+      "filters": [
+        {
+          "key": "city",
+          "label": "Course",
+          "preferred": "New York"
+        }
+      ],
+      "note": "Every runner is normalized before aggregation. This is an observed city profile, not an elevation-adjusted pacing prescription."
+    }
+  ],
+  "statistics": {}
+}
