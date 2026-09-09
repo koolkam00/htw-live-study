@@ -68,7 +68,8 @@ export default function QuestionViz({ spec, selection }: { spec: ChartSpec; sele
       {samples.length > 0 && <p className="study-meta chart-sample" aria-live="polite">{samples.length === 1 ? `${formatNumber(samples[0], 'runners')} observations in this selection` : `${formatNumber(Math.min(...samples), 'runners')}–${formatNumber(Math.max(...samples), 'runners')} observations per plotted group`}{editions.length === 1 ? ` · ${editions[0]} represented editions` : ''}. {spec.coverageNote}</p>}
       {cities.length > 0 && <p className="study-meta">{cities.length === 1 ? cities[0] : `${Math.min(...cities)}–${Math.max(...cities)}`} contributing {cities.length === 1 && cities[0] === 1 ? 'city' : 'cities'} per comparison. This limited coverage should not be generalized to all marathons.</p>}
       {partialRows.length > 0 && <p className="study-meta guide-widened">Small-sample editions are omitted from the trend: {partialRows.map(row => `${row.label} (${formatNumber(Number(row[`n_${spec.series[0].key}`]), 'runners')} finishes)`).join(', ')}. Each has fewer than 25% of this city’s median eligible edition count. This flags possible partial coverage; it does not verify field completeness.</p>}
-      {spec.series.length > 1 && <div className="chart-legend" aria-label="Chart legend">
+      {spec.kind === 'range' && <p className="study-meta">The band spans the 10th–90th percentiles; the dark marker is the median. The center reference is zero change.</p>}
+      {spec.series.length > 1 && spec.kind !== 'range' && <div className="chart-legend" aria-label="Chart legend">
         {spec.series.map((series, i) => <span key={series.key} className={`chart-key ${spec.kind === 'line' && i === 1 ? 'dashed' : ''} ${spec.band && i > 0 ? 'band-edge' : ''}`} style={{ '--series-color': spec.band && i > 0 ? '#0758c7' : COLORS[i % COLORS.length] } as React.CSSProperties}>{series.label}</span>)}
       </div>}
       {!allValues.length ? <p className="answer-state" role="status">No published values for this selection.</p>
@@ -93,7 +94,7 @@ export default function QuestionViz({ spec, selection }: { spec: ChartSpec; sele
         </div> : spec.kind === 'paired' ? <div className="paired-chart"><p className="study-meta">Left of zero: less time than the even-pace budget. Right: more time.</p>{rows.map((row, i) => <div className="paired-item" key={i}><strong>{label(row.label)}</strong><div className="paired-tracks" aria-hidden="true">{spec.series.map((series, index) => {
           const n = Number(row[series.key]);
           return <div className="paired-track" key={series.key}><span style={{ background: COLORS[index % COLORS.length], left: `${50 + Math.min(0, n) / max * 50}%`, width: `${Math.abs(n) / max * 50}%` }} /></div>;
-        })}</div><p className="paired-values">{spec.series.map((series, index) => <span key={series.key} style={{ color: COLORS[index % COLORS.length] }}><span className="sr-only">{series.label}: </span>{value(row[series.key])}</span>)}</p></div>)}</div> : <div className="bars">
+        })}</div><p className="paired-values">{spec.series.map((series, index) => <span key={series.key} style={{ color: COLORS[index % COLORS.length] }}>{series.key === 'below' ? 'Below' : series.key === 'above' ? 'Above' : series.label}: {value(row[series.key])}</span>)}</p></div>)}</div> : <div className="bars">
           {rows.map((row, i) => <div className="bar-item" key={`${row.label}-${i}`}>
             <div className="bar-label"><span>{label(row.label)}</span>{spec.series.length === 1 && <strong>{value(row[spec.series[0].key])}</strong>}</div>
             {spec.series.map((series, index) => {

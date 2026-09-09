@@ -63,7 +63,7 @@ function CheckpointComparison({ summary, profile }: { summary: PersonalSummary; 
     loadCheckpoints(city, summary.as_of, submitted.checkpoint, submitted.elapsed, controller.signal).then(value => {
       if (value.city !== city.city || !Array.isArray(value.rows)) throw new Error('This checkpoint comparison is not available.');
       if (active) { setData(value); setLoadedKey(queryKey); }
-    }).catch(e => { if (active && e.name !== 'AbortError') setError(loadMessage); });
+    }).catch(e => { if (active && e.name !== 'AbortError') { cache.clear(); setError(loadMessage); } });
     return () => { active = false; controller.abort(); };
   }, [queryKey, city.checkpoint_file, summary.as_of, retry]);
   const currentData = data?.city === profile.city && loadedKey === queryKey ? data : null;
@@ -160,7 +160,7 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
     loadAggregate<CityData>(profileFile, summary.as_of, controller.signal).then(value => {
       if (value.city !== city.city || !value.cohorts) throw new Error('This course comparison is not available.');
       if (active) { setData(value); setLoadedFile(profileFile); }
-    }).catch(e => { if (active && e.name !== 'AbortError') setLoadError(loadMessage); });
+    }).catch(e => { if (active && e.name !== 'AbortError') { cache.clear(); setLoadError(loadMessage); } });
     return () => { active = false; controller.abort(); };
   }, [ready, city.city, profileFile, summary.as_of, retry]);
 
@@ -175,7 +175,7 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
       if (value.city !== city.city || value.target !== profile.goal || !value.near) throw new Error(loadMessage);
       if (active) setNearData(value);
     };
-    load().catch(e => { if (active && e.name !== 'AbortError') setNearError(loadMessage); });
+    load().catch(e => { if (active && e.name !== 'AbortError') { cache.clear(); setNearError(loadMessage); } });
     return () => { active = false; controller.abort(); };
   }, [ready, city.city, city.near_index, profile.goal, summary.as_of, nearRetry]);
 
