@@ -26,7 +26,7 @@ export const targetBucket = (target: number) => Math.round(target / 15) * 15;
 export const finishBand = (target: number) => `${clock(targetBucket(target) * 60 - 450, true)}–${clock(targetBucket(target) * 60 + 450, true)}`;
 export const cohortKey = (age: string, gender: string, prior: string) => `${age}|${gender}|${prior}`;
 export const percentUnder = (row: Distribution, target: number) => 100 * row.cdf[target - 150] / row.n;
-export const fmt = (value: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
+export const fmt = (value: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(Math.round(value * 10) / 10 || 0);
 export const count = (value: number) => new Intl.NumberFormat('en-US').format(value);
 const pace = (seconds: number) => `${Math.floor(Math.round(seconds) / 60)}:${String(Math.round(seconds) % 60).padStart(2, '0')}/km`;
 
@@ -72,7 +72,7 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
   return PERSONAL_QUESTIONS.map(question => {
     const answer: GuideAnswer = { ...question, answer: 'There are not enough eligible observations for this comparison on the selected course.', detail: 'Choose a broader profile or All courses. A missing result is never filled with an invented estimate.', charts: [] };
     const use = (cohort: PersonalCohort, sample: Sample = cohort) => {
-      answer.comparison = comparisonLabel(data.city, cohort); answer.widened = widening(profile, cohort); answer.sample = sample;
+      answer.comparison = comparisonLabel(data.city, cohort); answer.widened = widening(profile, cohort); answer.sample = { n: sample.n, editions: sample.editions };
     };
     if (question.id === 'profile' || question.id === 'terrain') {
       const cohort = chooseCohort(data, profile, c => !!c.profiles[bucket]);
@@ -86,7 +86,7 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
         const segments = data.terrain.filter(t => MARATHON_SECTION_ENDS.includes(t.end));
         if (!segments.length) { answer.answer = 'No supplied terrain profile is available for this course selection.'; answer.detail = 'The pacing profile is still available. Select an individual course with a supplied profile to align terrain and pace.'; return answer; }
         const uphill = segments.reduce((best, segment) => segment.net > best.net ? segment : best, segments[0]);
-        answer.answer = `The supplied profile shows ${fmt(uphill.net)} m of net elevation change in ${sectionLabel(uphill.end)}, its largest section rise. Compare this with the observed pace profile below.`;
+        answer.answer = uphill.net > 0 ? `The supplied profile shows ${fmt(uphill.net)} m of net elevation change in ${sectionLabel(uphill.end)}, its largest net section rise. Compare this with the observed pace profile below.` : 'No section has a net rise in this supplied profile. Individual climbs can still occur within a section with a net descent.';
         answer.detail = 'This is the available city route profile alongside pooled historical finishes. It does not establish the terrain used in each edition or explain an individual slowdown.';
         answer.charts.unshift(bars('Net elevation change in the supplied route', 'm', segments.map(t => ({ label: sectionLabel(t.end), value: t.net })), undefined, 'Net change conceals climbs followed by descents. Historical route validity is unknown.'));
         const withClimb = segments.filter(t => t.gain !== null && t.loss !== null);
@@ -100,8 +100,8 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
       use(cohort); answer.sample = undefined;
       const rows = groups.map(label => ({ label, value: question.id === 'opening' ? percentUnder(cohort.openings[label], target) : cohort.openings[label].late, n_value: cohort.openings[label].n }));
       if (question.id === 'opening') {
-        answer.answer = groups.map(group => `${group.replace(' opening', ' openings')}: ${fmt(percentUnder(cohort.openings[group], target))}% finished below ${clock(target * 60)}`).join('. ') + '.';
-        answer.detail = `Opening pace is compared with each runner’s earlier recorded best, not a known declared goal. ${count(n)} finishes are represented across the displayed groups; each group has its own denominator.`;
+        answer.answer = groups.every(group => percentUnder(cohort.openings[group], target) === 0) ? `No runner in these published opening groups finished below ${clock(target * 60)}.` : groups.map(group => `${group.replace(' opening', ' openings')}: ${fmt(percentUnder(cohort.openings[group], target))}% finished below ${clock(target * 60)}`).join('. ') + '.';
+        answer.detail = `“Faster” means faster than the runner’s earlier-best marathon pace. ${cohort.prior !== 'all' && target < Number(cohort.prior) + 15 ? 'Your target is faster than some or all earlier bests in this band, so the comparison mixes improvement in ability with opening choices. ' : ''}It does not show that starting faster improves the result. ${count(n)} finishes are represented; each opening group has its own denominator.`;
         answer.charts = [bars('Finishes strictly below your threshold', '%', rows)];
       } else {
         const early = data.terrain.filter(t => t.end === 5 || t.end === 10);
@@ -117,10 +117,10 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
       const sum = (v: number[]) => v.reduce((a, b) => a + b, 0);
       answer.answer = `Nearby finishes averaged ${clock(sum(near.below.durations), true)} below the threshold and ${clock(sum(near.above.durations), true)} above it.`;
       answer.detail = `Compare ${count(near.below.n)} finishes in the five minutes below ${clock(target * 60)} with ${count(near.above.n)} from ${clock(target * 60)} to under ${clock((target + 5) * 60)}. Higher values mean more time spent than the target’s even-pace section budget.`;
-      answer.charts = [bars('Minutes relative to the even-pace section budget', 'min', MARATHON_SECTION_ENDS.map((end, i) => {
+      answer.charts = [{ ...bars('Minutes relative to the even-pace section budget', 'min', MARATHON_SECTION_ENDS.map((end, i) => {
         const km = end - (i ? MARATHON_SECTION_ENDS[i - 1] : 0), budget = target * km / 42.195;
         return { label: sectionLabel(end), below: near.below.durations[i] / 60 - budget, above: near.above.durations[i] / 60 - budget, n_below: near.below.n, n_above: near.above.n };
-      }), [{ key: 'below', label: 'Just below the threshold' }, { key: 'above', label: 'Just above the threshold' }])];
+      }), [{ key: 'below', label: 'Just below the threshold' }, { key: 'above', label: 'Just above the threshold' }]), kind: 'paired' }];
     } else if (question.id === 'age') {
       let rows: { cohort: PersonalCohort; value: Distribution }[] = [];
       for (const key of candidates({ ...profile, age: 'all' })) {
@@ -150,7 +150,7 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
       answer.comparison = comparisonLabel('Courses with enough coverage', rows[0]); answer.widened = widening(profile, rows[0]);
       answer.answer = `${rows[0].city} has the lowest median finish-time change relative to earlier recorded bests among these ${rows.length} comparable course groups: ${fmt(rows[0].values[1])}%.`;
       answer.detail = 'Below zero means faster than the earlier benchmark. The 10th–90th percentile range describes outcome variation. Course, field selection, fitness changes and conditions remain mixed together.';
-      answer.charts = [bars('Outcome and spread by course', '% change', rows.map(r => ({ label: r.city, low: r.values[0], value: r.values[1], high: r.values[2], n_low: r.n, n_value: r.n, n_high: r.n })), [{ key: 'low', label: '10th percentile' }, { key: 'value', label: 'Median' }, { key: 'high', label: '90th percentile' }])];
+      answer.charts = [{ ...bars('Outcome and spread by course', '% change', rows.map(r => ({ label: r.city, low: r.values[0], value: r.values[1], high: r.values[2], n_low: r.n, n_value: r.n, n_high: r.n })), [{ key: 'low', label: '10th percentile' }, { key: 'value', label: 'Median' }, { key: 'high', label: '90th percentile' }]), kind: 'range' }];
     } else if (question.id === 'weather') {
       const cohort = chooseCohort(data, profile, c => c.weather.length >= 2) || chooseCohort(data, profile, c => c.weather.length > 0);
       if (!cohort) return answer;
@@ -169,7 +169,7 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
       const cohort = chooseCohort(data, profile, c => !!c.repeat); if (!cohort) return answer;
       const row = cohort.repeat!; use(cohort, row);
       answer.answer = `Across ${count(row.n)} same-course pairs, the later finish averaged ${fmt(Math.abs(row.finish_change))} minutes ${row.finish_change < 0 ? 'faster' : 'slower'}.`;
-      answer.detail = 'Both appearances are normalized to their own marathon average. These paired changes can reflect fitness, conditions and route changes as well as familiarity. They are not selected by the visitor’s target.';
+      answer.detail = 'Both appearances are normalized to their own marathon average. These changes can reflect fitness, conditions, route changes and familiarity. Selection on an earlier best can also produce regression to the mean: some subsequent slowing is expected even without a change in course knowledge. The visitor’s target does not select these pairs.';
       answer.charts = [{ title: 'How the same runners distributed their pace', unit: '% pace', xLabel: 'Section end (km)', xNumeric: true, kind: 'line', sectionEnds: MARATHON_SECTION_ENDS,
         rows: MARATHON_SECTION_ENDS.map((end, i) => ({ label: end, previous: row.previous[i], current: row.current[i], n_previous: row.n, n_current: row.n })), series: [{ key: 'previous', label: 'Earlier appearance' }, { key: 'current', label: 'Later appearance' }] }];
     } else if (question.id === 'gains') {
@@ -191,7 +191,7 @@ export function checkpointResult(data: CheckpointData, profile: Profile, checkpo
   for (const requestedTrend of [...new Set([trend, 'all'])]) for (const key of keys) {
     const [age, gender] = key.split('|');
     const row = data.rows.find(r => r.checkpoint === checkpoint && r.elapsed === elapsedBand && r.trend === requestedTrend && r.age === age && r.gender === gender);
-    if (row) return { row, trendWidened: requestedTrend !== trend, comparison: `${data.city} · ${age === 'all' ? 'all ages' : age} · ${gender === 'all' ? 'all recorded categories' : gender} · ${clock(elapsedBand * 60)} to under ${clock((elapsedBand + 2) * 60)} at ${checkpoint} km · ${requestedTrend === 'all' ? 'all recent pace trends' : requestedTrend.toLowerCase()}`, widened: widening({ ...profile, previous: null }, { age, gender, prior: 'all' }) };
+    if (row) return { row, adjacent: data.rows.filter(r => r.checkpoint === checkpoint && Math.abs(r.elapsed - elapsedBand) === 2 && r.trend === requestedTrend && r.age === age && r.gender === gender).sort((a, b) => a.elapsed - b.elapsed), trendWidened: requestedTrend !== trend, comparison: `${data.city} · ${age === 'all' ? 'all ages' : `age ${age}`} · ${gender === 'all' ? 'all recorded categories' : gender} · ${clock(elapsedBand * 60)} to under ${clock((elapsedBand + 2) * 60)} at ${checkpoint} km · ${requestedTrend === 'all' ? 'all recent pace trends' : requestedTrend.toLowerCase()}`, widened: widening({ ...profile, previous: null }, { age, gender, prior: 'all' }) };
   }
   return null;
 }

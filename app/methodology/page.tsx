@@ -4,6 +4,7 @@ import { QUESTIONS } from '@/lib/question-catalog';
 import { getExtensions } from '@/lib/extension-data';
 import { getPersonalMethod, getPersonalSummary } from '@/lib/personalized-data';
 import { PERSONAL_QUESTIONS } from '@/lib/personalized-catalog';
+import MethodAnchors from '@/components/MethodAnchors';
 
 export const metadata = { title: 'Methodology | Marathon Pacing Study' };
 
@@ -26,6 +27,7 @@ export default function MethodologyPage() {
   const calculated = questions.filter(question => question.dataset);
   const personalized = getPersonalSummary();
   return <article className="prose">
+    <MethodAnchors />
     <h1>How we study marathon pacing</h1>
     <p className="answer">The study follows the whole race: how runners start, distribute their speed, respond to the course, finish, and improve over time.</p>
     <h2>Four things we want to understand</h2>
@@ -47,7 +49,9 @@ export default function MethodologyPage() {
     <p>The visitor’s previous marathon time is compared with bands of earlier recorded bests, not an exact last-race match. A custom target can be any whole minute; success counts and nearby-finish comparisons use that exact threshold. Pacing profiles and improvement breakdowns use the clearly displayed 15-minute achieved-time band centered on the nearest preset, with the upper boundary excluded.</p>
     <p>Fallbacks keep the selected course and try broader age and gender groups before dropping an earlier-time restriction. Each answer prints its actual comparison group and identifies broadened filters. Cross-course comparisons use one common set of filters across all displayed courses. A missing comparison is not shown as zero. Age-group and course comparisons deliberately vary the dimension being compared.</p>
     <p>Checkpoint comparisons use current elapsed progress instead of previous marathon time. They match a two-minute elapsed-time interval and, when entered, the most recent 5 km pace relative to elapsed average pace. The entered time determines the required remaining pace exactly, while historical outcomes describe the full matching interval. These retrospective proportions have not been calibrated as personal forecasts.</p>
-    {PERSONAL_QUESTIONS.map(question => <details className="methodology" key={question.id}><summary>{question.title}</summary><div className="methodology-content"><p>{question.method}</p><Link href={`/your-race#guide-${question.id}`}>Open this personalized question</Link></div></details>)}
+    <p>Course options are marked “limited coverage” when fewer than 1,000 eligible finishes or three editions are represented. This is a disclosure threshold, not a test that other courses have complete fields. Age and gender availability means a publishable group exists somewhere on that course, not that every combination is available. Repeated fallback notices are collected above the answers, while each answer retains its actual comparison label.</p>
+    <p>Checkpoint outcomes are published in fixed, non-overlapping two-minute bins. The selected bin and available immediately neighboring bins use identical demographic and trend filters. A one-second boundary crossing can change the displayed group; it does not indicate an abrupt change in personal prospects. We do not interpolate probabilities or recenter bins using aggregate data.</p>
+    {PERSONAL_QUESTIONS.map(question => <details className="methodology" id={`personal-${question.id}`} key={question.id}><summary>{question.title}</summary><div className="methodology-content"><p>{question.method}</p><Link prefetch={false} href={`/your-race#guide-${question.id}`}>Open this personalized question</Link></div></details>)}
     <p><a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/data/packs/ext_personalized_guide/pack_meta.json`}>Personalized analysis coverage, provenance and calculation details</a></p>
     <h2>How to read the pacing charts</h2>
     <p><strong>“40 km” means the 35–40 km section.</strong> Pace profiles show section averages at the section’s end distance, not instantaneous pace at that timing mat. An upward movement means slower pace. Joining two averages with a line does not establish a sudden change at either checkpoint.</p>
@@ -70,11 +74,15 @@ export default function MethodologyPage() {
     <p>We reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate records in an edition. These checks reduce errors; they do not independently confirm that every identity link is correct. Names and runner IDs stay private.</p>
     <p>Using only strictly earlier years prevents current-race and same-year results from entering the prior benchmark. Personal-best gains compare with the fastest finish in earlier recorded years; they cannot establish a lifetime best. Race-pair analyses use adjacent observations with one race in each endpoint year. The interval analysis instead uses exact supplied dates, restricted to identity groups with complete, unique date coverage.</p>
     <p>Exact-age analyses exclude age-group-only records. Reported gender is used as supplied and is never inferred from names. Unknown categories are preserved in overall counts where the analysis permits them.</p>
+    <p>The guide’s exact-age total includes all recorded gender categories. The broader age chart uses 18–29 and then ten-year bands, includes only the published Men and Women groups, and suppresses cells below 100 finishes. Its smaller published sample therefore differs from the guide’s five-year bands; neither infers an exact age from an age-group label.</p>
     <h2>Matching, uncertainty and forecast validation</h2>
     <p>The opening-strategy comparison matches race edition, recorded gender and 15-minute bands of prior performance. All three opening groups need at least 20 finishes within a stratum; the smallest group supplies a common weight. Its 95% interval comes from 500 resamples of whole race editions. This accounts for edition clustering, but not a runner appearing across editions.</p>
     <p>Other charts are descriptive unless their individual methods state otherwise. A large runner count does not eliminate confounding or create thousands of independent weather observations. No significance ranking or claim of an optimal strategy is made from the many comparisons.</p>
     <p>The checkpoint forecast is trained on earlier years and tested on the latest three observed years. It compares even-pace extrapolation with a model calibrated to elapsed pace, and then adds the latest pace trend. All inputs are available at the checkpoint. Training cells need 100 records; sparse cells use a documented fallback. The site reports actual forecast error and observed coverage of an 80% prediction interval.</p>
     <p>The forecast test holds out entire later race editions. Runners can appear in both periods, but identities are not model inputs. The same complete-finish cohort is used at every checkpoint; these results do not predict withdrawals or apply automatically to runners with missing splits.</p>
+    <p>An 80% prediction interval is a nominal target, not guaranteed coverage. Observed coverage can fall below 80%, including at 35 km. Read the measured coverage beside each forecast rather than assume exact calibration.</p>
+    <h2>Edition coverage and time trends</h2>
+    <p>For each city, the time-trend display omits editions with fewer than 25% of that city’s median eligible edition count. Their original values remain in the exact-value table, labeled as small-sample editions. Missing and omitted years break the line. This heuristic identifies suspiciously small samples; it does not prove incomplete scraping or certify any other year as complete. Pooled guide results still include these records, and “represented editions” counts partial coverage as well as fuller fields.</p>
     <h2>Weather, routes and qualifying rules</h2>
     <p>The weather overlay uses the Open-Meteo archive hour nearest the scheduled local start. Each temperature-band comparison gives equal weight to eligible race editions, with at least five editions per band. These modeled conditions are a start-hour proxy, not each runner’s exposure throughout the race.</p>
     <p>Course elevation comes from supplied GPX routes and digital elevation models, sometimes smoothed over 800 m. Historical validity years are absent. Terrain comparisons use the available city route as an explicitly labeled proxy; mixed hills, route changes, bridges and tunnels limit interpretation.</p>
@@ -90,7 +98,7 @@ export default function MethodologyPage() {
     <p>The {QUESTIONS.length} questions are organized around race strategy, courses and conditions, goals and finishing, runner differences, and learning over time. The original question lists are incorporated, alongside six additions about successful strategies, personal-best gains, congestion, consistency, and course adaptation.</p>
     <h2 id="question-methods">Methods for every question</h2>
     <p>Open a question for its actual definitions, comparison groups, sample rules and limits. The result page contains the answer and charts.</p>
-    {questions.map(question => <details className="methodology" key={question.id}>
+    {questions.map(question => <details className="methodology" id={`method-${question.id}`} key={question.id}>
       <summary>{question.number}. {question.title}</summary>
       <div className="methodology-content">
         {question.method.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -98,7 +106,7 @@ export default function MethodologyPage() {
         <div className="source-links"><Link href={`/packs/${question.id}`}>Read the answer &amp; charts</Link>{question.sources.map(source => <a href={source.href} key={source.href}>{source.label}</a>)}</div>
       </div>
     </details>)}
-    <details className="methodology">
+    <details className="methodology" id="method-smyth_htw">
       <summary>Focused analysis: hitting the wall</summary>
       <div className="methodology-content">
         <p>{study.method[0]}</p>

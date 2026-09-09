@@ -10,7 +10,7 @@ export type ChartSpec = {
   title: string;
   unit: string;
   xLabel: string;
-  kind?: 'bars' | 'line';
+  kind?: 'bars' | 'line' | 'range' | 'paired';
   xNumeric?: boolean;
   xUnit?: string;
   sectionEnds?: number[];
@@ -20,6 +20,8 @@ export type ChartSpec = {
   filters?: { key: string; label: string; preferred?: string }[];
   note?: string;
   source?: string;
+  coverageNote?: string;
+  partialRows?: DataRow[];
 };
 export type ResearchAnswer = {
   id: string; number?: number; title: string; aliases: string[]; theme?: ThemeId;
@@ -140,7 +142,7 @@ export function getStudyAnswer(): ResearchAnswer {
     : 'The slowdown threshold and reference window are not available for this snapshot.';
   const chart = sexChart(liveRows('t2'), 'age_group', 'pct_htw', 'Runners meeting the wall definition', '%');
   chart.xLabel = 'Age group';
-  chart.note = 'Age groups use only records with a reported age. Each percentage uses the runners in that age and gender group.';
+  chart.note = 'Original dataset (t2), restricted to records with a reported age. Each percentage uses the finishes in that age and gender group. This differs from the repeaters subset shown later on the wall-study page.';
   return { id: 'smyth_htw', title: EXTRA_TITLES.smyth_htw, aliases: [], available: rate !== null,
     answer: rate !== null ? `About ${formatNumber(rate, '%')} of recorded finishes meet the study’s definition of hitting the wall.` : 'The study-wide result is not available in this snapshot.',
     detail: rate !== null ? `That is about ${Math.round(rate)} in every 100 recorded finishes, across ${count(total)} results. A runner can appear more than once.` : undefined,

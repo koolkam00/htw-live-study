@@ -19,6 +19,9 @@ export type CourseResult = Sample & { city: string; age: string; gender: string;
 export type PersonalSummary = {
   schema_version: 1; pack_id: string; as_of: string; export_id: string; input_as_of: string;
   n: number; age_n: number; history_n: number; analyses: number;
-  cities: { city: string; file: string; checkpoint_file: string; n: number }[];
+  cities: { city: string; file: string; checkpoint_file: string; n: number;
+    ages?: string[]; genders?: string[]; editions?: number; limited?: boolean;
+    profile_files?: Record<string, string>; near_index?: string; checkpoint_index?: string;
+  }[];
   courses: CourseResult[];
 };
