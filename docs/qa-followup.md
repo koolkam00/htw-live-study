@@ -42,6 +42,7 @@ This update changes presentation, controls and aggregate delivery. It preserves 
 - A new regression check compares every answer, chart and sample from the smaller transport views against the full source shards across 240 profiles spanning all 30 course selections, four targets and two demographic/prior-time profiles.
 - Targeted checks cover checkpoint boundary neighbors, URL normalization, age/gender availability, negative zero, screened annual editions, rank exclusions and repeaters counts.
 - Export checks resolve 151 methodology fragment links, all 120 sitemap URLs and the custom 404.
+- Hosted preview checks return HTTP 200 for the guide, wall study, methodology, robots and sitemap. The NYC profile response matches its content hash and serves `Cache-Control: public, max-age=31536000, immutable`.
 
 No physical-device, browser-emulation, screen-reader or slow-network timing audit was rerun in this update. Payload reductions are byte measurements, not measured loading-time guarantees.
 
