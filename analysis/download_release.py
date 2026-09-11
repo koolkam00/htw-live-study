@@ -1,14 +1,17 @@
-"""Download and verify a private CORE or FULL export outside the site checkout.
+"""Download and verify a public CORE or FULL GitHub release export.
 
-Uses the authenticated GitHub CLI. Never prints credentials or runner records.
+No GitHub CLI or token is required. GH_TOKEN or GITHUB_TOKEN optionally raises
+the API rate limit; asset downloads always use their public browser URL.
 """
 import argparse
 import hashlib
 import json
+import os
 import shutil
-import subprocess
 import tarfile
 from pathlib import Path
+from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
 
 EXPECTED = {
     "race_records.parquet", "race_conditions.parquet", "course_profiles.parquet",
@@ -22,12 +25,26 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def download_asset(repo, asset, destination):
-    with destination.open("wb") as stream:
-        subprocess.run([
-            "gh", "api", f"repos/{repo}/releases/assets/{asset['id']}",
-            "-H", "Accept: application/octet-stream",
-        ], stdout=stream, check=True)
+def read_release(repo, tag):
+    request = Request(
+        f"https://api.github.com/repos/{repo}/releases/tags/{tag}",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": "marathon-pacing-study"},
+    )
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        # Credentials belong only on this API request, never on redirects.
+        request.add_unredirected_header("Authorization", f"Bearer {token}")
+    with urlopen(request, timeout=60) as response:
+        return json.load(response)
+
+
+def download_asset(asset, destination):
+    url = asset["browser_download_url"]
+    if urlsplit(url).scheme != "https" or urlsplit(url).hostname != "github.com":
+        raise ValueError("Expected a public GitHub release download URL.")
+    request = Request(url, headers={"User-Agent": "marathon-pacing-study"})
+    with urlopen(request, timeout=60) as response, destination.open("wb") as stream:
+        shutil.copyfileobj(response, stream)
     digest = asset.get("digest", "")
     if not digest.startswith("sha256:"):
         raise ValueError("The release asset must have a GitHub SHA-256 digest.")
@@ -36,31 +53,26 @@ def download_asset(repo, asset, destination):
         raise ValueError("Release asset checksum or size mismatch.")
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tag")
     parser.add_argument("--bundle", choices=["CORE", "FULL"], default="CORE")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     config = json.loads(Path(__file__).with_name("release.json").read_text())
     repo, tag = config["repository"], args.tag or config["tag"]
     if not tag.startswith("private-export-") or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_." for c in tag):
         raise ValueError("Expected a private-export release tag.")
     root = args.output.resolve()
-    checkout = Path(__file__).resolve().parents[1]
-    if root == checkout or checkout in root.parents:
-        raise ValueError("Private data must be downloaded outside the site checkout.")
-    root.mkdir(parents=True, exist_ok=True, mode=0o700)
-    release = json.loads(subprocess.check_output([
-        "gh", "api", f"repos/{repo}/releases/tags/{tag}",
-    ]))
+    root.mkdir(parents=True, exist_ok=True)
+    release = read_release(repo, tag)
     expected = EXPECTED | ({"features.parquet"} if args.bundle == "FULL" else set())
     assets = [a for a in release["assets"] if f"-{args.bundle}-" in a["name"] and a["name"].endswith(".tar.gz")]
     if len(assets) != 1:
         raise ValueError(f"Expected exactly one {args.bundle} archive in the release.")
     asset = assets[0]
     archive = root / f"{args.bundle.lower()}.tar.gz"
-    download_asset(repo, asset, archive)
+    download_asset(asset, archive)
     seen = set()
     with tarfile.open(archive, "r:gz") as tar:
         total = 0
@@ -74,7 +86,7 @@ def main():
                 raise ValueError(f"Unexpected or duplicate export file: {name}")
             total += member.size
             if total > 8 * 1024 ** 3:
-                raise ValueError("Private archive exceeds the extraction size limit.")
+                raise ValueError("Archive exceeds the extraction size limit.")
             with tar.extractfile(member) as source, (root / name).open("wb") as target:
                 shutil.copyfileobj(source, target)
             seen.add(name)
@@ -82,7 +94,7 @@ def main():
         raise ValueError(f"Missing {args.bundle} files: {sorted(expected - seen)}")
     brief = next((a for a in release["assets"] if a["name"] == "OUTSIDE-AGENT-PASTE-BRIEF.md"), None)
     if brief:
-        download_asset(repo, brief, root / brief["name"])
+        download_asset(brief, root / brief["name"])
     provenance = {
         "repository": repo, "release_tag": tag, "release_published_at": release["published_at"],
         "asset": asset["name"], "asset_sha256": asset["digest"][7:],
@@ -90,7 +102,7 @@ def main():
         "manifest_sha256": sha256(root / "MANIFEST.json"),
     }
     (root / "provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
-    print(f"Verified {args.bundle} export {tag}; extracted {len(seen)} files outside the checkout.")
+    print(f"Verified {args.bundle} export {tag}; extracted {len(seen)} files to {root}.")
 
 
 if __name__ == "__main__":

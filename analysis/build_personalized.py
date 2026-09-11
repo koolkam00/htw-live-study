@@ -1,4 +1,4 @@
-"""Twelve personalized questions, computed privately from existing export tables.
+"""Twelve personalized questions, computed from public export tables.
 
 This module reuses the validated in-memory CORE/FULL linkage prepared by
 build_extended. Only fixed, minimum-size aggregate cohorts leave the job.
@@ -247,7 +247,7 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
       'analysis_script_sha256':script_hash,'supporting_script_sha256':hashlib.sha256(Path(__file__).with_name('build_extended.py').read_bytes()).hexdigest(),
       'linkage_audit':diagnostics,'minimum_public_cell':100,'analysis_count':12,'coverage':dict(coverage),
       'methodology_prose':[
-        'All twelve personalized questions use the existing private export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 150 to 270 whole minutes are evaluated with strict finish < target.',
+        'All twelve personalized questions use the complete public export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 150 to 270 whole minutes are evaluated with strict finish < target.',
         'Exact ages define 18–24 then five-year bands through 85–89. Age-group-only labels are not converted into exact ages. Optional recorded gender is Women, Men or all available records. Previous performance selects a 15-minute band of best times in the two strictly earlier calendar years.',
         'Every public result has at least 100 finishes or linked pairs. Age, gender and prior-performance rollups are computed directly from the same records, not by averaging subgroup medians. The site labels any broader comparison used when a narrow combination is unavailable. Availability is not statistical certainty.',
         'Section paces use actual elapsed differences divided by 5 km or 2.195 km at the finish. Quantile ranges describe variation between finishes, not confidence intervals. Higher time per distance means slower. Every complete cohort uses the same runners at all nine checkpoints.',

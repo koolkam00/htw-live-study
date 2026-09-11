@@ -1,4 +1,4 @@
-"""Whole-race and linked-history analyses. Private computation, aggregate output only.
+"""Whole-race and linked-history analyses from public source records, producing chart aggregates.
 
 All timing outcomes are recomputed from CORE. FULL supplies identity candidates,
 never its supplied PB, ability, half-split, prediction or outcome fields.
@@ -105,7 +105,7 @@ def prepare_history(db, source):
 class ExtendedPublisher(Publisher):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,common_method=COMMON_METHOD[:2]+[
-          'Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.', OBSERVATIONAL],script=__file__,**kwargs)
+          'Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.', OBSERVATIONAL],script=__file__,**kwargs)
 
     def publish(self,*args,unit='eligible finishes',scope='descriptive',**kwargs):
         super().publish(*args,**kwargs)
@@ -597,7 +597,7 @@ def run(source,output,live_as_of,personalized_output=None):
     for function in [strategy_analyses,checkpoint_analyses,course_analyses,history_analyses,qualifying_analysis]:
         function(db,pub)
         print(f'{function.__name__}: {len(pub.packs)} aggregate packs calculated',flush=True)
-    # Add aggregate linkage diagnostics to every pack, never private keys/paths.
+    # Add aggregate linkage diagnostics to every chart pack.
     for entry in pub.packs:
         target=output/entry['id']/'pack_meta.json'
         meta=json.loads(target.read_text());meta['linkage_audit']=diagnostics

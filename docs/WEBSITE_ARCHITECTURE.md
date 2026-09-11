@@ -17,7 +17,9 @@ Takeover evidence and current branch changes are distinguished in [PROJECT_HANDO
 | /your-race | app/your-race/page.tsx; components/PersonalizedGuide.tsx | Twelve personalized questions |
 | /methodology | app/methodology/page.tsx | Definitions, cohorts and limitations |
 
-## Three public data paths
+## Full-data access and three chart-data paths
+
+Current policy exposes source code, full runner exports, database snapshots and overlays to anonymous readers in ordinary unencrypted formats. Link to public Release assets for large files; rendering aggregate charts is a performance and analytical choice, not an access boundary. There is no requirement to keep runner data outside this checkout. See [dated access verification](PROJECT_HANDOFF.md#public-access-policy-and-verification).
 
 1. **Core:** public/data/live.json and original S/R/RN/P pack folders. lib/research-data.ts reads JSON/CSV and maps them to explanatory answers; hooks/useLiveData.ts and usePackMeta.ts support client legacy views. lib/packs.ts default statuses are fallback registry values, not proof of valid current calculations.
 2. **Extensions:** lib/extension-data.ts discovers ext_* directories at build time, requires ready schema-valid metadata, reads summaries and CSVs, and maps question_id to lib/question-catalog.ts. Newer input_as_of wins, with calculation date as tie-breaker. Invalid ready data fails the build. This is not a request-time connection to the ingestion database.
@@ -38,8 +40,8 @@ Course pages use `lib/course-data.ts`: names come from `live.json` table `t1` an
 
 ## Data to rendering to deployment
 
-Private computation produces reviewed aggregate artifacts. Importers validate and write the designated public folders. Build reads those files and generates static output. A repository merge is documented to lead to Vercel publication; exact hosting project settings and credentials were not inspected. During takeover, all 401 checked-in public aggregate files matched the production responses byte for byte, including September 7 extension metadata. This evidence predates this branch's presentation changes and does not establish that they are deployed.
+The chart calculations produce aggregate artifacts; the current data-access policy also covers full source records. Importers validate and write the designated public folders. Build reads those files and generates static output. A repository merge is documented to lead to Vercel publication; exact hosting project settings and credentials were not inspected. During takeover, all 401 checked-in public aggregate files matched the production responses byte for byte, including September 7 extension metadata. This dated evidence predates the September 11 presentation update; it does not establish the deployment state of later changes.
 
 For a new analysis, update its calculation, registry/question mapping, metadata/method, public aggregate output and verification together. Preserve stable IDs and aliases. For UI changes, test mobile widths and null/sparse cohorts; a successful build alone does not resolve the historical mobile audit.
 
-This branch adopts Marathon Pacing Study presentation and the `/slowdown` route while retaining legacy URLs and internal data keys. The numerical definition stays at least 25% slower for at least 5 km after 20 km relative to the 5–20 km baseline, with a neutral [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513) citation. Presentation edits do not refresh the source vintage, change numeric aggregates or imply a deployment. Original numerical-run hashes and subsequent presentation revisions are recorded separately where metadata text changes.
+The September 11 presentation update introduced Marathon Pacing Study terminology and the `/slowdown` route while retaining legacy URLs and internal data keys. The numerical definition stays at least 25% slower for at least 5 km after 20 km relative to the 5–20 km baseline, with a neutral [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513) citation. Presentation edits do not refresh the source vintage, change numeric aggregates or imply a deployment. Original numerical-run hashes and subsequent presentation revisions are recorded separately where metadata text changes.

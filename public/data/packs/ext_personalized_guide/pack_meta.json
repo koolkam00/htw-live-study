@@ -53,8 +53,8 @@
     "checkpoints": 72558
   },
   "methodology_prose": [
-    "All twelve personalized questions use the existing private export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 150 to 270 whole minutes are evaluated with strict finish < target.",
-    "Exact ages define 18\u201324 then five-year bands through 85\u201389. Age-group-only labels are not converted into exact ages. Optional recorded gender is Women, Men or all available records. Previous performance selects a 15-minute band of best times in the two strictly earlier calendar years.",
+    "All twelve personalized questions use the complete public export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 150 to 270 whole minutes are evaluated with strict finish < target.",
+    "Exact ages define 18–24 then five-year bands through 85–89. Age-group-only labels are not converted into exact ages. Optional recorded gender is Women, Men or all available records. Previous performance selects a 15-minute band of best times in the two strictly earlier calendar years.",
     "Every public result has at least 100 finishes or linked pairs. Age, gender and prior-performance rollups are computed directly from the same records, not by averaging subgroup medians. The site labels any broader comparison used when a narrow combination is unavailable. Availability is not statistical certainty.",
     "Section paces use actual elapsed differences divided by 5 km or 2.195 km at the finish. Quantile ranges describe variation between finishes, not confidence intervals. Higher time per distance means slower. Every complete cohort uses the same runners at all nine checkpoints.",
     "The comparison is observational. Historical route changes and declared goals are absent. Supplied elevation and start-hour weather remain proxies. Current and same-year performances are excluded from prior benchmarks. Individual identity checks follow the linked-history pipeline.",
@@ -123,5 +123,9 @@
     "city_27.json": "56c64a0290fe980fbda1e6f89c562180ee1575ee98d534cbf6a33d48bec96959",
     "city_28.json": "3cdeadc96c925dcdecfd7f8dca5fcf639d76cdc6845edcb16747ed3e3545e1a6",
     "city_29.json": "9246ca9aaba7d7d0a6d0e249be79bff98ce95753ece1918d2b2d5e2e812e26e5"
+  },
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology, labels and public-access wording only; numerical values, input dates and calculation provenance retained."
   }
 }

@@ -68,7 +68,7 @@ def main():
                   FROM read_parquet(?) f LEFT JOIN dates USING(city,year)''',[str(conditions),str(path)]).fetchone()
                 report[path.name]['date_join_coverage'] = {'feature_rows':dates[0],'rows_with_unambiguous_overlay_date':dates[1]}
     (args.output / "schema-coverage.json").write_text(json.dumps(report, indent=2) + "\n")
-    # These documentation files stay in a private workflow artifact, never in public/.
+    # Include source documentation with the inspection report.
     for name in ["README.md", "MANIFEST.json", "OUTSIDE-AGENT-PASTE-BRIEF.md", "provenance.json"]:
         if (args.input / name).exists():
             shutil.copyfile(args.input / name, args.output / name)

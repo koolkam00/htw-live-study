@@ -1,4 +1,4 @@
-name: Private marathon pacing analysis
+name: Marathon pacing analysis
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: Private export release tag (blank uses analysis/release.json)
+        description: Export release tag (blank uses analysis/release.json)
         required: false
         type: string
 
@@ -21,7 +21,6 @@ jobs:
   analyse:
     if: >-
       github.repository == 'koolkam00/htw-live-study' &&
-      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
       (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'private-export-'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -37,21 +36,22 @@ jobs:
         run: python -m pip install -r analysis/requirements.txt
       - name: Check timing and cohort calculations
         run: python -m unittest discover -s analysis -p 'test_*.py'
-      - name: Download verified private FULL export
+      - name: Download verified FULL export
         env:
+          # Optional for API rate limits; public assets download anonymously.
           GH_TOKEN: ${{ github.token }}
           PACING_RELEASE_TAG: ${{ inputs.release_tag || github.event.release.tag_name || '' }}
-        run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-private" --tag "$PACING_RELEASE_TAG"
+        run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-input" --tag "$PACING_RELEASE_TAG"
       - name: Inspect available fields and coverage
-        run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-inspection"
+        run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-input" --output "$RUNNER_TEMP/pacing-inspection"
       - name: Read current public snapshot date
         run: |
           curl --fail --silent --show-error https://htw-live-study.vercel.app/data/live.json > "$RUNNER_TEMP/pacing-live.json"
           python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"]+"/pacing-live.json")); assert d["status"] in ("ready","ok"); print("PACING_LIVE_AS_OF="+d["as_of"])' >> "$GITHUB_ENV"
       - name: Calculate aggregate pacing packs
-        run: python analysis/build_pacing.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --live-as-of "$PACING_LIVE_AS_OF"
+        run: python analysis/build_pacing.py --input "$RUNNER_TEMP/pacing-input" --output "$RUNNER_TEMP/pacing-aggregates" --live-as-of "$PACING_LIVE_AS_OF"
       - name: Calculate full-race, forecast and linked-history analyses
-        run: python analysis/build_extended.py --input "$RUNNER_TEMP/pacing-private" --output "$RUNNER_TEMP/pacing-aggregates" --personalized-output "$RUNNER_TEMP/pacing-personalized" --live-as-of "$PACING_LIVE_AS_OF"
+        run: python analysis/build_extended.py --input "$RUNNER_TEMP/pacing-input" --output "$RUNNER_TEMP/pacing-aggregates" --personalized-output "$RUNNER_TEMP/pacing-personalized" --live-as-of "$PACING_LIVE_AS_OF"
       - name: Write numerical findings from verified aggregates
         run: python analysis/write_findings.py --output "$RUNNER_TEMP/pacing-aggregates"
       - uses: actions/upload-artifact@v4

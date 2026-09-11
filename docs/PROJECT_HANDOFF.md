@@ -1,6 +1,6 @@
 # Project handoff
 
-Evidence updated 2026-09-11 during takeover on `codex/documentation-handoff-20260911`, starting at commit `8cc2ada`. The base main commit was `140e5c66e7a433dfc3c6eab0563ec39845006d3f` (PR #28). This document distinguishes the inspected deployment, current export contract and subsequent presentation changes in this branch.
+Evidence updated 2026-09-11 during takeover on `codex/documentation-handoff-20260911`, starting at commit `8cc2ada`. The base main commit was `140e5c66e7a433dfc3c6eab0563ec39845006d3f` (PR #28). This document distinguishes that inspected deployment, the export contract and later changes. The current access-policy work is on `codex/public-data-access`.
 
 ## Read in order
 
@@ -21,31 +21,39 @@ The early 12/26-question planning counts are historical. The current catalog con
 
 The personalized selector uses course, age band, target 2:30–4:30 with 15-minute presets and whole-minute custom thresholds, optional recorded gender and previous marathon time. Previous time filters a band of recent recorded bests, not a verified exact last marathon. Course substitution is never silent; cohort broadening must be labeled. Do not invent data.
 
+## Public-access policy and verification
+
+As requested on September 11, 2026, the source code, complete runner-level data including recorded names, exports, database snapshots, overlays and analysis outputs are public research material. Anyone must be able to download and open ordinary unencrypted files without an account, token or separate decryption key. Public GitHub Releases are preferred for large binary files; storing runner data in the checkout is allowed. Statistical minimum-cohort rules remain rules for the reliability of chart estimates, not access restrictions on full records. Passwords, tokens and operational credentials are not part of the dataset.
+
+**Latest verification (2026-09-11):** GitHub reports this repository as public. Without credentials or cookies, all nine published releases were listed and the first 16 bytes of each of the 21 assets were read successfully, including four CORE/FULL archives and eight SQLite backups. The source release pin was also read anonymously. This verifies public access, not a repeat of every full-file checksum audit.  A subsequent anonymous smoke test downloaded and SHA-256-verified the complete pinned September 7 CORE archive, extracted all eight files and opened all five Parquet tables, including 3,451,055 raw records. See the [access evidence](evidence/2026-09-11/public-access-audit.json) and [download links](../analysis/ACCESS.md).
+
+Legacy `private-export-*`, `private-*` and backup filenames remain stable compatibility identifiers. They do not imply that an account should be required. Earlier instructions to keep runner records private, outside the checkout or out of public downloads are superseded.
+
 ## Verified release and production state
 
 - [analysis/release.json](../analysis/release.json) still pins `private-export-20260907-1318`. All 34 extension directories—33 broad packs and the personalized guide—use bundle `private-20260907-1318`.
-- Before presentation changes in this branch, all **401 checked-in production aggregate files** were fetched from the public deployment and matched byte for byte. Production therefore used the same September 7 aggregates at inspection; this does not claim the later branch changes are deployed.
+- Before the September 11 presentation changes, all **401 checked-in production aggregate files** were fetched from the public deployment and matched byte for byte. Production therefore used the same September 7 aggregates at inspection; this does not claim the later branch changes are deployed.
 - Both archives in [private-export-20260910-1412](https://github.com/koolkam00/htw-live-study/releases/tag/private-export-20260910-1412) were downloaded outside the checkout and verified against their release sizes and SHA-256 digests. CORE has **3,580,279** raw rows; FULL has **3,580,279** feature rows. IDs are unique, non-null and have exactly matching sets. Row order differs. City/year/age agree by ID; 552 raw `X` sex values become null in features. Comparable checkpoint and finish timings agree within 1 ms after converting feature minutes to seconds. This establishes release-specific record alignment, not independently verified cross-race identities.
 - The September 10 feature table has **138 columns** and lacks `race`, `runner_name` and `split_mode_in`. Every feature `race_date` remains null. The current history builder expects the missing name/edition fields, so adopting this schema requires an explicit versioned consumer change or a new producer export restoring the required columns.
 - Both archives contain files outside the current downloader allowlist. CORE adds `ID-CONTRACT.md` and `SHA256SUMS.txt`; FULL additionally includes `FEATURE-FIELD-NOTES.md` and `COUNT-DIFF.md`. The checked-in downloader rejects these current archives.
 - The latest relevant refresh remains [failed run 34490423926](https://github.com/koolkam00/htw-live-study/actions/runs/34490423926), with no retry found at inspection. It failed before downloading FULL with “Expected exactly one FULL archive in the release”; downstream calculations and uploads were skipped. The current listing has one matching FULL archive. Its later extraction/schema problems are separate from that historical failure.
-- The release producer states publication is gated on Lead verification. No ingestion change, refresh dispatch, release-pin change, merge or deployment was performed during takeover.
+- During the initial takeover, the release producer described a Lead-verification publication gate, and no ingestion change, refresh dispatch, release-pin change, merge or deployment was performed. That historical privacy/access gate does not restrict the current public-data policy. Schema, checksum and analytical validation still determine whether an export is compatible and whether chart calculations are correct.
 
-## Ownership and access boundaries
+## Responsibilities and operational access
 
 | Responsibility | Coordination role |
 | --- | --- |
-| Ingestion, live private SQLite, private exports | New Data Base Lead |
+| Ingestion, live SQLite, public exports | New Data Base Lead |
 | Derived features, original packs and live.json dumps | Core analysis lead |
 | Weather and course overlays | Weather Elevation Lead |
 | Site repository and publication | Site owner |
 | Reviewable UI and extension analyses | Outside analysis/Codex agent |
 
-These are responsibility labels, not authenticated identities or permission grants. Repository access does not provide shell access to the ingestion machine. Private Releases hold compressed full records and backups; they are not encrypted archives. Keep raw runner data, names and working inputs outside the site tree and public artifacts.
+These are coordination responsibilities. Public repository/data access does not itself provide shell access to the ingestion machine. Publish full records and consistent backups as ordinary, unencrypted files, with direct anonymous links and documented schemas. The live service remains separate from downloadable database snapshots; operational credentials are not research data.
 
 ## Remaining work and evidence
 
-The highest-priority task is the [producer handoff](INGESTION_HANDOFF.md): request a new compatible full export with restored name/edition columns, audit sidecars outside the archives and the verified ID fix preserved. If an intentional schema change is preferred, agree a version-specific consumer adapter while retaining the September 7 natural-key join. Run the private inspection/calculation before proposing any pin or publication change. Next, reconcile split/source/edition completeness and exact-age coverage, then reproduce the targeted production UI and cohort-disclosure issues.
+The highest-priority task is the [producer handoff](INGESTION_HANDOFF.md): request a new compatible full export with restored name/edition columns, audit sidecars outside the archives and the verified ID fix preserved. If an intentional schema change is preferred, agree a version-specific consumer adapter while retaining the September 7 natural-key join. Run the inspection/calculation before adopting a new numerical release pin. Public access to full exports does not depend on whether their chart refresh has passed. Next, reconcile split/source/edition completeness and exact-age coverage, then reproduce the targeted production UI and cohort-disclosure issues.
 
 The checked-in guide still has no published age-specific cohort for 21 of its 30 selections (29 cities plus All courses); only 29.9% of eligible finishes have exact ages. This is a verified aggregate-data limit. Historical UI findings require reproduction against a named deployment. Ingestion scripts, live schedules, backup restore evidence and hosting configuration remain outside the inspected access.
 

@@ -1,4 +1,4 @@
-"""Private-runner diagnostics; writes only counts and race-overlay metadata."""
+"""Runner-data diagnostics; reports counts and race-overlay metadata."""
 import argparse
 import json
 from pathlib import Path

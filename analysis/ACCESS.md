@@ -1,6 +1,14 @@
-# Verified private export access
+# Public export access
 
-Updated September 11, 2026. This records export access, not a direct connection to the live ingestion database. Full runner records remain in private GitHub Releases and outside the website checkout. Archives are compressed, not encrypted. Only aggregate audit evidence is stored with these documents.
+Updated September 11, 2026. The owner requires public access to the complete Marathon Pacing Study data, source and documentation, superseding the earlier private-release policy. Full records, including supplied runner names and identifiers, belong in publicly downloadable releases. Archives are compressed, not encrypted. Releases keep large binaries separate from the website build for size and reproducibility, not privacy. This records export access, not a direct connection to the live ingestion database.
+
+## Open the data
+
+Browse [all releases](https://github.com/koolkam00/htw-live-study/releases) or download the complete [September 10 CORE](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260910-1412/htw-private-export-CORE-20260910-1412.tar.gz) and [September 10 FULL](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260910-1412/htw-private-export-FULL-20260910-1412.tar.gz) archives. FULL includes CORE tables plus every supplied feature row and column. The legacy `private` text in names is retained for link and pipeline compatibility.
+
+No account, token, password or decryption key should be needed. Standard gzip/tar tools open the archives; DuckDB or PyArrow opens the Parquet tables. The current strict pipeline downloader still rejects the September 10 archive/schema contract, as detailed below; this does not prevent opening its files directly. For a reproducible calculation, use the pinned September 7 release with the [local commands](README.md#access-and-refresh).
+
+**Verified September 11, 2026:** GitHub reports the repository as public. Without credentials or cookies, all nine releases were listed, the first 16 bytes of every one of their 21 assets were read, and the source release pin was retrieved. This verifies anonymous access to every published asset; the earlier complete-archive checksum audits remain separate evidence.  A subsequent anonymous smoke test downloaded and SHA-256-verified the complete pinned September 7 CORE archive, extracted all eight files and opened all five Parquet tables, including 3,451,055 raw records. See [machine-readable access results](../docs/evidence/2026-09-11/public-access-audit.json).
 
 ## September 10: directly audited export, not yet calculated
 
@@ -35,9 +43,9 @@ Evidence: [archive member hashes](../docs/evidence/2026-09-11/archive-members-au
 Source: `private-20260907-1318`, created September 7, 2026. All observations below describe that vintage.
 
 Both CORE and FULL were downloaded and SHA-256 verified inside the repository's
-private analysis environment. Every Parquet table and column was scanned. The
+then-private analysis environment. Every Parquet table and column was scanned. The
 GitHub connector's lack of direct release-binary download support does not limit
-queries in that environment. Individual rows and names are not published.
+queries in that environment. At that inspection, individual rows and names were not public; the later owner instruction authorizes the complete release contents to be public.
 
 | File | Rows | Columns |
 | --- | ---: | ---: |
