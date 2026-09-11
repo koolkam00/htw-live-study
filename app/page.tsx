@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { UnitLink as Link, MarathonDistance } from '@/components/UnitsProvider';
 import AnalysisIndex from '@/components/AnalysisIndex';
 import PacingPreview from '@/components/PacingPreview';
 import { getAnalysisStart } from '@/lib/analysis-server';
@@ -8,7 +8,7 @@ export default function Page() {
   const { summary, answers } = getAnalysisStart();
   return <div className="home">
     <section className="home-hero">
-      <div className="hero-copy"><p className="eyebrow">A study of how marathons unfold</p><h1>Understand<br />your next<br /><span>42.195 km.</span></h1><p className="hero-description">Millions of race results. Ten useful questions. Explore the patterns behind pacing, conditions and better finishes.</p><Link className="button-primary" href="/analyses/pacing-pattern">Start with your pacing <span aria-hidden="true">↗</span></Link><a className="hero-secondary" href="#the-ten">Explore all ten analyses <span aria-hidden="true">↓</span></a></div>
+      <div className="hero-copy"><p className="eyebrow">A study of how marathons unfold</p><h1>Understand<br />your next<br /><span><MarathonDistance />.</span></h1><p className="hero-description">Millions of race results. Ten useful questions. Explore the patterns behind pacing, conditions and better finishes.</p><Link className="button-primary" href="/analyses/pacing-pattern">Start with your pacing <span aria-hidden="true">↗</span></Link><a className="hero-secondary" href="#the-ten">Explore all ten analyses <span aria-hidden="true">↓</span></a></div>
       <PacingPreview answer={answers.find(answer => answer.id === 'profile')!} />
     </section>
     <section className="evidence-strip" aria-label="The data behind the study"><div><strong>{(summary.n / 1e6).toFixed(2)} million</strong><span>complete race finishes</span></div><div><strong>{summary.cities.filter(city => city.city !== 'All courses').length} cities</strong><span>with usable pacing records</span></div><p>Real races, read carefully.<br /><Link href="/about">Meet the study <span aria-hidden="true">↗</span></Link></p></section>

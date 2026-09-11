@@ -88,7 +88,7 @@ function Answer({ answer, number, summary, profile }: { answer: GuideAnswer; num
     {answer.comparison && <p className="study-meta guide-coverage">Comparison: {answer.comparison}.{answer.sample && ` ${count(answer.sample.n)} observations across ${answer.sample.editions} race editions.`}</p>}
     {answer.widened && <p className="study-meta guide-widened">{answer.widened}</p>}
     <details className="methodology"><summary>Methodology</summary><div className="methodology-content"><p>{answer.method}</p><p>Every published result contains at least 100 observations. Variation bands describe performances, not certainty in an estimate. Each answer labels its actual comparison group, including broader filters where needed.</p><Link href="/methodology#personalized">Full personalized methodology</Link></div></details>
-    {answer.id === 'checkpoint' ? <CheckpointComparison summary={summary} profile={profile} /> : answer.charts.map((chart, i) => <QuestionViz key={`${answer.id}-${i}`} spec={chart} />)}
+    {answer.id === 'checkpoint' ? <CheckpointComparison summary={summary} profile={profile} /> : answer.charts.map((chart, i) => <QuestionViz key={`${answer.id}-${i}`} spec={chart} unitSystem="km" />)}
   </section>;
 }
 

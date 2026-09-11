@@ -3,9 +3,12 @@
 import { useId, useState } from 'react';
 import type { ChartSpec } from '@/lib/research-data';
 import QuestionViz from './QuestionViz';
+import { unitText } from '@/lib/units';
+import { useUnits } from './UnitsProvider';
 
 export default function AnalysisChart({ charts, analysisId }: { charts: ChartSpec[]; analysisId: string }) {
   const id = useId();
+  const { units } = useUnits();
   const [selection, setSelection] = useState({ analysisId, index: 0 });
   const index = selection.analysisId === analysisId && selection.index < charts.length ? selection.index : 0;
   const selected = charts[index];
@@ -15,10 +18,10 @@ export default function AnalysisChart({ charts, analysisId }: { charts: ChartSpe
     <h2 className="analysis-chart-heading" id={`${id}-heading`}>Explore the comparison</h2>
     {charts.length > 1 && <div className="chart-switcher">
       {charts.length <= 3 ? <div className="chart-switcher-buttons" role="group" aria-label="Choose a comparison">
-        {charts.map((chart, option) => <button key={`${option}-${chart.title}`} type="button" aria-pressed={index === option} aria-controls={`${id}-comparison`} onClick={() => choose(option)}>{chart.title}</button>)}
+        {charts.map((chart, option) => <button key={`${option}-${chart.title}`} type="button" aria-pressed={index === option} aria-controls={`${id}-comparison`} onClick={() => choose(option)}>{unitText(chart.title, units)}</button>)}
       </div> : <label className="chart-switcher-label" htmlFor={`${id}-select`}>Comparison
         <select id={`${id}-select`} value={index} aria-controls={`${id}-comparison`} onChange={event => choose(Number(event.target.value))}>
-          {charts.map((chart, option) => <option key={`${option}-${chart.title}`} value={option}>{chart.title}</option>)}
+          {charts.map((chart, option) => <option key={`${option}-${chart.title}`} value={option}>{unitText(chart.title, units)}</option>)}
         </select>
       </label>}
     </div>}

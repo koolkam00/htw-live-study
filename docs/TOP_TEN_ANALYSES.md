@@ -1,8 +1,10 @@
 # Ten analyses for Marathon Pacing Study
 
-Implementation documented September 11, 2026 on `codex/ten-analysis-redesign`. The main website presents ten ranked analyses, each at `/analyses/{slug}`. The personalized pack was recalculated at `2026-09-11T09:15:27Z` to expand whole-minute target support to 90–720 minutes, using the same September 7 input. This is not adoption of a newer source release. The checked-in personalized pack uses `private-20260907-1318`: 2,739,842 eligible finishes, 819,742 with an exact age, and 373,955 with a recent prior benchmark. The newer export has not replaced these results.
+Implementation documented September 11, 2026; the redesign shipped in [PR #32](https://github.com/koolkam00/htw-live-study/pull/32), main commit `3e32bf8`, and was verified live. The main website presents ten ranked analyses, each at `/analyses/{slug}`. The personalized pack was recalculated at `2026-09-11T09:15:27Z` to expand whole-minute target support to 90–720 minutes, using the same September 7 input. This is not adoption of a newer source release. The checked-in personalized pack uses `private-20260907-1318`: 2,739,842 eligible finishes, 819,742 with an exact age, and 373,955 with a recent prior benchmark. The newer export has not replaced these results.
 
 The order prioritizes an understandable runner decision, then strength and availability of the evidence, then additional information beyond the preceding cards. The ranking stays fixed; changing a profile updates results and availability without shuffling priorities.
+
+The subsequent display-unit update defaults to miles and minutes per mile, with a Miles / Kilometres switch and elevation in feet for miles mode. The selection follows links and is shareable as `units=mi|km`; the browser saves the preference. The metric section names in this technical catalog describe source measurements. On the site, a recorded 5 km section becomes 3.11 miles without creating individual-mile splits. Unit selection changes displayed numbers and labels only: the ranked questions, source release, cohorts, counting thresholds and finish durations stay the same. See [display-unit semantics](WEBSITE_ARCHITECTURE.md#display-units). The PR #32 deployment verification above predates this unit update.
 
 ## Primary order and routes
 
