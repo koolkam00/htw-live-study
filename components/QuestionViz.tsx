@@ -7,10 +7,11 @@ import type { ChartSpec } from '@/lib/research-data';
 import { filterOptions, resolveSelection } from '@/lib/chart-selection';
 import { sectionLabel } from '@/lib/section-labels';
 
-const COLORS = ['#0758c7', '#ad492e', '#526078'];
+const COLORS = ['#2463eb', '#bb6844', '#687785'];
 
-export default function QuestionViz({ spec }: { spec: ChartSpec }) {
+export default function QuestionViz({ spec, headingLevel = 3 }: { spec: ChartSpec; headingLevel?: 2 | 3 }) {
   const id = useId();
+  const Heading = headingLevel === 2 ? 'h2' : 'h3';
   const filters = spec.filters || [];
   const [selected, setSelected] = useState<Record<string, string>>(() => resolveSelection(spec));
   const rows = useMemo(() => spec.rows.filter(row =>
@@ -21,6 +22,19 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
   const max = spec.unit === '%' ? Math.max(100, ...allValues) : spec.unit === 'correlation' ? 1 : Math.max(1, ...allValues.map(Math.abs));
   const hasCounts = rows.some(row => spec.series.some(series => finite(row[`n_${series.key}`]) !== null));
   const chartRows = spec.band ? rows.map(row => ({ ...row, interval: [row[spec.band!.lower], row[spec.band!.upper]] })) : rows;
+  const percentileLabels = ['10th percentile', 'Median', '90th percentile'];
+  const percentileKeys = spec.kind !== 'line' && spec.series.length === 3
+    ? [['p10', 'median', 'p90'], ['low', 'value', 'high']].find(keys => keys.every((key, index) => spec.series.some(series => series.key === key && series.label === percentileLabels[index])))
+    : undefined;
+  const timeRange = spec.unit === 'finish' || spec.unit === 'min/km';
+  const rangeMin = allValues.length ? Math.min(...allValues, ...(timeRange ? [] : [0])) : 0;
+  const rangeMax = allValues.length ? Math.max(...allValues, ...(timeRange ? [] : [0])) : 0;
+  const rangePadding = (rangeMax - rangeMin) * .05 || 1;
+  const rangeStart = timeRange ? Math.max(0, rangeMin - rangePadding) : rangeMin - rangePadding;
+  const rangeEnd = rangeMax + rangePadding;
+  const rangePosition = (n: number) => (n - rangeStart) / (rangeEnd - rangeStart) * 100;
+  const rangeHasZero = rangeStart < 0 && rangeEnd > 0;
+  const rangeZeroPosition = rangePosition(0);
   const value = (number: unknown) => {
     const n = finite(number);
     return n === null ? 'Not available' : formatNumber(n, spec.unit);
@@ -39,9 +53,8 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
 
   return (
     <figure className="study-figure" aria-labelledby={`${id}-title`}>
-      <h3 id={`${id}-title`} className="chart-title">{spec.title}</h3>
+      <Heading id={`${id}-title`} className="chart-title">{spec.title}</Heading>
       <p className="chart-unit">{units[spec.unit] || spec.unit}</p>
-      {spec.sectionEnds && <p className="study-meta">Each point averages the preceding section: 40 km means 35–40 km. The last point covers 40–42.195 km. Connecting lines do not locate a change within a section.</p>}
       {filters.length > 0 && <div className="chart-controls">
         {filters.map((filter, index) => {
           const options = filterOptions(spec, index, selected);
@@ -53,20 +66,41 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
           </label>;
         })}
       </div>}
-      {spec.series.length > 1 && <div className="chart-legend" aria-label="Chart legend">
-        {spec.series.map((series, i) => <span key={series.key} className={`chart-key ${spec.kind === 'line' && i === 1 ? 'dashed' : ''}`} style={{ '--series-color': spec.band && i > 0 ? '#0758c7' : COLORS[i % COLORS.length] } as React.CSSProperties}>{series.label}</span>)}
+      {spec.series.length > 1 && !percentileKeys && <div className="chart-legend" aria-label="Chart legend">
+        {spec.series.map((series, i) => <span key={series.key} className={`chart-key ${spec.kind === 'line' && i === 1 ? 'dashed' : ''}`} style={{ '--series-color': spec.band && i > 0 ? COLORS[0] : COLORS[i % COLORS.length] } as React.CSSProperties}>{series.label}</span>)}
       </div>}
       {!allValues.length ? <p className="answer-state" role="status">No published values for this selection.</p>
+        : percentileKeys ? <div className="range-chart">
+          <p className="study-meta">The line spans the 10th to 90th percentile. The dot marks the median.</p>
+          <div className="range-axis" aria-hidden="true" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ visibility: rangeHasZero && rangeZeroPosition < 15 ? 'hidden' : undefined }}>{value(rangeStart)}</span>
+            {rangeHasZero && <span className="range-zero-label" style={{ position: 'absolute', left: `${rangeZeroPosition}%`, transform: 'translateX(-50%)' }}>{value(0)}</span>}
+            <span style={{ visibility: rangeHasZero && rangeZeroPosition > 85 ? 'hidden' : undefined }}>{value(rangeEnd)}</span>
+          </div>
+          {rows.map((row, i) => {
+            const low = finite(row[percentileKeys[0]]), median = finite(row[percentileKeys[1]]), high = finite(row[percentileKeys[2]]);
+            const complete = low !== null && median !== null && high !== null && low <= median && median <= high;
+            return <div className="range-row" key={`${row.label}-${i}`}>
+              <div className="range-label">{label(row.label)}</div>
+              <div className="range-track" aria-hidden="true" style={{ position: 'relative', height: 28 }}>{complete && <>
+                {rangeStart <= 0 && rangeEnd >= 0 && <span className="range-zero" style={{ position: 'absolute', left: `${rangePosition(0)}%`, top: 3, bottom: 3, borderLeft: '1px solid #c9d2dd' }} />}
+                <span className="range-span" style={{ position: 'absolute', left: `${rangePosition(low)}%`, width: `${rangePosition(high) - rangePosition(low)}%`, top: 13, height: 2, borderRadius: 1, background: COLORS[2] }} />
+                <span className="range-marker" style={{ position: 'absolute', left: `${rangePosition(median)}%`, top: 7, width: 14, height: 14, transform: 'translateX(-50%)', borderRadius: '50%', background: COLORS[0], border: '2px solid white' }} />
+              </>}</div>
+              <div className="range-values"><strong aria-label={`Median: ${value(median)}`}>{median === null ? '—' : value(median)}</strong></div>
+            </div>;
+          })}
+        </div>
         : spec.kind === 'line' ? <div className="chart">
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <ComposedChart data={chartRows} margin={{ top: 20, right: 16, bottom: 24, left: 0 }} accessibilityLayer>
               <CartesianGrid vertical={false} stroke="#dfe5ee" />
-              <XAxis dataKey="label" type={spec.xNumeric ? 'number' : 'category'} domain={spec.xNumeric ? ['dataMin', 'dataMax'] : undefined} tickCount={5} tickLine={false} axisLine={false} minTickGap={28} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={v => typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v)} label={{ value: spec.xLabel, position: 'insideBottom', offset: -18, fontSize: 14, fill: '#526078' }} />
-              <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#526078' }} tickFormatter={axisValue} domain={signed || spec.unit === 'min/km' ? ['auto', 'auto'] : [0, 'auto']} />
-              {signed && <ReferenceLine y={0} stroke="#526078" />}
-              {spec.band && <Area type="linear" dataKey="interval" stroke="none" fill="#0758c7" fillOpacity={0.12} tooltipType="none" isAnimationActive={false} />}
+              <XAxis dataKey="label" type={spec.xNumeric ? 'number' : 'category'} domain={spec.xNumeric ? ['dataMin', 'dataMax'] : undefined} tickCount={5} tickLine={false} axisLine={false} minTickGap={28} tick={{ fontSize: 14, fill: '#687785' }} tickFormatter={v => typeof v === 'number' ? formatNumber(v, spec.xUnit) : String(v)} label={{ value: spec.xLabel, position: 'insideBottom', offset: -18, fontSize: 14, fill: '#687785' }} />
+              <YAxis width={58} tickLine={false} axisLine={false} tick={{ fontSize: 14, fill: '#687785' }} tickFormatter={axisValue} domain={signed || spec.unit === 'min/km' ? ['auto', 'auto'] : [0, 'auto']} />
+              {signed && <ReferenceLine y={0} stroke="#687785" />}
+              {spec.band && <Area type="linear" dataKey="interval" stroke="none" fill={COLORS[0]} fillOpacity={0.12} tooltipType="none" isAnimationActive={false} />}
               <Tooltip formatter={v => value(v)} labelFormatter={v => spec.sectionEnds ? `Average over ${label(v)}` : `${spec.xLabel}: ${label(v)}`} contentStyle={{ fontSize: 14, border: '1px solid #dfe5ee', borderRadius: 4, maxWidth: 250 }} />
-              {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={spec.band && i > 0 ? '#0758c7' : COLORS[i % COLORS.length]} strokeOpacity={spec.band && i > 0 ? 0.35 : 1} strokeWidth={spec.band && i > 0 ? 1 : 2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={spec.band && i > 0 ? false : { r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}
+              {spec.series.map((series, i) => <Line key={series.key} dataKey={series.key} name={series.label} stroke={spec.band && i > 0 ? COLORS[0] : COLORS[i % COLORS.length]} strokeOpacity={spec.band && i > 0 ? 0.35 : 1} strokeWidth={spec.band && i > 0 ? 1 : 2.5} strokeDasharray={i === 1 ? '6 4' : undefined} type="linear" dot={spec.band && i > 0 ? false : { r: 3 }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />)}
             </ComposedChart>
           </ResponsiveContainer>
         </div> : <div className="bars">
@@ -75,13 +109,16 @@ export default function QuestionViz({ spec }: { spec: ChartSpec }) {
             {spec.series.map((series, index) => {
               const n = finite(row[series.key]);
               return <div key={series.key}>
-                {spec.series.length > 1 && <div className="bar-label"><span style={{ color: COLORS[index % COLORS.length] }}>{series.label}</span><strong>{value(n)}</strong></div>}
+                {spec.series.length > 1 && <div className="bar-label"><span className="bar-series-label">{series.label}</span><strong>{value(n)}</strong></div>}
                 {n !== null && <div className={`bar-track ${signed ? 'signed-track' : ''}`} aria-hidden="true"><div className="bar-fill" style={{ width: `${Math.abs(n) / max * (signed ? 50 : 100)}%`, marginLeft: signed ? `${n < 0 ? 50 - Math.abs(n) / max * 50 : 50}%` : undefined, background: COLORS[index % COLORS.length] }} /></div>}
               </div>;
             })}
           </div>)}
         </div>}
-      {spec.note && <figcaption>{spec.note}</figcaption>}
+      {(spec.note || spec.sectionEnds) && <figcaption>
+        {spec.sectionEnds && <p>Points average the preceding section. The final section is 40–42.195 km; lines do not locate pace changes within a section.</p>}
+        {spec.note && <p>{spec.note}</p>}
+      </figcaption>}
       <details className="table-disclosure">
         <summary>View exact values{hasCounts ? ' and sample sizes' : ''}</summary>
         <div className="table-scroll" role="region" aria-label={`Values for ${spec.title}`} tabIndex={0}>

@@ -22,11 +22,13 @@ def sample(row):
     assert isinstance(row['editions'],int) and 1<=row['editions']<=row['n']
 
 
-def distribution(row,has_pace=True,has_cdf=True):
+def distribution(row,has_pace=True,has_cdf=True,target_min=150,target_max=270):
     sample(row)
     finite(row['finish']+[row['retention'],row['late']])
     assert len(row['finish'])==3 and row['finish']==sorted(row['finish'])
-    assert len(row['cdf'])==(121 if has_cdf else 0)
+    assert len(row['cdf'])==(target_max-target_min+1 if has_cdf else 0)
+    if has_cdf:
+        assert row.get('cdf_min',150)==target_min, 'CDF start does not match the declared target range'
     assert row['cdf']==sorted(row['cdf']) and all(isinstance(n,int) and 0<=n<=row['n'] for n in row['cdf'])
     assert len(row['pace'])==(9 if has_pace else 0)
     for values in row['pace']:
@@ -36,7 +38,7 @@ def distribution(row,has_pace=True,has_cdf=True):
 def validate_archive(archive,expected_export):
     with zipfile.ZipFile(archive) as bundle:
         infos=[i for i in bundle.infolist() if not i.is_dir()]
-        assert sum(i.file_size for i in infos)<=128*1024**2, 'Oversized aggregate artifact'
+        assert sum(i.file_size for i in infos)<=512*1024**2, 'Oversized aggregate artifact'
         assert len({i.filename for i in infos})==len(infos), 'Duplicate artifact entry'
         assert all(re.fullmatch(PACK+r'/(pack_meta\.json|summary\.json|tables/(city|checkpoint)_[0-9]{2,3}\.json)',i.filename) for i in infos), 'Unexpected artifact member'
         files={i.filename:json.loads(bundle.read(i)) for i in infos}
@@ -44,6 +46,11 @@ def validate_archive(archive,expected_export):
     assert meta['id']==PACK and meta['presentation']=='personalized-guide' and meta['status']=='ready'
     assert meta['analysis_count']==summary['analyses']==12 and meta['schema_version']==summary['schema_version']==1
     assert meta['input_export_id']==summary['export_id']==expected_export
+    target_min=summary.get('target_min',150);target_max=summary.get('target_max',270)
+    assert (target_min,target_max) in [(150,270),(90,720)], 'Unsupported target range'
+    assert (meta.get('target_min',150),meta.get('target_max',270))==(target_min,target_max)
+    def check_distribution(row,has_pace=True,has_cdf=True):
+        distribution(row,has_pace,has_cdf,target_min,target_max)
     for k in ['analysis_script_sha256','input_asset_sha256','input_manifest_sha256','supporting_script_sha256']:
         assert re.fullmatch('[a-f0-9]{64}',meta[k]), 'Missing provenance checksum'
     c=meta['cohort']
@@ -57,18 +64,18 @@ def validate_archive(archive,expected_export):
         assert data['city']==cp['city']==city['city']
         assert set(data)=={'city','cohorts','terrain'} and set(cp)=={'city','rows'}
         for key,row in data['cohorts'].items():
-            assert set(row)<=set('n editions finish cdf retention late pace age gender prior profiles openings near weather gains repeat performance'.split())
+            assert set(row)<=set('n editions finish cdf cdf_min retention late pace age gender prior profiles openings near weather gains repeat performance'.split())
             assert key=='|'.join([row['age'],row['gender'],row['prior']])
             assert row['age']=='all' or re.fullmatch(r'(18|[2-8][05])–(24|[2-8][49])',row['age'])
             assert row['gender'] in ['all','Women','Men']
             assert row['prior']=='all' or row['prior'].isdigit()
-            distribution(row);cohorts_seen+=1
+            check_distribution(row);cohorts_seen+=1
             for bucket,value in row['profiles'].items():
-                assert int(bucket) in range(150,271,15);distribution(value,has_cdf=False)
+                assert int(bucket) in range(target_min,target_max+1,15);check_distribution(value,has_cdf=False)
             for opening,value in row['openings'].items():
-                assert opening in ['Faster opening','Similar opening','Slower opening'];distribution(value,has_pace=False)
+                assert opening in ['Faster opening','Similar opening','Slower opening'];check_distribution(value,has_pace=False)
             for near in row['near']:
-                assert near['target'] in range(150,271)
+                assert near['target'] in range(target_min,target_max+1)
                 for side in ['below','above']:
                     value=near[side];sample(value);finite(value['durations']);assert len(value['durations'])==9
                     mean=sum(value['durations'])/60
@@ -82,7 +89,8 @@ def validate_archive(archive,expected_export):
                     assert len(profile)==9 and abs(sum(km*x for km,x in zip(LENGTHS,profile)))<0.01
             if 'performance' in row:
                 value=row['performance'];sample(value);finite(value['values']);assert value['values']==sorted(value['values'])
-            for value in row['gains'].values():
+            for bucket,value in row['gains'].items():
+                assert int(bucket) in range(target_min,target_max+1,15)
                 sample(value);finite(value['values']+[value['total'],value['previous'],value['current']])
                 assert len(value['values'])==3 and abs(sum(value['values'])-value['total'])<0.001
                 assert abs((value['previous']-value['current'])/60-value['total'])<0.001
@@ -90,8 +98,8 @@ def validate_archive(archive,expected_export):
             assert set(terrain)=={'end','net','gain','loss'};finite([x for x in terrain.values() if x is not None])
         cpkeys=[]
         for row in cp['rows']:
-            assert set(row)==set('age gender checkpoint elapsed trend n editions finish retention late pace cdf'.split())
-            distribution(row,has_pace=False);assert row['checkpoint'] in [20,30,35] and row['elapsed']%2==0
+            assert set(row)-{'cdf_min'}==set('age gender checkpoint elapsed trend n editions finish retention late pace cdf'.split())
+            check_distribution(row,has_pace=False);assert row['checkpoint'] in [20,30,35] and row['elapsed']%2==0
             cpkeys.append((row['age'],row['gender'],row['checkpoint'],row['elapsed'],row['trend']));checkpoint_seen+=1
         assert len(set(cpkeys))==len(cpkeys)
     assert set(files)==expected, 'Missing or unreferenced aggregate shard'

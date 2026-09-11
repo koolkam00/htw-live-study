@@ -1,0 +1,179 @@
+{
+  "comparisons": {
+    "cdf_distributions": 77020,
+    "cdf_threshold_counts": 9319420,
+    "checkpoint_cells": 72558,
+    "profiles_cells": 3502,
+    "gains_cells": 1704,
+    "near_target_cells": 25393,
+    "base_cohorts": 1867
+  },
+  "float_differences": 5,
+  "float_difference_details": [
+    {
+      "aggregate": "city_00.json/40–44|Women|255/repeat/finish_change",
+      "before": 7.4438,
+      "after": 7.4437
+    },
+    {
+      "aggregate": "city_01.json/all|all|285/repeat/finish_change",
+      "before": -7.3188,
+      "after": -7.3187
+    },
+    {
+      "aggregate": "city_05.json/all|Men|255/gains/210/values/0",
+      "before": 7.4283,
+      "after": 7.4282
+    },
+    {
+      "aggregate": "city_06.json/all|Men|285/repeat/finish_change",
+      "before": -11.5923,
+      "after": -11.5922
+    },
+    {
+      "aggregate": "city_18.json/30–34|all|345/repeat/finish_change",
+      "before": -10.3402,
+      "after": -10.3403
+    }
+  ],
+  "max_absolute_float_difference": 0.00010000000000065512,
+  "cdf_overlap_mismatches": 0,
+  "new_profile_cells": 2822,
+  "new_gain_cells": 602,
+  "new_near_target_cells": 24334,
+  "target_min": 90,
+  "target_max": 720,
+  "export_id": "private-20260907-1318",
+  "n": 2739842,
+  "age_n": 819742,
+  "history_n": 373955,
+  "input_asset_sha256": "f042ee689ebbb487cf87abe70dd796fd9362765bca36a7e1b0ecf0f715a00fe7",
+  "overlap_thresholds": [
+    150,
+    270
+  ],
+  "all_courses_available_profile_buckets": [
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    240,
+    255,
+    270,
+    285,
+    300,
+    315,
+    330,
+    345,
+    360,
+    375,
+    390,
+    405,
+    420,
+    435,
+    450,
+    465,
+    480,
+    495,
+    510,
+    525
+  ],
+  "whole_minute_finish_counts": {
+    "90": 0,
+    "120": 35,
+    "150": 10411,
+    "180": 154513,
+    "270": 1786748,
+    "300": 2232898,
+    "360": 2628251,
+    "480": 2738159,
+    "600": 2739824,
+    "720": 2739842
+  },
+  "all_courses_achieved_buckets": {
+    "90": null,
+    "120": 532,
+    "150": 18361,
+    "180": 133293,
+    "270": 267083,
+    "300": 173784,
+    "360": 51172,
+    "480": 955,
+    "600": null,
+    "720": null
+  },
+  "new_aggregate_bytes": 209002878,
+  "old_aggregate_bytes": 48348884,
+  "largest_new_shard_bytes": 46699198,
+  "verified_at": "2026-09-11T09:20:45Z",
+  "baseline_repository_revision": "65869e489fe42f77f303755da43daa7690a5fac5",
+  "calculated_at": "2026-09-11T09:15:27Z",
+  "input_as_of": "2026-09-07T13:19:23Z",
+  "live_json_as_of": "2026-09-07T04:44:53Z",
+  "source_download": {
+    "access": "anonymous HTTPS",
+    "bundle": "FULL",
+    "release_tag": "private-export-20260907-1318",
+    "verified_sha256": "f042ee689ebbb487cf87abe70dd796fd9362765bca36a7e1b0ecf0f715a00fe7",
+    "verified_files_extracted": 9
+  },
+  "analysis_script_sha256": "f9ba9cda928e5f20e0ec9c20761f289252d0b58235e0d9d5f75d5a4a920be38b",
+  "supporting_script_sha256": "fc36e50364533e02f095cc44155cda8ece1484bfde711ac73f0d17ae7280b445",
+  "transport_script_sha256": "748da4b7e618077e9ab1d56de258fc20dc9953595b9e631f6f0650c6f89b97a4",
+  "comparison_method": "Compare each baseline cohort, opening and checkpoint distribution with the new CDF slice for targets 150–270; match checkpoints by age/gender/checkpoint/elapsed/trend, compare common achieved buckets and nearby targets, and sort weather/course groups before comparison. Require exact count equality and absolute floating-value difference at most 0.00011. Added groups are counted separately.",
+  "comparison_notes": [
+    "All prior CDF counts match exactly. The five listed changes are fourth-decimal differences in mean minutes; the formulas and source cohort are unchanged.",
+    "The target range is evaluated exactly at whole minutes using finish < target. Achieved-time groups remain 15-minute buckets with a 100-finish minimum.",
+    "Sparse achieved-time and comparison groups remain unavailable; support for a threshold does not guarantee an achieved-time profile.",
+    "Only ext_personalized_guide was imported. The 25 broad extended outputs were calculated in temporary storage but were not imported."
+  ],
+  "published_aggregate_bytes": 209008502,
+  "published_files": 62,
+  "coverage": {
+    "profiles": 1012,
+    "openings": 1528,
+    "near": 513,
+    "weather": 1213,
+    "repeat": 1630,
+    "gains": 669,
+    "performance": 1719,
+    "checkpoints": 72558
+  },
+  "validation": {
+    "python_unittests": {
+      "passed": 10
+    },
+    "personalized_import_check": {
+      "cohorts": 1867,
+      "checkpoint_cells": 72558,
+      "passed": true
+    },
+    "npm_verify_data": {
+      "passed": true,
+      "broad_questions": 35,
+      "broad_chart_views": 125,
+      "personalized_profiles": 160,
+      "personalized_charts": 1320
+    },
+    "provenance_script_checksums_match_current_files": true,
+    "release_pin_unchanged": true,
+    "other_public_packs_unchanged": true
+  },
+  "transport_size_examples": [
+    {
+      "file": "city_00.json",
+      "json_bytes": 7741472,
+      "local_gzip_equivalent_bytes": 1502430
+    },
+    {
+      "file": "checkpoint_00.json",
+      "json_bytes": 46699198,
+      "local_gzip_equivalent_bytes": 2631320
+    }
+  ],
+  "transport_size_note": "Gzip sizes are measured locally for comparison; they do not verify HTTP response compression. Shards remain ordinary JSON and checkpoint loading remains separate."
+}

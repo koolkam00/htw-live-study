@@ -8,14 +8,19 @@ Takeover evidence and current branch changes are distinguished in [PROJECT_HANDO
 
 | Route | Source / renderer | Purpose |
 | --- | --- | --- |
-| / | app/page.tsx; components/QuestionsHome.tsx | Themed research questions |
-| /packs | app/packs/page.tsx | Pack browsing |
-| /packs/[packId] | app/packs/[packId]/page.tsx; ResearchQuestion / PackClientPage | Question or legacy pack content |
+| / | app/page.tsx; PacingPreview / AnalysisIndex | Study introduction and the ranked ten analyses |
+| /analyses | app/analyses/page.tsx; AnalysisIndex | Primary ten-question directory |
+| /analyses/[slug] | app/analyses/[slug]/page.tsx; AnalysisExplorer / AnalysisChart | One primary question, supported controls, observed results and methods |
+| /about | app/about/page.tsx | Study purpose and interpretation |
+| /packs and /packs/[packId] | app/packs; ResearchQuestion / PackClientPage | Broader research archive and legacy pack content |
 | /slowdown | app/slowdown/page.tsx; sustained-slowdown dashboard | Sustained-slowdown measure and six figures |
 | /htw and /packs/smyth_htw | Legacy route files | Compatibility URLs retained for existing links |
-| /courses and /courses/[city] | app/courses; lib/course-data.ts | Course-specific public summaries |
-| /your-race | app/your-race/page.tsx; components/PersonalizedGuide.tsx | Twelve personalized questions |
+| /courses and /courses/[city] | app/courses; lib/course-data.ts | Course-specific supporting summaries |
+| /your-race | Legacy personalized entry | Client compatibility redirect preserving mapped question hashes and profile query parameters |
+| /research/personalized | Archived PersonalizedGuide | All twelve backing questions in the earlier guide layout |
 | /methodology | app/methodology/page.tsx | Definitions, cohorts and limitations |
+
+[lib/ten-analyses.ts](../lib/ten-analyses.ts) is the primary ordering and route registry: pacing pattern, opening pace, checkpoint, section differences, courses, weather, terrain, target context, improvement and age. The [ten-analysis guide](TOP_TEN_ANALYSES.md) maps these pages to data and limitations. The 35-question catalog in `lib/question-catalog.ts` and 33 broad extension packs remain a research archive; the personalized catalog retains 12 backing calculation paths. These are overlapping views, not independent datasets. `/your-race#guide-{id}` maps the primary ten to their new analysis pages; `#guide-downhill` and `#guide-return` open the retained twelve-question guide at `/research/personalized`. The `/packs` archive links to the ten and keeps the twelve-question list collapsed.
 
 ## Full-data access and three chart-data paths
 
@@ -23,20 +28,24 @@ Current policy exposes source code, full runner exports, database snapshots and 
 
 1. **Core:** public/data/live.json and original S/R/RN/P pack folders. lib/research-data.ts reads JSON/CSV and maps them to explanatory answers; hooks/useLiveData.ts and usePackMeta.ts support client legacy views. lib/packs.ts default statuses are fallback registry values, not proof of valid current calculations.
 2. **Extensions:** lib/extension-data.ts discovers ext_* directories at build time, requires ready schema-valid metadata, reads summaries and CSVs, and maps question_id to lib/question-catalog.ts. Newer input_as_of wins, with calculation date as tie-breaker. Invalid ready data fails the build. This is not a request-time connection to the ingestion database.
-3. **Personalized:** lib/personalized-data.ts loads the summary/method; PersonalizedGuide and lib/personalized.ts use per-city aggregate shards. public/data/packs/ext_personalized_guide contains pack_meta.json, summary.json, tables/city_XX.json and tables/checkpoint_XX.json. The summary maps city names to filenames; never assume numeric shard positions stay stable. Checkpoint shards load when requested.
+3. **Personalized:** `lib/personalized-data.ts` loads the summary/method. `lib/analysis-server.ts` builds the initial All courses / 4:00 answer from the matching city shard during static export. `AnalysisExplorer` and `lib/personalized.ts` select among the fixed aggregates; `lib/analysis-aggregates.ts` loads the needed JSON through the client cache. `public/data/packs/ext_personalized_guide` contains `pack_meta.json`, `summary.json`, `tables/city_XX.json` and `tables/checkpoint_XX.json`. The summary maps city names to filenames; never assume numeric shard positions stay stable. Course comparison uses the summary; checkpoint shards load when requested.
 
 Course pages use `lib/course-data.ts`: names come from `live.json` table `t1` and the course-profile extension, and charts come from `ext_course_pacing_profiles`. Files under `public/data/c4` exist but are not read by this route's loader. Core and extensions can have different source vintages; display and compare them explicitly.
 
-## Personalized semantics to preserve
+## Primary explorer and personalized semantics
 
-- Three focuses: prepare, choose, review. They reorder/select emphasis among the same twelve questions.
-- Thresholds are whole minutes 150–270; presets are every 15 minutes. Strict finish < target is evaluated exactly, not interpolated.
-- Achieved-time profiles use a 15-minute bucket centered on the nearest preset; these are not declared goals.
+`lib/analysis-profile.ts` defines the example as All courses, 4:00, all ages, all recorded genders and no previous time. Profile selections travel between the ten pages in URL parameters; browser history restores them. The explorer labels the example and subsequent selections, validates submitted times, and provides visible loading, retry and unavailable-result states. There is no arbitrary city substitution for a sparse cohort. All courses has no terrain profile: the terrain page asks for a course explicitly.
+
+- Ranking is fixed. Profile changes update comparisons and availability without reordering the ten.
+- The personalized pack was recalculated at `2026-09-11T09:15:27Z` from bundle `private-20260907-1318`, input timestamp `2026-09-07T13:19:23Z`. The source pin did not change.
+- Thresholds are every whole minute from 90 through 720 (1:30–12:00). Strict finish < target is evaluated exactly, not interpolated. The engine has 43 presets at 15-minute intervals; achieved-time profiles use a 15-minute bucket centered on the nearest preset and describe achieved finishes, not declared goals.
+- Accepted targets do not imply that all corresponding chart cells exist. Profile, nearby-finish, age, prior-performance and checkpoint comparisons retain their sample requirements; sparse and extreme selections can remain unavailable. The pack’s `analyses: 12` counts retained engine paths, not primary pages.
+- Visible controls match each question. Course comparison varies courses and hides course/time filters. Weather hides time. Age comparison varies age and hides the age filter. Checkpoint comparison hides previous time. Other relevant profile refinements remain available.
 - Ages: 18–24, then five-year bands through 85–89. Unknown exact age contributes to All only.
-- Previous time selects a 15-minute band of best recorded performances in the two earlier calendar years, not an exact last-race filter.
-- Fallback broadening should be explicit. Never replace the selected course silently. Comparison questions intentionally vary the comparison dimension.
-- Checkpoints at 20/30/35 km use two-minute elapsed bands and optional recent pace trend; the previous-time filter does not apply. Historical complete-finisher outcomes are not calibrated individual probabilities.
-- Standard public estimates require 100 observations. Edition/group comparisons and forecast cohorts have additional rules documented in each pack.
+- Previous time selects a 15-minute band of best recorded performances in the two earlier calendar years, not an exact last-race filter. Broader age/gender/prior comparisons are explicitly labeled.
+- Checkpoints at 20/30/35 km use two-minute elapsed bands and optional recent pace trend. Historical complete-finisher outcomes are not calibrated individual probabilities.
+- Weather and terrain are supported data views, not universal filters. The weather chart compares published start-hour temperature bands. Terrain switches between supplied elevation and pacing charts; demographic/time refinements change the pace cohort, not the elevation measurements.
+- Standard chart estimates require 100 observations. Edition/group comparisons and forecast cohorts have additional rules documented in each pack. These reliability rules do not restrict full-data access.
 
 ## Data to rendering to deployment
 
@@ -44,4 +53,6 @@ The chart calculations produce aggregate artifacts; the current data-access poli
 
 For a new analysis, update its calculation, registry/question mapping, metadata/method, public aggregate output and verification together. Preserve stable IDs and aliases. For UI changes, test mobile widths and null/sparse cohorts; a successful build alone does not resolve the historical mobile audit.
 
-The September 11 presentation update introduced Marathon Pacing Study terminology and the `/slowdown` route while retaining legacy URLs and internal data keys. The numerical definition stays at least 25% slower for at least 5 km after 20 km relative to the 5–20 km baseline, with a neutral [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513) citation. Presentation edits do not refresh the source vintage, change numeric aggregates or imply a deployment. Original numerical-run hashes and subsequent presentation revisions are recorded separately where metadata text changes.
+The earlier September 11 presentation update introduced Marathon Pacing Study terminology and the `/slowdown` route while retaining legacy URLs and internal data keys. The numerical definition stays at least 25% slower for at least 5 km after 20 km relative to the 5–20 km baseline, with a neutral [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513) citation. Presentation edits do not refresh the source vintage, change numeric aggregates or imply a deployment. Original numerical-run hashes and subsequent presentation revisions are recorded separately where metadata text changes.
+
+The subsequent ten-analysis redesign changes primary navigation, page composition and profile controls, and recalculates the personalized pack to expand supported targets. Its calculation timestamp and script provenance were updated; the September 7 input vintage and sustained-slowdown definition remain unchanged. No production state is inferred from this checkout.

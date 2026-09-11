@@ -1,17 +1,18 @@
 # Analysis catalog
 
-Verified from the repository commit in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md). This is an index of current implementation and checked-in outputs, not a claim that every original hypothesis is answerable or that a new export was calculated.
+Updated September 11, 2026 for the ten-analysis redesign; source and deployment evidence is recorded in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md). This is an index of current implementation and checked-in outputs, not a claim that every original hypothesis is answerable or that a new export was calculated.
 
 ## How to read the catalog
 
-- 35 primary questions are defined in [lib/question-catalog.ts](../lib/question-catalog.ts). 33 have registered extension packs; group running and congestion remain measurement-limited.
+- The primary site has [ten ranked analyses](TOP_TEN_ANALYSES.md), defined in [lib/ten-analyses.ts](../lib/ten-analyses.ts) and served at `/analyses/{slug}`. They reuse ten of the twelve personalized calculation paths below.
+- 35 broader research-archive questions are defined in [lib/question-catalog.ts](../lib/question-catalog.ts). 33 have registered extension packs; group running and congestion remain measurement-limited.
 - Eight foundation packs are calculated by [analysis/build_pacing.py](../analysis/build_pacing.py); the other 25 by [analysis/build_extended.py](../analysis/build_extended.py). [analysis/write_findings.py](../analysis/write_findings.py) generates narrative findings from aggregates.
-- Twelve personalized questions share [analysis/build_personalized.py](../analysis/build_personalized.py) and [lib/personalized.ts](../lib/personalized.ts); they are not twelve independent raw datasets.
+- Twelve backing personalized calculation paths share [analysis/build_personalized.py](../analysis/build_personalized.py) and [lib/personalized.ts](../lib/personalized.ts); they are not twelve independent raw datasets.
 - Legacy S/R/RN/P and sustained-slowdown figure folders coexist. Aliases and replacement answers overlap; do not count folders as unique studies.
 - Per-pack methods below follow checked-in metadata and preserve denominators, definitions and limitations; presentation labels use the current Marathon Pacing Study terminology. Full runner records and source code are public research material under the current access policy. Older aggregate-only distribution wording is superseded; chart cohort thresholds remain reliability requirements, not restrictions on downloading the full dataset. Ready is a metadata state, not proof of causal identification.
 - All extension entries below use the September 7 bundle in the checked-in metadata. Newer release notes do not update these outputs automatically.
 
-The September 11 takeover confirmed all 33 registered broad packs and the separate personalized guide are ready. Their original numerical-run script hashes matched the checked-in calculation code before the presentation-only terminology changes; subsequent text revisions are recorded separately. Metadata scopes comprise 23 descriptive analyses, seven partial comparisons, one route proxy, one weather proxy and one temporally validated forecast. Ready does not mean that the full original causal question has been resolved.
+The September 11 takeover confirmed all 33 registered broad packs and the separate personalized guide are ready. The broad packs’ original numerical-run script hashes matched the checked-in calculation code before the presentation-only terminology changes; subsequent text revisions are recorded separately. The personalized pack was subsequently recalculated at `2026-09-11T09:15:27Z` from the same September 7 input, with new numerical-run provenance and exact whole-minute threshold support from 90 through 720. Its `analyses: 12` remains the backing-engine count, not the number of primary pages. Metadata scopes comprise 23 descriptive analyses, seven partial comparisons, one route proxy, one weather proxy and one temporally validated forecast. Ready does not mean that the full original causal question has been resolved.
 
 September 10 CORE/FULL canonical ID alignment and timing units are now verified, but the newer archive members and 138-column feature schema are incompatible with the current consumer. No new September 10 aggregate calculation was imported. See [current export access](../analysis/ACCESS.md).
 
@@ -25,7 +26,7 @@ Extended calculations reuse the raw preparation with retained raw record ID, rea
 
 Each entry links the authoritative metadata, summary, calculation script and actual table files. Metadata contains cohort/exclusion diagnostics, observation units, provenance and method prose; summary charts specify the numeric columns and per-series sample-count columns. Use those contracts rather than inferring formulas from the question title.
 
-## Primary question map
+## Broader research archive question map
 
 | # | Question ID and title | Theme | Extension / state | Aliases |
 | --- | --- | --- | --- | --- |
@@ -728,9 +729,11 @@ Methods and limitations from this pack:
 - Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
-## Personalized question map and methods
+## Personalized engine: twelve calculation paths and methods
 
 Producer: [analysis/build_personalized.py](../analysis/build_personalized.py), called from build_extended.py with --personalized-output. Renderer/calculation selection: [lib/personalized.ts](../lib/personalized.ts); question wording: [lib/personalized-catalog.ts](../lib/personalized-catalog.ts). Output: [metadata](../public/data/packs/ext_personalized_guide/pack_meta.json) and [summary and city-file mapping](../public/data/packs/ext_personalized_guide/summary.json), with tables/city_XX.json and tables/checkpoint_XX.json shards. Import using import_personalized.py separately from the 33-pack import.
+
+The primary page order and wording come from [the ten-analysis registry](../lib/ten-analyses.ts); the engine catalog below retains its original focus labels and two additional paths, `downhill` and `return`. The primary default is an All courses / 4:00 example, with no assumed age, gender or prior performance. The current pack uses input timestamp `2026-09-07T13:19:23Z` and calculation timestamp `2026-09-11T09:15:27Z`. Every integer target from 90 through 720 minutes has exact threshold support, but profile, near-finish, checkpoint and history cells publish only when their own sample rules pass. Extreme or sparse selections can therefore have no result.
 
 All questions share the eligible and prior-history preparation described above. A displayed filter may be broadened only with explicit labeling. Read each method for dimensions deliberately varied, achieved-time conditioning and prior-time exclusions.
 
@@ -792,7 +795,7 @@ Use the supplied modeled start-hour temperature and runners with earlier benchma
 
 Focus: prepare, choose.
 
-Evaluate the selected time against the historical finish-time distribution in the displayed cohort. Optional previous performance selects a 15-minute band of recent recorded bests. Each whole-minute threshold from 2:30 through 4:30 is calculated exactly using a strict less-than comparison. Without previous performance this describes the selected field, not individual readiness.
+Evaluate the selected time against the historical finish-time distribution in the displayed cohort. Optional previous performance selects a 15-minute band of recent recorded bests. Each whole-minute threshold from 1:30 through 12:00 is calculated exactly using a strict less-than comparison. Without previous performance this describes the selected field, not individual readiness.
 
 ### return: How do runners change when they return to this course?
 
@@ -867,4 +870,4 @@ Group dynamics (`r16_groups_hold_or_fall`) and congestion (`r33_start_congestion
 
 ## Maintaining this document
 
-Regenerate/review the map against analysis/pack_registry.json and both question catalogs after adding analyses. Update the entry's method, input vintage, cohort, script and output links when calculations change. Preserve the separation between hypotheses, measured fields, derived features, completed outputs and blocked questions.
+Review the primary ten against `lib/ten-analyses.ts`, and the archive and backing-engine maps against `analysis/pack_registry.json`, `lib/question-catalog.ts` and `lib/personalized-catalog.ts` after adding analyses. Update the entry's method, input vintage, cohort, script and output links when calculations change. Preserve the separation between hypotheses, measured fields, derived features, completed outputs and blocked questions.

@@ -14,7 +14,9 @@ from build_pacing import POINTS, records
 
 PACK = 'ext_personalized_guide'
 MIN_N = 100
-TARGETS = list(range(150, 271))
+TARGET_MIN = 90
+TARGET_MAX = 720
+TARGETS = list(range(TARGET_MIN, TARGET_MAX + 1))
 LENGTHS = [POINTS[i] - (POINTS[i-1] if i else 0) for i in range(9)]
 
 
@@ -56,10 +58,12 @@ def distribution(db, extras=(), where='true', cdf=True, pace=True, view='pg'):
         key = tuple(row.pop(k) for k in keys)
         row['pace'] = [row.pop(f'pace{i}') for i in range(9)] if pace else []
         row['cdf'] = []
+        if cdf:
+            row['cdf_min'] = TARGET_MIN
         mapped[key] = row
     if cdf and mapped:
         hist = records(db, f'''SELECT {columns},
-          least(271,greatest(150,floor(t8/60)::INTEGER+1)) AS threshold,count(*) AS n
+          least({TARGET_MAX + 1},greatest({TARGET_MIN},floor(t8/60)::INTEGER+1)) AS threshold,count(*) AS n
           FROM {view} WHERE {where} GROUP BY ALL''')
         bins = defaultdict(list)
         for row in hist:
@@ -68,7 +72,7 @@ def distribution(db, extras=(), where='true', cdf=True, pace=True, view='pg'):
                 bins[key].append((row['threshold'],row['n']))
         for key, row in mapped.items():
             row['cdf'] = cdf_from_bins(bins[key])
-            assert len(row['cdf']) == 121 and all(0 <= n <= row['n'] for n in row['cdf'])
+            assert len(row['cdf']) == len(TARGETS) and all(0 <= n <= row['n'] for n in row['cdf'])
             assert row['cdf'] == sorted(row['cdf'])
     return mapped
 
@@ -77,7 +81,7 @@ def near_targets(db):
     sums = ','.join(f'sum(d{i}) AS s{i}' for i in range(9))
     rows = records(db, f'''SELECT c,floor(t8/60)::INTEGER AS minute,count(*) AS n,
       list(DISTINCT edition) AS events,{sums}
-      FROM pg WHERE t8>=145*60 AND t8<275*60 GROUP BY c,minute''')
+      FROM pg WHERE t8>={TARGET_MIN - 5}*60 AND t8<{TARGET_MAX + 5}*60 GROUP BY c,minute''')
     buckets = defaultdict(dict)
     for row in rows:
         buckets[row['c']][row['minute']] = row
@@ -141,7 +145,8 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
       'export_id':provenance['release_tag'].replace('private-export-','private-'),
       'input_as_of':manifest['created_at'],'n':counts['eligible'],
       'age_n':db.execute('SELECT count(*) FROM personal_seed WHERE age_key IS NOT NULL').fetchone()[0],
-      'history_n':diagnostics['recent_benchmark_finishes'],'analyses':12,'cities':[],'courses':[]}
+      'history_n':diagnostics['recent_benchmark_finishes'],'analyses':12,
+      'target_min':TARGET_MIN,'target_max':TARGET_MAX,'cities':[],'courses':[]}
     coverage = defaultdict(int)
     for city_index, city in enumerate(['All courses']+cities):
         condition = 'true' if city=='All courses' else 'city=?'
@@ -159,7 +164,7 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
         for (key,), row in basic.items():
             a,g,b = key.split('|')
             cohorts[key] = {**row,'age':a,'gender':g,'prior':b,'profiles':{},'openings':{},'near':[], 'weather':[], 'gains':{}}
-        for (key,bucket), row in distribution(db,('bucket',),'bucket BETWEEN 150 AND 270',cdf=False).items():
+        for (key,bucket), row in distribution(db,('bucket',),f'bucket BETWEEN {TARGET_MIN} AND {TARGET_MAX}',cdf=False).items():
             cohorts[key]['profiles'][str(bucket)] = row
         for (key,opening), row in distribution(db,('opening_group',),'recent_best IS NOT NULL',pace=False).items():
             cohorts[key]['openings'][opening] = row
@@ -195,13 +200,13 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
             assert abs(sum(LENGTHS[i]*row['previous'][i] for i in range(9)))<1e-6
             assert abs(sum(LENGTHS[i]*row['current'][i] for i in range(9)))<1e-6
             cohorts[key]['repeat']=row
-        gains = records(db,'''SELECT g.c,g.bucket,count(*) AS n,count(DISTINCT g.edition) AS editions,
+        gains = records(db,f'''SELECT g.c,g.bucket,count(*) AS n,count(DISTINCT g.edition) AS editions,
           avg((old.t1-g.t1)/60) AS opening,
           avg(((old.t5-old.t1)-(g.t5-g.t1))/60) AS middle,
           avg(((old.t8-old.t5)-(g.t8-g.t5))/60) AS late,
           avg((old.t8-g.t8)/60) AS total,avg(old.t8) AS previous,avg(g.t8) AS current
           FROM pg g JOIN linked old ON old.rid=g.earlier_best_rid
-          WHERE g.t8<old.t8 AND g.bucket BETWEEN 150 AND 270
+          WHERE g.t8<old.t8 AND g.bucket BETWEEN {TARGET_MIN} AND {TARGET_MAX}
           GROUP BY g.c,g.bucket HAVING count(*)>=100''')
         for row in gains:
             key=row.pop('c');bucket=row.pop('bucket')
@@ -245,9 +250,10 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
       'corpus':{k:manifest[k] for k in ['n_records','n_cities','n_race_years']},
       'input_asset_sha256':provenance['asset_sha256'],'input_manifest_sha256':provenance['manifest_sha256'],
       'analysis_script_sha256':script_hash,'supporting_script_sha256':hashlib.sha256(Path(__file__).with_name('build_extended.py').read_bytes()).hexdigest(),
-      'linkage_audit':diagnostics,'minimum_public_cell':100,'analysis_count':12,'coverage':dict(coverage),
+      'linkage_audit':diagnostics,'minimum_public_cell':100,'analysis_count':12,
+      'target_min':TARGET_MIN,'target_max':TARGET_MAX,'coverage':dict(coverage),
       'methodology_prose':[
-        'All twelve personalized questions use the complete public export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 150 to 270 whole minutes are evaluated with strict finish < target.',
+        'All twelve personalized questions use the complete public export. Visitor targets are chosen thresholds, never inferred historical intentions. Targets from 90 to 720 whole minutes are evaluated with strict finish < target. Sparse achieved-time and comparison groups remain unavailable rather than being estimated.',
         'Exact ages define 18–24 then five-year bands through 85–89. Age-group-only labels are not converted into exact ages. Optional recorded gender is Women, Men or all available records. Previous performance selects a 15-minute band of best times in the two strictly earlier calendar years.',
         'Every public result has at least 100 finishes or linked pairs. Age, gender and prior-performance rollups are computed directly from the same records, not by averaging subgroup medians. The site labels any broader comparison used when a narrow combination is unavailable. Availability is not statistical certainty.',
         'Section paces use actual elapsed differences divided by 5 km or 2.195 km at the finish. Quantile ranges describe variation between finishes, not confidence intervals. Higher time per distance means slower. Every complete cohort uses the same runners at all nine checkpoints.',

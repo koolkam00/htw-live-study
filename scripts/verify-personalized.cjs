@@ -9,14 +9,20 @@ require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileMo
 }).outputText, filename);
 
 const { buildGuide, candidates, checkpointResult, chooseCohort, defaultProfile, parseMinutes, parseElapsed, parseSection, percentUnder, priorBand, targetBucket, finishBand } = require('../lib/personalized.ts');
-const { PERSONAL_QUESTIONS, GOAL_PRESETS, AGE_OPTIONS } = require('../lib/personalized-catalog.ts');
+const { PERSONAL_QUESTIONS, GOAL_PRESETS, GOAL_MIN, GOAL_MAX, AGE_OPTIONS } = require('../lib/personalized-catalog.ts');
 const { getPersonalSummary } = require('../lib/personalized-data.ts');
 const root = 'public/data/packs/ext_personalized_guide';
 const summary = getPersonalSummary();
 const meta = JSON.parse(fs.readFileSync(`${root}/pack_meta.json`, 'utf8'));
 assert.equal(PERSONAL_QUESTIONS.length, 12);
 assert.equal(new Set(PERSONAL_QUESTIONS.map(q => q.id)).size, 12);
-assert.deepEqual(GOAL_PRESETS, [150, 165, 180, 195, 210, 225, 240, 255, 270]);
+assert.equal(GOAL_MIN, 90);
+assert.equal(GOAL_MAX, 720);
+for (const data of [summary, meta]) {
+  assert.equal(data.target_min, GOAL_MIN, 'Published data must support the advertised target range');
+  assert.equal(data.target_max, GOAL_MAX, 'Published data must support the advertised target range');
+}
+assert.deepEqual(GOAL_PRESETS, Array.from({ length: 43 }, (_, i) => 90 + i * 15));
 assert.ok(AGE_OPTIONS.includes('30–34') && AGE_OPTIONS.includes('85–89'));
 assert.equal(parseMinutes('3:10'), 190);
 assert.equal(parseMinutes('3:70'), null);
@@ -31,17 +37,38 @@ const fake = { n: 200, cdf: Array.from({ length: 121 }, (_, i) => i < 30 ? 0 : i
 assert.equal(percentUnder(fake, 179), 0);
 assert.equal(percentUnder(fake, 180), 50, 'The client must preserve the strict threshold from the calculation');
 assert.equal(percentUnder(fake, 181), 100);
+assert.equal(percentUnder(fake, 90), null, 'Legacy data must not invent an unsupported fast threshold');
+assert.equal(percentUnder(fake, 300), null, 'Legacy data must not invent an unsupported slower threshold');
+assert.equal(percentUnder(fake, 180.5), null, 'Only whole-minute thresholds are supported');
+const expanded = { n: 200, cdf_min: 90, cdf: Array.from({ length: 631 }, (_, i) => i < 270 ? 0 : i === 270 ? 100 : 200) };
+assert.equal(percentUnder(expanded, 90), 0);
+assert.equal(percentUnder(expanded, 360), 50, 'Six-hour thresholds keep strict inequality');
+assert.equal(percentUnder(expanded, 361), 100);
+assert.equal(percentUnder(expanded, 720), 100);
+assert.equal(percentUnder(expanded, 721), null);
 
 let cases = 0, plots = 0;
+function verifyPublishedCdf(row) {
+  assert.equal(row.cdf_min, GOAL_MIN);
+  assert.equal(row.cdf.length, GOAL_MAX - GOAL_MIN + 1);
+  for (let i = 0; i < row.cdf.length; i++) {
+    assert.ok(Number.isInteger(row.cdf[i]) && row.cdf[i] >= (i ? row.cdf[i - 1] : 0) && row.cdf[i] <= row.n);
+  }
+}
 for (const file of Object.keys(meta.transport_shards_sha256)) {
   const bytes = fs.readFileSync(`${root}/tables/${file}`);
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), meta.transport_shards_sha256[file]);
-  assert.doesNotThrow(() => JSON.parse(bytes));
+  const data = JSON.parse(bytes);
+  if (data.rows) data.rows.forEach(verifyPublishedCdf);
+  else for (const row of Object.values(data.cohorts)) {
+    verifyPublishedCdf(row);
+    Object.values(row.openings).forEach(verifyPublishedCdf);
+  }
 }
 for (const city of ['New York', 'All courses', 'Tokyo', 'London']) {
   const source = summary.cities.find(c => c.city === city); assert.ok(source);
   const data = JSON.parse(fs.readFileSync(`${root}/tables/${source.file}`));
-  for (const goal of [150, 177, 180, 270]) for (const previous of [null, 190]) for (const age of ['all', '30–34']) {
+  for (const goal of [90, 120, 150, 177, 180, 270, 300, 360, 480, 720]) for (const previous of [null, 190]) for (const age of ['all', '30–34']) {
     const profile = { ...defaultProfile, city, age, goal, previous, gender: 'Men' };
     const answers = buildGuide(data, summary, profile);
     assert.equal(answers.length, 12);
@@ -76,6 +103,8 @@ assert.equal(checkpointResult(cp, p, 30, 129 * 60 + 59, null).row, cpRow);
 assert.equal(checkpointResult(cp, p, 30, 130 * 60, null), null, 'Elapsed bands have an exclusive upper boundary');
 assert.match(checkpointResult(cp, p, 30, 129 * 60, null).widened, /age/);
 assert.equal(checkpointResult(cp, p, 35, 129 * 60, null), null);
+assert.equal(checkpointResult(cp, { ...p, goal: 360 }, 30, 129 * 60, null), null, 'Legacy checkpoint CDFs do not cover six-hour targets');
+assert.equal(checkpointResult({ city: 'New York', rows: [{ ...cpRow, ...expanded }] }, { ...p, goal: 360 }, 30, 129 * 60, null).row.cdf_min, 90);
 
 (async () => {
   const source = summary.cities.find(c => c.city === 'New York');
