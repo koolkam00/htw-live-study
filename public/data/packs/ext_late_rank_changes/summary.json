@@ -1,5 +1,5 @@
 {
-  "answer_prose": "For 26.0% of eligible finishes, relative ranking shifted by more than five percentile points between 30 km and the finish.",
+  "answer_prose": "For 25.8% of eligible finishes, relative ranking shifted by more than five percentile points between 30 km and the finish.",
   "detail_prose": "These are changes in elapsed-time rankings, not a count of physical overtakes.",
   "charts": [
     {
@@ -16,8 +16,8 @@
     }
   ],
   "statistics": {
-    "n": 2739828,
-    "moved": 25.989587667547013,
-    "median_positions": 652.5
+    "n": 3328145,
+    "moved": 25.809302178841364,
+    "median_positions": 702.5
   }
 }

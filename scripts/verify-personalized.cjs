@@ -65,8 +65,8 @@ for (const file of Object.keys(meta.transport_shards_sha256)) {
     Object.values(row.openings).forEach(verifyPublishedCdf);
   }
 }
-for (const city of ['New York', 'All courses', 'Tokyo', 'London']) {
-  const source = summary.cities.find(c => c.city === city); assert.ok(source);
+for (const source of summary.cities) {
+  const city = source.city;
   const data = JSON.parse(fs.readFileSync(`${root}/tables/${source.file}`));
   for (const goal of [90, 120, 150, 177, 180, 270, 300, 360, 480, 720]) for (const previous of [null, 190]) for (const age of ['all', '30–34']) {
     const profile = { ...defaultProfile, city, age, goal, previous, gender: 'Men' };

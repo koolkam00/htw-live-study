@@ -10,6 +10,7 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
+from source_quality import validate_source_quality
 
 PACKS = json.loads(Path(__file__).with_name('pack_registry.json').read_text())
 
@@ -45,8 +46,9 @@ def validate_archive(archive, expected_export):
             if key in meta and not re.fullmatch('[a-f0-9]{64}',meta[key]):
                 raise ValueError('Invalid supporting-script checksum.')
         cohort = meta['cohort']
-        if sum(cohort[key] for key in ['duplicates_removed','missing_or_unparsed','non_increasing','outside_quality_bounds','eligible']) != cohort['raw']:
+        if sum(cohort[key] for key in ['duplicates_removed','missing_or_unparsed','non_increasing','outside_quality_bounds','eligible']) + cohort.get('source_quality_excluded', 0) != cohort['raw']:
             raise ValueError('Cohort exclusions do not reconcile.')
+        validate_source_quality(meta)
         if not 100 <= meta['n'] <= cohort['eligible']:
             raise ValueError('Invalid analysis sample size.')
         used_tables = set()

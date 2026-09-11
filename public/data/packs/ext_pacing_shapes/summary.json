@@ -1,6 +1,6 @@
 {
-  "answer_prose": "The most common pattern is pronounced slowing: 45.7% of eligible finishes. The full-course profile also shows how pace changes within those broad blocks.",
-  "detail_prose": "Calculated directly from 2,739,842 complete, plausible split records in the public export.",
+  "answer_prose": "The most common pattern is pronounced slowing: 47.5% of eligible finishes. The full-course profile also shows how pace changes within those broad blocks.",
+  "detail_prose": "Calculated directly from 3,328,159 complete, plausible split records in the public export.",
   "charts": [
     {
       "title": "The typical pace profile",
@@ -34,59 +34,61 @@
   "statistics": {},
   "audit": {
     "cohort": {
-      "deduplicated": 3451055,
-      "complete": 2961462,
-      "increasing": 2744217,
-      "eligible": 2739842,
-      "raw": 3451055,
+      "deduplicated": 4207456,
+      "complete": 3591032,
+      "increasing": 3373737,
+      "timing_eligible": 3369060,
+      "eligible": 3328159,
+      "source_quality_excluded": 40901,
+      "raw": 4207456,
       "duplicates_removed": 0,
-      "missing_or_unparsed": 489593,
-      "non_increasing": 217245,
-      "outside_quality_bounds": 4375
+      "missing_or_unparsed": 616424,
+      "non_increasing": 217295,
+      "outside_quality_bounds": 4677
     },
     "packs": [
       {
         "id": "ext_pacing_shapes",
-        "n": 2739842,
+        "n": 3328159,
         "question_id": "r10_unravel_typology"
       },
       {
         "id": "ext_course_pacing_profiles",
-        "n": 2739842,
+        "n": 3328159,
         "question_id": "s3_course_breaks"
       },
       {
         "id": "ext_checkpoint_outcomes",
-        "n": 2739842,
+        "n": 3328159,
         "question_id": "r04_on_pace_goal_hits"
       },
       {
         "id": "ext_pace_trend_at_20k",
-        "n": 1502890,
+        "n": 1891811,
         "question_id": "r03_accel_vs_decel_20k"
       },
       {
         "id": "ext_late_rank_changes",
-        "n": 2739828,
+        "n": 3328145,
         "question_id": "r06_decided_after_30k"
       },
       {
         "id": "ext_age_pacing",
-        "n": 814779,
+        "n": 1165597,
         "question_id": "r22_aging_changes"
       },
       {
         "id": "ext_gender_pacing",
-        "n": 2225913,
+        "n": 2769673,
         "question_id": "r23_gender_pacing"
       },
       {
         "id": "ext_pacing_over_time",
-        "n": 2479058,
+        "n": 3216336,
         "question_id": "r26_pacing_over_20y"
       }
     ],
-    "source_editions_with_eligible_records": 162,
+    "source_editions_with_eligible_records": 180,
     "validation": {
       "exclusion_counts_reconcile": true,
       "individual_normalization_integrates_to_zero": true,

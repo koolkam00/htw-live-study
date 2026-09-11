@@ -1,46 +1,148 @@
 {
   "schema_version": 1,
   "id": "weather_screen",
-  "as_of": "2026-09-11T15:23:23Z",
+  "as_of": "2026-09-11T16:13:19Z",
   "input": {
     "repository": "koolkam00/htw-live-study",
-    "release_tag": "private-export-20260911-0336",
-    "release_published_at": "2026-09-11T04:01:10Z",
-    "asset": "htw-private-export-FULL-20260911-0336.tar.gz",
-    "asset_sha256": "1bf534a3f381b994d037f749eb3c6c5b50e1ca4e6fac5e67078732e266ca1094",
+    "release_tag": "private-export-20260911-1107",
+    "release_published_at": "2026-09-11T15:24:02Z",
+    "asset": "htw-private-export-FULL-20260911-1107.tar.gz",
+    "asset_sha256": "ffe901857c2603ac4305d9376a194eed171052d9835223c8ba5b19b59067a656",
     "bundle": "FULL",
-    "manifest_sha256": "dbff684d9c96eca1694c3fc8917ed46d60da2c500a42b55fc08c7dc4386f8a39",
-    "as_of": "2026-09-11T03:44:08Z",
-    "race_conditions_sha256": "ef75029e5f8385cd6d1206d6b8e78f05cc278906c055c8824d6d68483ba5d5ee"
+    "manifest_sha256": "4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2",
+    "as_of": "2026-09-11T15:10:45Z",
+    "race_conditions_sha256": "f0a7cc1ce9504573483458676fa578998a296dd6f91ba0777edc1f7a0bb55baf"
   },
   "calculation": {
-    "script_sha256": "8069ea74b2339274adb15d44f2c9153e259686a80e9eae9b1b6e8ab12ebffa93",
-    "pacing_script_sha256": "5df4f8dd4b1bedfdc5f8daaf048353a05d565b164eae3249dbbaecef6c7bc01d",
+    "script_sha256": "2056378339cad53ef0c9c3137297b4993156ff2631807d2319b9dc39efe0698a",
+    "pacing_script_sha256": "7c6959b427fa1b06bb9600bb3377ecb226257d14aa0ec61a71a63f42bc87a3dd",
     "duckdb_version": "1.4.4",
-    "numpy_version": "2.5.3"
+    "numpy_version": "2.5.3",
+    "source_quality_script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6"
+  },
+  "source_quality": {
+    "version": 1,
+    "release_tag": "private-export-20260911-1107",
+    "reviewed_edition_policy": true,
+    "editions": [
+      {
+        "city": "Honolulu",
+        "year": 2016,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 20118,
+        "deduplicated_records": 20118,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Rotterdam",
+        "year": 2012,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 7542,
+        "deduplicated_records": 7542,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Eindhoven",
+        "year": 2009,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 1407,
+        "deduplicated_records": 1407,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Eindhoven",
+        "year": 2010,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 1462,
+        "deduplicated_records": 1462,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Frankfurt",
+        "year": 2019,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this 5 km grid; numerically plausible rows are not reinstated.",
+        "raw_records": 12513,
+        "deduplicated_records": 12513,
+        "timing_eligible_excluded": 10624
+      },
+      {
+        "city": "New York",
+        "year": 2008,
+        "category": "incomplete_ingestion",
+        "reason": "Release notes identify a partial live-ingestion snapshot of only 200 records.",
+        "raw_records": 200,
+        "deduplicated_records": 200,
+        "timing_eligible_excluded": 198
+      },
+      {
+        "city": "Chicago",
+        "year": 2016,
+        "category": "incomplete_ingestion",
+        "reason": "Producer handoff identifies this 6,512-record edition as incomplete and on HOLD.",
+        "raw_records": 6512,
+        "deduplicated_records": 6512,
+        "timing_eligible_excluded": 6506
+      },
+      {
+        "city": "Tokyo",
+        "year": 2026,
+        "category": "selected_field",
+        "reason": "Source notes identify top-500 PDFs, not a representative full marathon field.",
+        "raw_records": 353,
+        "deduplicated_records": 353,
+        "timing_eligible_excluded": 353
+      },
+      {
+        "city": "Amsterdam",
+        "year": 2025,
+        "category": "unreconciled_hold",
+        "reason": "Source audit marks HOLD: 23,328 listed versus 23,325 retrieved. This conservative hold does not establish a large bias from the three missing records.",
+        "raw_records": 23325,
+        "deduplicated_records": 23325,
+        "timing_eligible_excluded": 23220
+      },
+      {
+        "city": "Valencia",
+        "year": 2017,
+        "category": "incomplete_ingestion",
+        "reason": "Source audit marks HOLD: 3,373 listed detail pages missing; the observed records also lack 20 km.",
+        "raw_records": 12485,
+        "deduplicated_records": 12485,
+        "timing_eligible_excluded": 0
+      }
+    ],
+    "policy_sha256": "c638b6c0abe3167a2d3d51aee485eae54fd6175761ef9d26d5914c9671eb15b0",
+    "script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6"
   },
   "cohort": {
-    "deduplicated": 3978660,
-    "complete": 3374527,
-    "increasing": 3157250,
-    "eligible": 3152691,
-    "raw": 3978660,
+    "deduplicated": 4207456,
+    "complete": 3591032,
+    "increasing": 3373737,
+    "timing_eligible": 3369060,
+    "eligible": 3328159,
+    "source_quality_excluded": 40901,
+    "raw": 4207456,
     "duplicates_removed": 0,
-    "missing_or_unparsed": 604133,
-    "non_increasing": 217277,
-    "outside_quality_bounds": 4559,
-    "weather_rows": 227,
-    "weather_unique_valid_rows": 226,
-    "eligible_editions_before_weather": 179,
-    "weather_analysis_editions": 174,
-    "weather_analysis_courses": 29,
-    "weather_analysis_finishes": 3120690
+    "missing_or_unparsed": 616424,
+    "non_increasing": 217295,
+    "outside_quality_bounds": 4677,
+    "weather_rows": 235,
+    "weather_unique_valid_rows": 234,
+    "eligible_editions_before_weather": 180,
+    "weather_analysis_editions": 177,
+    "weather_analysis_courses": 27,
+    "weather_analysis_finishes": 3324934
   },
   "exclusions": {
     "invalid_weather_rows": 1,
     "weather_error: observed hour differs from scheduled start by more than 30 minutes": 1,
-    "no_valid_unique_weather_editions": 4,
-    "no_valid_unique_weather_finishes": 31987,
+    "no_valid_unique_weather_editions": 2,
+    "no_valid_unique_weather_finishes": 3211,
     "fewer_than_100_finishes_editions": 1,
     "fewer_than_100_finishes_finishes": 14
   },
@@ -76,7 +178,8 @@
     "This is an exploratory, adjusted edition-level association among eligible finishers. It does not establish a weather penalty, an individual forecast or a causal effect. Field composition, fitness, opening congestion, race organization, route changes and unmeasured conditions remain possible explanations. The opening 0\u201320 km baseline can itself be affected by weather and congestion. Runners who did not finish or lack valid splits are not represented.",
     "Relative humidity changes with temperature. Dew point is the modeled moisture exposure; the raw humidity percentage is retained for context. Wind speed gives no runner-specific headwind or tailwind without a valid historical route, direction and personal exposure timeline. Scheduled-start weather is not personal wave-start weather.",
     "Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.",
-    "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant."
+    "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.",
+    "Apply the reviewed source-quality edition exclusions for this exact export after the timing checks. Known invalid split grids, incomplete ingestion, unreconciled HOLD editions and a selected top-finisher field do not contribute to the analyses or prior benchmarks. Report source exclusions separately; an already invalid timing row is not counted twice. Missing age or recorded gender alone does not exclude an otherwise eligible finish from the overall cohort. Other sparse editions are not declared incomplete merely from their size."
   ],
   "candidates": [
     {
@@ -99,140 +202,132 @@
         "max": 22.0
       },
       "effect": {
-        "estimate": 0.6821274134527957,
-        "low": -0.47948800169054373,
-        "high": 1.6600056268313836,
+        "estimate": 0.6367743647591054,
+        "low": -0.517331960979573,
+        "high": 1.5891518723517428,
         "confidence": 0.9833333333333333,
         "unit": "percentage points"
       },
       "support": {
-        "editions": 174,
-        "courses": 29,
-        "finishes": 3120690,
-        "vif": 2.642918802173995,
-        "courses_with_half_iqr_range": 24,
+        "editions": 177,
+        "courses": 27,
+        "finishes": 3324934,
+        "vif": 2.6837935063976817,
+        "courses_with_half_iqr_range": 25,
         "valid_bootstrap_draws": 6000,
         "failed_bootstrap_draws": 0,
-        "leave_course_out_min": 0.38555533502890393,
-        "leave_course_out_max": 0.8513420678784605,
+        "leave_course_out_min": 0.3400384657053325,
+        "leave_course_out_max": 0.8331244611383729,
         "failed_leave_course_out_fits": 0
       },
       "leave_course_out": [
         {
           "omitted_course": "Amsterdam",
-          "estimate": 0.6998039698286241
+          "estimate": 0.656091164074994
         },
         {
           "omitted_course": "Auckland",
-          "estimate": 0.7196475695218056
+          "estimate": 0.6714593346191391
         },
         {
           "omitted_course": "Austin",
-          "estimate": 0.6719109572889714
+          "estimate": 0.6261121519385034
         },
         {
           "omitted_course": "Barcelona",
-          "estimate": 0.6934377145337935
+          "estimate": 0.6471590194960103
         },
         {
           "omitted_course": "Berlin",
-          "estimate": 0.6477740321619943
+          "estimate": 0.5893769324979412
         },
         {
           "omitted_course": "Boston",
-          "estimate": 0.6671781351649226
+          "estimate": 0.6285108126085294
         },
         {
           "omitted_course": "Chicago",
-          "estimate": 0.7013239310566204
+          "estimate": 0.6744198574131683
         },
         {
           "omitted_course": "Copenhagen",
-          "estimate": 0.5687448364987755
+          "estimate": 0.52560516191265
         },
         {
           "omitted_course": "Dubai",
-          "estimate": 0.5473589861814019
+          "estimate": 0.5080346870428167
         },
         {
           "omitted_course": "Eindhoven",
-          "estimate": 0.8135025717096002
-        },
-        {
-          "omitted_course": "Frankfurt",
-          "estimate": 0.6821274134527957
+          "estimate": 0.760419122963006
         },
         {
           "omitted_course": "Gold Coast",
-          "estimate": 0.5843406824681262
+          "estimate": 0.5455456106292342
         },
         {
           "omitted_course": "Hamburg",
-          "estimate": 0.7124676223262312
+          "estimate": 0.6579122546608341
         },
         {
           "omitted_course": "Helsinki",
-          "estimate": 0.6423397386443181
+          "estimate": 0.5995862039801529
         },
         {
           "omitted_course": "London",
-          "estimate": 0.7013146655804141
+          "estimate": 0.6529396366948885
         },
         {
           "omitted_course": "Madrid",
-          "estimate": 0.6284539203775449
+          "estimate": 0.5589901592041508
         },
         {
           "omitted_course": "Melbourne",
-          "estimate": 0.6821274134527957
+          "estimate": 0.6367743647591054
         },
         {
           "omitted_course": "New York",
-          "estimate": 0.8513420678784605
+          "estimate": 0.8331244611383729
         },
         {
           "omitted_course": "Oslo",
-          "estimate": 0.7236474246500244
+          "estimate": 0.6745814181513548
         },
         {
           "omitted_course": "Paris",
-          "estimate": 0.6811964556160376
+          "estimate": 0.6354888415954111
         },
         {
           "omitted_course": "Prague",
-          "estimate": 0.6443214273172114
+          "estimate": 0.5952308368372367
         },
         {
           "omitted_course": "Rotterdam",
-          "estimate": 0.7600646563161433
+          "estimate": 0.7149780620204473
         },
         {
           "omitted_course": "Singapore",
-          "estimate": 0.6821274134527957
+          "estimate": 0.6367743647591054
         },
         {
           "omitted_course": "Stockholm",
-          "estimate": 0.38555533502890393
+          "estimate": 0.3400384657053325
         },
         {
           "omitted_course": "Sydney",
-          "estimate": 0.724878936418261
-        },
-        {
-          "omitted_course": "Tokyo",
-          "estimate": 0.6821274134527957
+          "estimate": 0.6834324749683403
         },
         {
           "omitted_course": "Valencia",
-          "estimate": 0.6435092792863708
+          "estimate": 0.5968991630001103
         },
         {
           "omitted_course": "Warsaw",
-          "estimate": 0.7972218526750967
+          "estimate": 0.7456123988786667
         },
         {
           "omitted_course": "Washington",
-          "estimate": 0.7791237935349377
+          "estimate": 0.7364580093896338
         }
       ]
     },
@@ -241,153 +336,145 @@
       "title": "What happens when race day gets warmer?",
       "status": "ready",
       "takeaway_type": "association",
-      "summary": "An interquartile increase in first-four-hours temperature change was associated with 1.9 percentage points more slowing between the two 20 km blocks.",
+      "summary": "An interquartile increase in first-four-hours temperature change was associated with 2.1 percentage points more slowing between the two 20 km blocks.",
       "reasons": [],
       "exposure": {
         "key": "warming_c",
         "label": "First-four-hours temperature change",
         "unit": "\u00b0C",
-        "q25": 2.725000000000001,
-        "q75": 6.3999999999999995,
-        "iqr": 3.6749999999999985,
-        "min": -1.5,
+        "q25": 2.700000000000001,
+        "q75": 6.4,
+        "iqr": 3.6999999999999993,
+        "min": -0.9000000000000021,
         "max": 13.6
       },
       "effect": {
-        "estimate": 1.942189573406047,
-        "low": 1.4312227843923717,
-        "high": 2.5204205607094634,
+        "estimate": 2.072530704943567,
+        "low": 1.530141873648582,
+        "high": 2.745932650496323,
         "confidence": 0.9833333333333333,
         "unit": "percentage points"
       },
       "support": {
-        "editions": 174,
-        "courses": 29,
-        "finishes": 3120690,
-        "vif": 1.2222626616254482,
+        "editions": 177,
+        "courses": 27,
+        "finishes": 3324934,
+        "vif": 1.2239925117896837,
         "courses_with_half_iqr_range": 21,
         "valid_bootstrap_draws": 6000,
         "failed_bootstrap_draws": 0,
-        "leave_course_out_min": 1.8749717483224833,
-        "leave_course_out_max": 2.0360922327767996,
+        "leave_course_out_min": 1.9332599393193037,
+        "leave_course_out_max": 2.1856650123353734,
         "failed_leave_course_out_fits": 0
       },
       "leave_course_out": [
         {
           "omitted_course": "Amsterdam",
-          "estimate": 1.9134273126997843
+          "estimate": 2.055617517770745
         },
         {
           "omitted_course": "Auckland",
-          "estimate": 1.9023642916031533
+          "estimate": 2.0358460890551404
         },
         {
           "omitted_course": "Austin",
-          "estimate": 1.9467179282968103
+          "estimate": 2.0766104997180905
         },
         {
           "omitted_course": "Barcelona",
-          "estimate": 1.9956893472177397
+          "estimate": 2.1256137147891883
         },
         {
           "omitted_course": "Berlin",
-          "estimate": 2.0360922327767996
+          "estimate": 2.1856650123353734
         },
         {
           "omitted_course": "Boston",
-          "estimate": 1.8749717483224833
+          "estimate": 2.0155320504617182
         },
         {
           "omitted_course": "Chicago",
-          "estimate": 1.9075823143829453
+          "estimate": 1.9332599393193037
         },
         {
           "omitted_course": "Copenhagen",
-          "estimate": 1.877637977307562
+          "estimate": 2.011341222212114
         },
         {
           "omitted_course": "Dubai",
-          "estimate": 1.975233362370618
+          "estimate": 2.104264027892129
         },
         {
           "omitted_course": "Eindhoven",
-          "estimate": 1.9034413130187007
-        },
-        {
-          "omitted_course": "Frankfurt",
-          "estimate": 1.942189573406047
+          "estimate": 2.0436187935200056
         },
         {
           "omitted_course": "Gold Coast",
-          "estimate": 1.9936703289261695
+          "estimate": 2.123695577421487
         },
         {
           "omitted_course": "Hamburg",
-          "estimate": 1.8978430325447835
+          "estimate": 2.0388598307133394
         },
         {
           "omitted_course": "Helsinki",
-          "estimate": 1.97441394636274
+          "estimate": 2.1064090299574874
         },
         {
           "omitted_course": "London",
-          "estimate": 1.954773697361083
+          "estimate": 2.0898172156310704
         },
         {
           "omitted_course": "Madrid",
-          "estimate": 1.9177140804678507
+          "estimate": 2.065846290388992
         },
         {
           "omitted_course": "Melbourne",
-          "estimate": 1.942189573406047
+          "estimate": 2.072530704943567
         },
         {
           "omitted_course": "New York",
-          "estimate": 2.027797146751683
+          "estimate": 2.148742448829765
         },
         {
           "omitted_course": "Oslo",
-          "estimate": 1.9077598898047698
+          "estimate": 2.041927169237304
         },
         {
           "omitted_course": "Paris",
-          "estimate": 1.944130884191495
+          "estimate": 2.0747093523968574
         },
         {
           "omitted_course": "Prague",
-          "estimate": 1.9429034213238978
+          "estimate": 2.0738480458216655
         },
         {
           "omitted_course": "Rotterdam",
-          "estimate": 1.8776353696878267
+          "estimate": 2.0176391095102373
         },
         {
           "omitted_course": "Singapore",
-          "estimate": 1.942189573406047
+          "estimate": 2.072530704943567
         },
         {
           "omitted_course": "Stockholm",
-          "estimate": 1.9509151048459614
+          "estimate": 2.0786418763138403
         },
         {
           "omitted_course": "Sydney",
-          "estimate": 2.0041569873055782
-        },
-        {
-          "omitted_course": "Tokyo",
-          "estimate": 1.942189573406047
+          "estimate": 2.135070640392384
         },
         {
           "omitted_course": "Valencia",
-          "estimate": 1.9674712794906561
+          "estimate": 2.0990274112827008
         },
         {
           "omitted_course": "Warsaw",
-          "estimate": 1.911616273406175
+          "estimate": 2.04684704481218
         },
         {
           "omitted_course": "Washington",
-          "estimate": 1.9891177207988144
+          "estimate": 2.126583260031409
         }
       ]
     },
@@ -402,147 +489,139 @@
         "key": "wind_mps",
         "label": "Start wind speed",
         "unit": "m/s",
-        "q25": 2.1925,
-        "q75": 4.105,
-        "iqr": 1.9125000000000005,
+        "q25": 2.19,
+        "q75": 4.09,
+        "iqr": 1.9,
         "min": 0.41,
         "max": 9.93
       },
       "effect": {
-        "estimate": 0.21005967651858376,
-        "low": -0.4145910434939194,
-        "high": 0.7210533882705069,
+        "estimate": 0.23740429617380077,
+        "low": -0.3608770202986413,
+        "high": 0.7793072972996538,
         "confidence": 0.9833333333333333,
         "unit": "percentage points"
       },
       "support": {
-        "editions": 174,
-        "courses": 29,
-        "finishes": 3120690,
-        "vif": 1.276825568545011,
+        "editions": 177,
+        "courses": 27,
+        "finishes": 3324934,
+        "vif": 1.2611721527841493,
         "courses_with_half_iqr_range": 25,
         "valid_bootstrap_draws": 6000,
         "failed_bootstrap_draws": 0,
-        "leave_course_out_min": 0.1200600673055745,
-        "leave_course_out_max": 0.3802729153557678,
+        "leave_course_out_min": 0.14593884818818345,
+        "leave_course_out_max": 0.4002366240612953,
         "failed_leave_course_out_fits": 0
       },
       "leave_course_out": [
         {
           "omitted_course": "Amsterdam",
-          "estimate": 0.2297259546980094
+          "estimate": 0.2623959430829694
         },
         {
           "omitted_course": "Auckland",
-          "estimate": 0.17792773090319802
+          "estimate": 0.20730942008815478
         },
         {
           "omitted_course": "Austin",
-          "estimate": 0.20053992094738587
+          "estimate": 0.22810307151402834
         },
         {
           "omitted_course": "Barcelona",
-          "estimate": 0.21648003835335256
+          "estimate": 0.24407576757524624
         },
         {
           "omitted_course": "Berlin",
-          "estimate": 0.18742169730529018
+          "estimate": 0.2255249864759868
         },
         {
           "omitted_course": "Boston",
-          "estimate": 0.13318760267282725
+          "estimate": 0.1669018213987373
         },
         {
           "omitted_course": "Chicago",
-          "estimate": 0.19613787037220926
+          "estimate": 0.2019538370074682
         },
         {
           "omitted_course": "Copenhagen",
-          "estimate": 0.1200600673055745
+          "estimate": 0.14593884818818345
         },
         {
           "omitted_course": "Dubai",
-          "estimate": 0.22633889121916545
+          "estimate": 0.25047619935345483
         },
         {
           "omitted_course": "Eindhoven",
-          "estimate": 0.140514784904845
-        },
-        {
-          "omitted_course": "Frankfurt",
-          "estimate": 0.21005967651858376
+          "estimate": 0.1723598045678419
         },
         {
           "omitted_course": "Gold Coast",
-          "estimate": 0.3802729153557678
+          "estimate": 0.4002366240612953
         },
         {
           "omitted_course": "Hamburg",
-          "estimate": 0.1838166790152517
+          "estimate": 0.21470297057204418
         },
         {
           "omitted_course": "Helsinki",
-          "estimate": 0.23665428528134488
+          "estimate": 0.26648214125352065
         },
         {
           "omitted_course": "London",
-          "estimate": 0.20830624583969712
+          "estimate": 0.2356095798415127
         },
         {
           "omitted_course": "Madrid",
-          "estimate": 0.2511188894550319
+          "estimate": 0.282416752758349
         },
         {
           "omitted_course": "Melbourne",
-          "estimate": 0.21005967651858376
+          "estimate": 0.23740429617380077
         },
         {
           "omitted_course": "New York",
-          "estimate": 0.2325440445080216
+          "estimate": 0.250456015787972
         },
         {
           "omitted_course": "Oslo",
-          "estimate": 0.20018454984202472
+          "estimate": 0.22896546897350312
         },
         {
           "omitted_course": "Paris",
-          "estimate": 0.2071874211925036
+          "estimate": 0.23376076557850875
         },
         {
           "omitted_course": "Prague",
-          "estimate": 0.2023272937136021
+          "estimate": 0.2294753675419512
         },
         {
           "omitted_course": "Rotterdam",
-          "estimate": 0.257461937013351
+          "estimate": 0.28437140681786977
         },
         {
           "omitted_course": "Singapore",
-          "estimate": 0.21005967651858376
+          "estimate": 0.23740429617380077
         },
         {
           "omitted_course": "Stockholm",
-          "estimate": 0.17155498551535286
+          "estimate": 0.202084889163125
         },
         {
           "omitted_course": "Sydney",
-          "estimate": 0.22580619264923463
-        },
-        {
-          "omitted_course": "Tokyo",
-          "estimate": 0.21005967651858376
+          "estimate": 0.2531421353082829
         },
         {
           "omitted_course": "Valencia",
-          "estimate": 0.22914702390287922
+          "estimate": 0.2571709720679508
         },
         {
           "omitted_course": "Warsaw",
-          "estimate": 0.1939825847996457
+          "estimate": 0.2229657384497624
         },
         {
           "omitted_course": "Washington",
-          "estimate": 0.21609066555210876
+          "estimate": 0.24826620689133658
         }
       ]
     }
@@ -767,26 +846,6 @@
       "humidity_pct": 95.0,
       "wind_mps": 4.33,
       "warming_c": 2.1000000000000014
-    },
-    {
-      "city": "Amsterdam",
-      "year": 2025,
-      "race": "Amsterdam Marathon",
-      "n": 23220,
-      "pace_change_pct": 3.2795937417151477,
-      "finish_minutes": 235.15,
-      "women_pct": 26.45133505598622,
-      "median_recorded_age": null,
-      "weather_race": "Amsterdam Marathon",
-      "date": "2025-10-19",
-      "scheduled_start": "09:00",
-      "start_hour": "2025-10-19T09:00",
-      "four_hour": "2025-10-19T13:00",
-      "temp_c": 6.6,
-      "dewpoint_c": 4.7,
-      "humidity_pct": 87.0,
-      "wind_mps": 2.91,
-      "warming_c": 4.300000000000001
     },
     {
       "city": "Auckland",
@@ -1530,6 +1589,46 @@
     },
     {
       "city": "Chicago",
+      "year": 2017,
+      "race": "Chicago Marathon",
+      "n": 44009,
+      "pace_change_pct": 15.957873620862584,
+      "finish_minutes": 282.65,
+      "women_pct": 48.51734872412461,
+      "median_recorded_age": null,
+      "weather_race": "Chicago Marathon",
+      "date": "2017-10-08",
+      "scheduled_start": "07:30",
+      "start_hour": "2017-10-08T07:00",
+      "four_hour": "2017-10-08T11:00",
+      "temp_c": 13.3,
+      "dewpoint_c": 11.8,
+      "humidity_pct": 91.0,
+      "wind_mps": 3.78,
+      "warming_c": 6.899999999999999
+    },
+    {
+      "city": "Chicago",
+      "year": 2018,
+      "race": "Chicago Marathon",
+      "n": 51690,
+      "pace_change_pct": 8.48466483642304,
+      "finish_minutes": 250.4,
+      "women_pct": 45.82511124008512,
+      "median_recorded_age": null,
+      "weather_race": "Chicago Marathon",
+      "date": "2018-10-07",
+      "scheduled_start": "07:30",
+      "start_hour": "2018-10-07T07:00",
+      "four_hour": "2018-10-07T11:00",
+      "temp_c": 14.6,
+      "dewpoint_c": 13.4,
+      "humidity_pct": 93.0,
+      "wind_mps": 4.28,
+      "warming_c": 1.3000000000000007
+    },
+    {
+      "city": "Chicago",
       "year": 2019,
       "race": "Chicago Marathon",
       "n": 51530,
@@ -2169,26 +2268,6 @@
       "warming_c": 1.4000000000000004
     },
     {
-      "city": "Frankfurt",
-      "year": 2019,
-      "race": "Frankfurt Marathon",
-      "n": 10624,
-      "pace_change_pct": 4.820107709202226,
-      "finish_minutes": 229.45833333333334,
-      "women_pct": 22.260918674698797,
-      "median_recorded_age": 40.0,
-      "weather_race": "Frankfurt Marathon",
-      "date": "2019-10-27",
-      "scheduled_start": "10:00",
-      "start_hour": "2019-10-27T10:00",
-      "four_hour": "2019-10-27T14:00",
-      "temp_c": 13.7,
-      "dewpoint_c": 11.1,
-      "humidity_pct": 85.0,
-      "wind_mps": 3.97,
-      "warming_c": -1.5
-    },
-    {
       "city": "Gold Coast",
       "year": 2016,
       "race": "Gold Coast Marathon",
@@ -2367,6 +2446,26 @@
       "humidity_pct": 69.0,
       "wind_mps": 5.02,
       "warming_c": 4.200000000000001
+    },
+    {
+      "city": "Hamburg",
+      "year": 2025,
+      "race": "Hamburg Marathon",
+      "n": 10595,
+      "pace_change_pct": 5.650035137034437,
+      "finish_minutes": 239.43333333333334,
+      "women_pct": 24.577630957999055,
+      "median_recorded_age": null,
+      "weather_race": "Hamburg Marathon",
+      "date": "2025-04-27",
+      "scheduled_start": "09:00",
+      "start_hour": "2025-04-27T09:00",
+      "four_hour": "2025-04-27T13:00",
+      "temp_c": 8.6,
+      "dewpoint_c": 2.3,
+      "humidity_pct": 65.0,
+      "wind_mps": 2.48,
+      "warming_c": 6.200000000000001
     },
     {
       "city": "Helsinki",
@@ -2847,6 +2946,66 @@
       "humidity_pct": 82.0,
       "wind_mps": 3.4,
       "warming_c": 4.000000000000002
+    },
+    {
+      "city": "New York",
+      "year": 2009,
+      "race": "New York City Marathon",
+      "n": 42364,
+      "pace_change_pct": 11.431341720499798,
+      "finish_minutes": 258.43333333333334,
+      "women_pct": 34.60957416674535,
+      "median_recorded_age": 40.0,
+      "weather_race": "New York City Marathon",
+      "date": "2009-11-01",
+      "scheduled_start": "09:00",
+      "start_hour": "2009-11-01T09:00",
+      "four_hour": "2009-11-01T13:00",
+      "temp_c": 9.6,
+      "dewpoint_c": 8.1,
+      "humidity_pct": 90.0,
+      "wind_mps": 2.78,
+      "warming_c": 1.700000000000001
+    },
+    {
+      "city": "New York",
+      "year": 2010,
+      "race": "New York City Marathon",
+      "n": 43854,
+      "pace_change_pct": 12.203117435918642,
+      "finish_minutes": 260.775,
+      "women_pct": 35.76412641948283,
+      "median_recorded_age": 40.0,
+      "weather_race": "New York City Marathon",
+      "date": "2010-11-07",
+      "scheduled_start": "09:00",
+      "start_hour": "2010-11-07T09:00",
+      "four_hour": "2010-11-07T13:00",
+      "temp_c": 3.3,
+      "dewpoint_c": -1.8,
+      "humidity_pct": 69.0,
+      "wind_mps": 3.68,
+      "warming_c": 4.4
+    },
+    {
+      "city": "New York",
+      "year": 2011,
+      "race": "New York City Marathon",
+      "n": 45929,
+      "pace_change_pct": 12.579879496074486,
+      "finish_minutes": 262.3666666666667,
+      "women_pct": 36.155805700102334,
+      "median_recorded_age": 40.0,
+      "weather_race": "New York City Marathon",
+      "date": "2011-11-06",
+      "scheduled_start": "09:00",
+      "start_hour": "2011-11-06T09:00",
+      "four_hour": "2011-11-06T13:00",
+      "temp_c": 2.8,
+      "dewpoint_c": 1.2,
+      "humidity_pct": 89.0,
+      "wind_mps": 2.01,
+      "warming_c": 7.6000000000000005
     },
     {
       "city": "New York",
@@ -3627,26 +3786,6 @@
       "humidity_pct": 91.0,
       "wind_mps": 3.06,
       "warming_c": 13.6
-    },
-    {
-      "city": "Tokyo",
-      "year": 2026,
-      "race": "Tokyo Marathon",
-      "n": 353,
-      "pace_change_pct": 3.002125398512212,
-      "finish_minutes": 147.23333333333332,
-      "women_pct": 0.0,
-      "median_recorded_age": 32.0,
-      "weather_race": "Tokyo Marathon",
-      "date": "2026-03-01",
-      "scheduled_start": "09:10",
-      "start_hour": "2026-03-01T09:00",
-      "four_hour": "2026-03-01T13:00",
-      "temp_c": 10.3,
-      "dewpoint_c": 0.2,
-      "humidity_pct": 49.0,
-      "wind_mps": 4.11,
-      "warming_c": 6.099999999999998
     },
     {
       "city": "Valencia",

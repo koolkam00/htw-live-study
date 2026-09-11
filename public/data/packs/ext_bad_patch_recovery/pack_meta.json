@@ -4,58 +4,161 @@
   "question_id": "r09_bad_patch_recoverable",
   "title": "When can runners regain their rhythm?",
   "status": "ready",
-  "as_of": "2026-09-08T13:47:28Z",
-  "n": 818203,
-  "input_export_id": "private-20260907-1318",
-  "input_as_of": "2026-09-07T13:19:23Z",
+  "as_of": "2026-09-11T15:59:16Z",
+  "n": 1039878,
+  "input_export_id": "private-20260911-1107",
+  "input_as_of": "2026-09-11T15:10:45Z",
   "live_json_as_of": "2026-09-07T04:44:53Z",
-  "input_asset_sha256": "f042ee689ebbb487cf87abe70dd796fd9362765bca36a7e1b0ecf0f715a00fe7",
-  "input_manifest_sha256": "7d490eb272754e12a67ef686c5ff9a17a62a41b645b15d11065da398585f3e0e",
-  "analysis_script_sha256": "9ea1402c401dfb0fa34bbaba736c07404b20d1f4f3d675739abfcef286a626b6",
+  "input_asset_sha256": "ffe901857c2603ac4305d9376a194eed171052d9835223c8ba5b19b59067a656",
+  "input_manifest_sha256": "4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2",
+  "analysis_script_sha256": "46c3c611af86c4ed9d6fc12aa5517ce157fd127470359b89c7f3c1fac6a99600",
   "analysis_version": 2,
   "engine": "DuckDB 1.4.4",
   "corpus": {
-    "n_records": 3451055,
-    "n_cities": 33,
-    "n_race_years": 203
+    "n_records": 4207456,
+    "n_cities": 34,
+    "n_race_years": 240
   },
   "cohort": {
-    "deduplicated": 3451055,
-    "complete": 2961462,
-    "increasing": 2744217,
-    "eligible": 2739842,
-    "raw": 3451055,
+    "deduplicated": 4207456,
+    "complete": 3591032,
+    "increasing": 3373737,
+    "timing_eligible": 3369060,
+    "eligible": 3328159,
+    "source_quality_excluded": 40901,
+    "raw": 4207456,
     "duplicates_removed": 0,
-    "missing_or_unparsed": 489593,
-    "non_increasing": 217245,
-    "outside_quality_bounds": 4375
+    "missing_or_unparsed": 616424,
+    "non_increasing": 217295,
+    "outside_quality_bounds": 4677
   },
   "methodology_prose": [
-    "Scan 20–25, 25–30 and 30–35 km in order. A patch is the first section more than 10% slower than both the immediately preceding section and the 5–20 km baseline pace. Recovery means the next full 5 km is no more than 5% slower than that baseline.",
+    "Scan 20\u201325, 25\u201330 and 30\u201335 km in order. A patch is the first section more than 10% slower than both the immediately preceding section and the 5\u201320 km baseline pace. Recovery means the next full 5 km is no more than 5% slower than that baseline.",
     "Every runner contributes at most one patch. The outcome is next-section recovery, not a diagnosis or necessarily a return maintained to the finish. Course sections and different runner mixes can account for differences across distances. Five-kilometer timing cannot distinguish stops, walking, fatigue or terrain.",
     "Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.",
     "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.",
     "Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.",
-    "These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy."
+    "These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.",
+    "Apply the reviewed source-quality edition exclusions for this exact export after the timing checks. Known invalid split grids, incomplete ingestion, unreconciled HOLD editions and a selected top-finisher field do not contribute to the analyses or prior benchmarks. Report source exclusions separately; an already invalid timing row is not counted twice. Missing age or recorded gender alone does not exclude an otherwise eligible finish from the overall cohort. Other sparse editions are not declared incomplete merely from their size."
   ],
   "observational": true,
   "minimum_public_cell": 100,
+  "source_quality": {
+    "version": 1,
+    "release_tag": "private-export-20260911-1107",
+    "reviewed_edition_policy": true,
+    "editions": [
+      {
+        "city": "Honolulu",
+        "year": 2016,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 20118,
+        "deduplicated_records": 20118,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Rotterdam",
+        "year": 2012,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 7542,
+        "deduplicated_records": 7542,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Eindhoven",
+        "year": 2009,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 1407,
+        "deduplicated_records": 1407,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Eindhoven",
+        "year": 2010,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this incomplete 5 km grid.",
+        "raw_records": 1462,
+        "deduplicated_records": 1462,
+        "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Frankfurt",
+        "year": 2019,
+        "category": "invalid_split_grid",
+        "reason": "Producer explicitly force-dropped this 5 km grid; numerically plausible rows are not reinstated.",
+        "raw_records": 12513,
+        "deduplicated_records": 12513,
+        "timing_eligible_excluded": 10624
+      },
+      {
+        "city": "New York",
+        "year": 2008,
+        "category": "incomplete_ingestion",
+        "reason": "Release notes identify a partial live-ingestion snapshot of only 200 records.",
+        "raw_records": 200,
+        "deduplicated_records": 200,
+        "timing_eligible_excluded": 198
+      },
+      {
+        "city": "Chicago",
+        "year": 2016,
+        "category": "incomplete_ingestion",
+        "reason": "Producer handoff identifies this 6,512-record edition as incomplete and on HOLD.",
+        "raw_records": 6512,
+        "deduplicated_records": 6512,
+        "timing_eligible_excluded": 6506
+      },
+      {
+        "city": "Tokyo",
+        "year": 2026,
+        "category": "selected_field",
+        "reason": "Source notes identify top-500 PDFs, not a representative full marathon field.",
+        "raw_records": 353,
+        "deduplicated_records": 353,
+        "timing_eligible_excluded": 353
+      },
+      {
+        "city": "Amsterdam",
+        "year": 2025,
+        "category": "unreconciled_hold",
+        "reason": "Source audit marks HOLD: 23,328 listed versus 23,325 retrieved. This conservative hold does not establish a large bias from the three missing records.",
+        "raw_records": 23325,
+        "deduplicated_records": 23325,
+        "timing_eligible_excluded": 23220
+      },
+      {
+        "city": "Valencia",
+        "year": 2017,
+        "category": "incomplete_ingestion",
+        "reason": "Source audit marks HOLD: 3,373 listed detail pages missing; the observed records also lack 20 km.",
+        "raw_records": 12485,
+        "deduplicated_records": 12485,
+        "timing_eligible_excluded": 0
+      }
+    ],
+    "policy_sha256": "c638b6c0abe3167a2d3d51aee485eae54fd6175761ef9d26d5914c9671eb15b0",
+    "script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6"
+  },
+  "source_quality_script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6",
   "observation_unit": "eligible finishes",
   "evidence_scope": "descriptive",
-  "supporting_script_sha256": "cb6127b7f2824b2aea9b8095b0d6adc5415990e85955b33ff7793f5366e6fd23",
+  "supporting_script_sha256": "7c6959b427fa1b06bb9600bb3377ecb226257d14aa0ec61a71a63f42bc87a3dd",
   "linkage_audit": {
-    "feature_rows": 3382000,
-    "safe_identity_groups": 2242270,
-    "natural_key_candidate_rows": 2366742,
-    "ambiguous_cross_export_matches": 2,
-    "linked_eligible_finishes": 2366740,
-    "recent_benchmark_finishes": 373955,
-    "consecutive_cross_year_pairs": 383860,
-    "linked_with_supplied_date": 2143118
+    "feature_rows": 4207456,
+    "safe_identity_groups": 2715330,
+    "record_join_method": "canonical_record_id",
+    "canonical_id_contract_verified": true,
+    "candidate_link_rows": 3008457,
+    "natural_key_candidate_rows": 0,
+    "canonical_id_candidate_rows": 3008457,
+    "ambiguous_cross_export_matches": 0,
+    "linked_eligible_finishes": 3008457,
+    "recent_benchmark_finishes": 524323,
+    "consecutive_cross_year_pairs": 546847,
+    "linked_with_supplied_date": 3006219
   },
-  "narrative_script_sha256": "a9c6755fe727caa6c5a3994bd565e615067ec09c9c6f31e4e076622b810b5dcf",
-  "presentation_revision": {
-    "date": "2026-09-11",
-    "scope": "Terminology, labels and public-access wording only; numerical values, input dates and calculation provenance retained."
-  }
+  "narrative_script_sha256": "a9c6755fe727caa6c5a3994bd565e615067ec09c9c6f31e4e076622b810b5dcf"
 }

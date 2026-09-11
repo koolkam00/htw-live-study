@@ -2,6 +2,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const ts = require('typescript');
+const crypto = require('node:crypto');
+const canonicalJson = value => JSON.stringify((function sort(item) {
+  if (Array.isArray(item)) return item.map(sort);
+  if (item && typeof item === 'object') return Object.fromEntries(Object.keys(item).sort().map(key => [key, sort(item[key])]));
+  return item;
+})(value));
 
 process.chdir(path.resolve(__dirname, '..'));
 require.extensions['.ts'] = (module, filename) => module._compile(
@@ -53,7 +59,27 @@ for (const extension of extensions) {
   for (const key of ['input_asset_sha256', 'input_manifest_sha256', 'analysis_script_sha256']) assert.match(metadata[key], /^[a-f0-9]{64}$/);
   assert.ok(Number.isFinite(Date.parse(metadata.live_json_as_of)));
   const c = metadata.cohort;
-  assert.equal(c.raw, c.duplicates_removed + c.missing_or_unparsed + c.non_increasing + c.outside_quality_bounds + c.eligible);
+  assert.equal(c.raw, c.duplicates_removed + c.missing_or_unparsed + c.non_increasing + c.outside_quality_bounds + (c.source_quality_excluded || 0) + c.eligible);
+  if (metadata.input_export_id === 'private-20260911-1107') assert.ok(metadata.source_quality?.reviewed_edition_policy, 'This source requires the reviewed edition policy');
+  if (metadata.source_quality) {
+    const policy = metadata.source_quality;
+    const hash = crypto.createHash('sha256').update(fs.readFileSync('analysis/source_quality.py')).digest('hex');
+    assert.equal(metadata.source_quality_script_sha256, hash);
+    assert.equal(policy.script_sha256, hash);
+    assert.match(policy.policy_sha256, /^[a-f0-9]{64}$/);
+    const policyDefinition = { version: policy.version, release_tag: policy.release_tag, reviewed_edition_policy: policy.reviewed_edition_policy,
+      editions: policy.editions.map(({ city, year, category, reason }) => ({ city, year, category, reason })) };
+    assert.equal(policy.policy_sha256, crypto.createHash('sha256').update(canonicalJson(policyDefinition)).digest('hex'), 'Edition reasons must match the recorded policy hash');
+    assert.equal(policy.release_tag.replace('private-export-', 'private-'), metadata.input_export_id);
+    assert.equal(new Set(policy.editions.map(row => row.city + '/' + row.year)).size, policy.editions.length);
+    for (const row of policy.editions) {
+      assert.ok(row.city && Number.isInteger(row.year) && row.category && row.reason);
+      assert.ok([row.raw_records, row.deduplicated_records, row.timing_eligible_excluded].every(n => Number.isInteger(n) && n >= 0));
+      assert.ok(row.raw_records >= row.deduplicated_records && row.deduplicated_records >= row.timing_eligible_excluded);
+    }
+    assert.equal(policy.editions.reduce((sum, row) => sum + row.timing_eligible_excluded, 0), c.source_quality_excluded);
+    assert.equal(c.timing_eligible, c.eligible + c.source_quality_excluded);
+  }
   assert.ok(metadata.n <= c.eligible);
   if (metadata.narrative_script_sha256) assert.match(metadata.narrative_script_sha256, /^[a-f0-9]{64}$/);
   for (const chart of extension.answer.charts) for (const row of chart.rows) {

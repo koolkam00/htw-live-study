@@ -8,7 +8,6 @@ export function getWeatherEvidence(): WeatherEvidence {
   if (data.schema_version !== 1 || data.candidates.length !== 3 || !data.editions.length) throw new Error('Invalid weather evidence.');
   return data;
 }
-export function getWeatherAnalyses() {
-  const evidence = getWeatherEvidence();
+export function getWeatherAnalyses(evidence: WeatherEvidence = getWeatherEvidence()) {
   return WEATHER_QUESTIONS.filter(item => evidence.candidates.some(candidate => candidate.id === item.id && candidate.status === 'ready'));
 }

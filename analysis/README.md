@@ -1,261 +1,101 @@
-# Marathon pacing analyses
+# Marathon pacing analysis pipeline
 
-The separate [weather evidence screen](../docs/WEATHER_ANALYSES.md) evaluates humidity, four-hour warming and wind from the September 11 export. Warming and wind meet the prespecified takeaway rule; humidity is withheld. `build_weather.py` writes `public/data/weather/evidence.json` through an explicit review step, independent of the 33-pack and personalized importers. Its input pin is `weather-release.json`; the original pipeline's `release.json` stays September 7. Run the **Weather evidence screen** workflow or the documented local commands to reproduce all three decisions.
+The current full-refresh source is **`private-export-20260911-1107`**. Its verified input contains 4,207,456 raw and feature rows; the reviewed timing/source-quality cohort contains 3,328,159 eligible finishes. Calculation, import and publication are distinct statuses recorded in [the refresh report](../docs/REFRESH_20260911_1107.md). Use the exact tag and current source commit when reproducing results.
 
-This pipeline reads the complete public FULL export (including CORE tables) and produces
-33 aggregate question packs: eight foundation analyses and 25 whole-race,
-forecast, course and linked-history analyses. Some answers are explicitly partial
-or proxy comparisons. Group running and congestion cannot be calculated without
-absolute timing and start-offset data. It does not scrape races, change the
-database or overwrite core packs. Its chart output contains aggregates; complete
-individual records are available separately in the source releases. The main website selects ten ranked analyses from the personalized engine at `/analyses/{slug}`. The 33 broad packs form the research archive; the engine still has 12 calculation paths. See the [ten-analysis map](../docs/TOP_TEN_ANALYSES.md).
+The pipeline calculates eight foundation and 25 extended packs, plus the 12-path personalized engine supplying the [essential ten](../docs/TOP_TEN_ANALYSES.md). A separate [weather screen](../docs/WEATHER_ANALYSES.md) evaluates humidity, four-hour warming and wind and publishes only supported candidates. The 33 broad packs form the research archive. Group running and congestion remain limited by missing physical-proximity/start-offset measurements.
 
-## Access and refresh
+## Inputs and ownership
 
-The source is a public [GitHub Release](https://github.com/koolkam00/htw-live-study/releases) in `koolkam00/htw-live-study`.
-The full dataset is intended for anyone to download and open without an account,
-token, password or decryption key. See [ACCESS.md](ACCESS.md) for direct links.
-`release.json` pins the default release for reproducibility.
+[ACCESS.md](ACCESS.md) provides public CORE/FULL and backup downloads. Gzip compression is not encryption. Complete records, names and supplied features are available independently of aggregate charts. Credentials are not dataset contents.
 
-The pin and checked-in numerical outputs retain source release `private-export-20260907-1318`. The personalized pack was recalculated at `2026-09-11T09:15:27Z` from that same source to expand exact target support to 90–720 minutes; its input timestamp remains `2026-09-07T13:19:23Z`.
-The September 11 takeover verified matching CORE/FULL canonical IDs in the newer
-September 10 export, but also confirmed archive and feature-schema incompatibilities
-with the current downloader/history builder. At the September 11 takeover inspection, the latest relevant refresh had failed,
-with no retry found. Follow [ACCESS.md](ACCESS.md) and
-[known issues](../docs/KNOWN_ISSUES.md) before attempting that vintage. All 401
-production aggregate files matched the checkout before this branch's later
-presentation edits; that observation does not imply those edits are deployed.
+`release.json` pins the main pipeline and `weather-release.json` pins the weather screen. Both select 1107 alongside their validated outputs. Pins select inputs; they do not certify analysis or deployment. Source files, calculations and output metadata retain metric units. Miles and per-mile paces are website display conversions.
 
-Full records, names, features and backups are public release assets. The owner
-has removed earlier runner-data privacy restrictions. Releases are preferred for
-large binary files to keep clones and website builds small; downloaded inputs may
-be placed in any chosen data directory. The archives are compressed, not encrypted.
-The legacy `private-export-*` names remain technical identifiers, not access rules.
+These builders do not scrape races, operate the live ingestion database or regenerate `public/data/live.json` and original S/R/RN/P packs. Those files remain explicitly dated historical context. `--live-as-of` records their actual timestamp in new metadata; it never claims that they have been recalculated.
 
-The **Marathon pacing analysis** workflow downloads and verifies FULL,
-runs the calculations, and returns `pacing-aggregate-packs` containing
-only JSON and CSV aggregates. The workflow has read-only repository permission.
-Its Actions artifacts contain calculation results; full source archives and runner
-records are distributed through Releases rather than duplicated in those artifacts.
+## Download and inspect
 
-Publishing a new `private-export-*` release triggers the workflow on the default
-branch. It can also be run manually
-with a release tag. Changes to `analysis/` in relevant PRs run against the pinned release, including fork PRs subject to
-GitHub workflow approval. No schedule, scraping job, automatic merge, or production update
-is created.
-
-To update the site after a successful run:
-
-1. Download the `pacing-aggregate-packs` artifact ZIP from the successful run.
-2. Confirm the run used the intended release and analysis commit.
-3. Validate and import the ZIP, specifying its bundle ID:
-
-   ```bash
-   python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260907-1318
-   npm run verify:data
-   npm run build
-   ```
-
-4. Review and commit only the resulting `public/data/packs/ext_*` changes to a PR.
-   Andrew or the site owner merges it for Vercel publication. Updating
-   `analysis/release.json` keeps subsequent PR checks on the new release.
-
-Anyone can run the same computation locally with Python 3.12. The downloader
-uses ordinary HTTPS and requires no GitHub CLI or login. An optional `GH_TOKEN`
-or `GITHUB_TOKEN` can raise API rate limits. Choose an input directory:
+Run from the repository root with Python 3.12 and `analysis/requirements.txt` (DuckDB and NumPy). Choose fresh input and output directories.
 
 ```bash
 python -m pip install -r analysis/requirements.txt
-python analysis/download_release.py --bundle FULL --output /path/to/pacing-input
-python analysis/build_pacing.py --input /path/to/pacing-input --output /path/to/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/build_extended.py --input /path/to/pacing-input --output /path/to/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/write_findings.py --output /path/to/pacing-aggregates
+python analysis/download_release.py --bundle FULL --tag private-export-20260911-1107 --output /path/to/1107-input
+python analysis/download_release.py --bundle CORE --tag private-export-20260911-1107 --output /path/to/1107-core
+python analysis/inspect_export.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_expanded.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_release.py --input /path/to/1107-input --core /path/to/1107-core --output /path/to/1107-inspection/release-contract.json
+python -m unittest discover -s analysis -p 'test_*.py'
 ```
 
-Fetch `https://htw-live-study.vercel.app/data/live.json` first and use its actual
-`as_of`. FULL is verified against the release asset's size and SHA-256 digest.
-The import requires every pack in `pack_registry.json`; partial refreshes fail.
+The downloader verifies release asset size/SHA-256, rejects unsafe, duplicate or unexpected archive members, and writes `provenance.json`. CORE has exactly eight members; FULL adds `features.parquet`. Audit sidecars stay separate assets. `audit_release.py` checks shared files, raw/feature alignment and timing units; add `--previous /path/to/0336-input` for a same-ID raw-record delta. The 1107 manifest's obsolete private-data prose and stale self-reported byte size are recorded defects; do not alter the immutable input.
 
-## Inspecting the additional FULL data
+## Rebuild every analysis
 
-`download_release.py --bundle FULL` verifies and extracts the complete release,
-including `features.parquet`, into the chosen directory. The separate **Inspect
-complete marathon export** workflow does the same on relevant PR changes
-or a manual run. It returns table schemas, non-null counts, aggregate identifier
-coverage, and export documentation in `pacing-full-export-inspection`.
-
-All columns are available in the downloadable source release. The inspection job
-returns its reports without duplicating the source archive in its artifacts. Inspecting a derived feature confirms
-its availability, not the validity of its definition or identity-matching method.
-Compare its coverage with raw CORE before using it for longitudinal analyses.
-
-## Analysis contract
-
-Each pack contains `pack_meta.json`, `summary.json`, and `tables/*.csv`.
-Metadata includes the export ID, input and calculation dates, current public
-snapshot date, archive and manifest checksums, script checksum, engine version,
-raw and eligible counts, exclusions, and written methodology. Chart files contain
-aggregate values with their sample counts.
-
-Numerical-run script checksums identify the code that produced those calculations.
-Later presentation-only text revisions are recorded separately; they do not change
-the input vintage, calculation timestamp, numerical values or inherited method.
-The September 11 personalized range expansion is an actual recalculation with
-updated script hashes and calculation timestamp, while preserving the source release.
-
-The site discovers ready extension packs at build time. Each declares a
-`question_id`; the latest input vintage supplies that question's answer,
-methodology, and charts. Original routes and core files remain available. An
-invalid ready pack fails the build rather than silently rendering incorrect data.
-
-The eight foundation packs remain:
-
-| Extension | Measure |
-| --- | --- |
-| `ext_pacing_shapes` | Median runner-normalized section pace and equal-distance pacing categories |
-| `ext_course_pacing_profiles` | The same median profiles within each city |
-| `ext_checkpoint_outcomes` | Target achievement among runners within ±1% of target pace at 20, 30, and 40 km |
-| `ext_pace_trend_at_20k` | Finish-time differences across pace trends, matched on edition and 20 km minute |
-| `ext_late_rank_changes` | Changes in elapsed-time rank after 30 km using the same finishers and averaged ties |
-| `ext_age_pacing` | Opening speed and pace retention by exact age and recorded gender |
-| `ext_gender_pacing` | Pooled and race/20 km time-matched pace retention |
-| `ext_pacing_over_time` | City-specific yearly medians of opening speed and pace retention |
-
-The additional 25 owned packs are registered in `pack_registry.json`. Their
-actual formulas, cohort definitions and limits live in each `pack_meta.json` and
-are rendered both on the question and the site's Methodology page. Narrative
-findings are regenerated from the aggregate CSVs by `write_findings.py`, with a
-separate narrative-script checksum. They do not introduce new numerical inputs.
-
-## Personalized engine and the ten-analysis explorer
-
-The primary experience has ten ranked questions at `/analyses/{slug}`. Its order
-and visible controls are defined by `lib/ten-analyses.ts`; the 35-question broader
-catalog is a research archive. All 12 backing engine paths remain implemented,
-including downhill opening and same-course returns beyond the main ten. The
-full earlier guide remains at `/research/personalized`; `/your-race` preserves
-old links by forwarding mapped questions and profile parameters.
-
-The initial profile is an explicitly labeled All courses / 4:00 example, all ages,
-all recorded genders and no earlier time. Supported controls vary by analysis:
-course comparison spans courses, weather has no target filter, age comparison
-varies age, and checkpoint comparison has no previous-time filter. Terrain asks
-for an explicit course selection. There is no arbitrary city fallback or universal
-age × speed × gender × weather × elevation filter. Historical goals and
-historical route changes are not inferred.
-
-Visitors can enter every whole-minute target from 1:30 through 12:00. The engine
-uses 15-minute presets for achieved-time buckets; exact threshold counts retain
-one-minute precision. Published samples remain sparse for some courses,
-demographic/history combinations and extreme times. The accepted input range
-does not promise that every comparison has a result.
-
-`build_personalized.py` reuses the validated source tables inside the extended
-calculation. The workflow passes `--personalized-output` and uploads the separate
-**pacing-personalized-aggregates** artifact. It contains only fixed aggregate
-cohorts and checkpoint cells. Import it separately after review:
+Read `https://htw-live-study.vercel.app/data/live.json` and substitute its actual `as_of` below. Use the same verified FULL directory for all builders.
 
 ```bash
-python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260907-1318
+python analysis/build_pacing.py --input /path/to/1107-input --output /path/to/1107-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/build_extended.py --input /path/to/1107-input --output /path/to/1107-aggregates --personalized-output /path/to/1107-personalized --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/write_findings.py --output /path/to/1107-aggregates
+python analysis/build_weather.py --input /path/to/1107-input --output /path/to/1107-weather/evidence.json
+```
+
+`build_pacing.py` writes eight foundation packs; `build_extended.py` writes the other 25 and then calls `build_personalized.generate` on the same prepared cohort/linkage tables. Do not run a partial extension import or replace the current 90–720-minute personalized result with an older 150–270-minute artifact. `write_findings.py` generates narrative results from aggregate tables and records its own script hash.
+
+The weather model and publication gate remain fixed across refreshes: all three candidates are rerun and retained in the audit. Current ready decisions determine routes; do not force humidity to remain withheld or wind/warming to remain published. Details and uncertainty methods are in [WEATHER_ANALYSES.md](../docs/WEATHER_ANALYSES.md).
+
+## Validate and import
+
+The aggregate ZIP must contain `ext_pack_name/pack_meta.json`, `summary.json` and referenced `tables/*.csv`, with all 33 names in `pack_registry.json`. The personalized ZIP contains only `ext_personalized_guide/` and its JSON files. ZIP the contents of each output directory, not an extra parent folder. The two importers have separate ownership contracts.
+
+```bash
+python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260911-1107 --check-only
+python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107 --check-only
+python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260911-1107
+python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107
+```
+
+Review weather input identity, policy/script hashes, cohort reconciliation, all three decisions and edition values before copying its JSON to `public/data/weather/evidence.json`. Adopt both input pins with the reviewed outputs. Then run:
+
+```bash
+npm ci
 npm run verify:data
 npm run build
 ```
 
-The importer validates all cells and provenance before replacing only
-`public/data/packs/ext_personalized_guide`. Public files are readable aggregate JSON,
-validated before import and checked by SHA-256. Only the selected course loads,
-and checkpoint files load only when requested. HTTP compression is left to the
-host and requires no browser-specific decompressor. The original 33-pack importer
-and registry retain their existing ownership boundary.
+The 33-pack importer requires the complete registry and validates before replacing only its owned folders. The personalized importer validates every shard/CDF/cell and writes compact JSON with transport hashes. Artifact limits are 20 MB uncompressed for the 33-pack archive and 512 MB for personalized output; investigate unexpected growth rather than dropping required cells. Weather is outside both import contracts and has its own verification.
 
-The engine publishes achieved-time pacing bands, earlier-benchmark opening
-comparisons, exact-threshold near finishes, age contrasts, supplied terrain
-alignment, opening/late-pace comparisons, checkpoint outcomes, course outcome
-spread, edition-weighted weather, threshold distributions, paired returns and
-earlier-best improvement contributions. Each question and the Methodology page
-describe its denominator, conditioning variables and limits.
+The site checks source/pin consistency, raw/timing/source-exclusion reconciliation, finite values, observed cohort counts, strict target boundaries, route readiness, source labels and unit conversions. New publication still requires inspecting the exact diff and verifying production against the named commit and source release.
 
-Exact ages use 18–24 then five-year bands through 85–89; unknown ages remain in
-All only. Optional previous time selects a 15-minute band of recent recorded
-bests, not an exact last-race match. The client tries broader age/gender cohorts
-before dropping prior-time constraints and explicitly labels every relaxation.
-Per-course results never silently substitute another course. Cross-course and
-age-comparison panels deliberately vary the dimension they compare.
+## Timing and source-quality contract
 
-Custom threshold counts use strict finish < target at every integer minute from
-90 through 720. No interpolation is used. Achieved-time profile and improvement
-cohorts use the displayed 15-minute bucket centered on the nearest preset. Near
-finishes use [target−5,target) and [target,target+5) minute intervals. Checkpoints
-use two-minute elapsed bands with an exclusive upper endpoint, optional recent
-5 km trend and no prior-time filter. Their historical outcome proportions are
-not validated individual probabilities and exclude non-finishers.
+- Parse raw elapsed strings as H:MM:SS or M:SS; require all nine increasing checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and **42.195 km**, despite the `split_42_2km` field name. Do not interpolate missing splits or halfway times.
+- Deduplicate equivalent records ignoring database IDs, ingestion timestamps and source URLs. Keep finishes from 90 minutes to 12 hours and every section from 2 to 20 min/km. These bounds can exclude real unusual performances.
+- Apply [source_quality.py](source_quality.py) after timing checks. Its release-specific reviewed exclusions cover invalid grids, incomplete ingestion, unresolved HOLD editions and a selected top-finisher field. Excluded editions do not supply current outcomes or earlier benchmarks. Do not exclude additional editions merely for being small.
+- Reconcile `raw = duplicates_removed + missing_or_unparsed + non_increasing + outside_quality_bounds + source_quality_excluded + eligible`. `timing_eligible = source_quality_excluded + eligible`. The policy's edition counts and hashes travel with every output.
+- For 1107: timing-eligible 3,369,060; source-excluded 40,901; final eligible 3,328,159. Missing age or recorded gender alone does not remove a valid finish from All. Exact-age/gender comparisons retain their own coverage rules. Feature `valid_splits` is a different population.
+- Compare 0–20 with 20–40 km at equal distance; do not call these measured half-marathon splits. Runner-normalized median profiles need not integrate to zero even though each individual's normalized profile does.
+- Chart cells generally require 100 finishes. Matched strata and edition comparisons have additional documented minima. These are reliability rules, not restrictions on access to full records. Finish counts are not unique-runner counts.
 
-`scripts/verify-personalized.cjs` checks all twelve paths across presets, custom
-targets, optional history, sparse cities, explicit fallbacks, sample counts,
-finite charts, checkpoint boundaries and the actual JSON response decoder.
-`test_personalized.py` tests strict finish boundaries and section reconciliation
-on hand-checkable synthetic data inside the analysis workflow.
+## Identity and chronology
 
-## Shared definitions and limits
+The explicitly audited 1107 release uses canonical raw `id` / feature `record_id` after runtime checks of unique matching sets and recorded labels. The candidate join additionally matches finish and all nine section durations to milliseconds. Legacy September 7 reproduction retains one-to-one edition/name/full-timing matching because those numeric ID namespaces are incompatible. Never join by row order or apply the newer contract retroactively.
 
-- Splits must parse as elapsed H:MM:SS or M:SS and increase strictly. All nine
-  checkpoints must exist. The finish distance is 42.195 km despite the source
-  column name `split_42_2km`.
-- Exclude finishes outside 90 minutes–12 hours and sections outside 2–20 min/km.
-  These bounds can exclude genuine unusual performances. Exclusion categories
-  are disjoint and reconcile exactly to the raw count.
-- Compare 0–20 km with 20–40 km at equal distance. CORE has no halfway checkpoint;
-  do not call this an observed negative/positive half-marathon split.
-- Course profiles normalize each runner before taking medians. Median profiles
-  need not integrate to zero, although every individual's normalization does.
-- Matching uses the same city, year, race, and floored minute at 20 km, with at
-  least 20 observations per group. The smallest group supplies a common weight
-  for all groups in each stratum. Published sample counts are actual observations.
-- Chart estimates require at least 100 observations for statistical reliability,
-  not as a restriction on access to the underlying records. Finish counts are not
-  unique runner counts. The opening comparison has a 500-draw edition-clustered
-  bootstrap (seed 20260908); it does not also cluster repeated runners. Other
-  outcome percentiles describe variation, not uncertainty in estimates.
-- The checkpoint forecast holds out the latest three observed years. All factors,
-  fallbacks and prediction intervals use only training years and checkpoint-known
-  features. Median/90th-percentile absolute error, interval width and actual 80%
-  interval coverage are published. It describes complete eligible finishers.
-- In the September 7 input, CORE and FULL record IDs do not correspond. Join edition, normalized name and
-  all section/finish durations, require one-to-one matches, and use only supplied
-  non-ambiguous identities passing gender, birth-year and duplicate-edition checks.
-  Do not invent cross-race identities from names alone.
-- September 10 canonical IDs were verified to align, but row order differs and
-  its feature name/edition columns are absent. The current pipeline has not adopted
-  that schema. Request a producer-compatible export or review a version-specific
-  consumer adapter. Preserve the September 7 join and do not apply the newer ID
-  contract retroactively.
-- Prior performance is the best in the two strictly earlier calendar years;
-  supplied PB/ability fields and same-year performances never enter that benchmark.
-  Earlier-best gains compare with the best in all earlier years, so are not a claim
-  of a lifetime PB. Day intervals use the separate complete/unique supplied-date
-  cohort. Recorded-return analysis excludes recent index years and requires
-  subsequent home-city edition coverage; absence is not retirement.
-- Exact-age results exclude age-group labels. Route validity years are absent;
-  terrain is explicitly a supplied-route proxy. Weather is the modeled archive
-  hour nearest the scheduled start, not personal exposure. Neither is invented
-  or newly scraped. The narrow qualifying comparison uses dated B.A.A. standards,
-  not inferred individual qualification or acceptance.
+Cross-race IDs remain supplied candidates. Retain non-ambiguity, consistent recorded gender, inferred birth-year span at most two years and no duplicate edition. Recompute recent best from the two strictly earlier calendar years; exclude all current/same-year outcomes. Earlier-best improvements use all strictly earlier years, not a claimed lifetime PB. Supplied PB/ability/next-race fields never supply pre-race covariates.
 
-The sustained-slowdown definition and `live.json` remain owned by the core study.
-The inherited [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513)
-is unchanged: at least 25% slowing for at least 5 km after 20 km relative to the
-5–20 km baseline. Marathon Pacing Study retains this source citation and separates
-published reference results from its own data calculations.
+Feature race dates remain null. Dated comparisons use complete, unique supplied edition-date coverage. Pair analyses require uniquely observed endpoint years; recorded return requires subsequent home-city edition coverage. Missing later records do not establish retirement. Course historical validity remains unavailable, so terrain is a supplied-route proxy.
 
-## Verification
+## Personalized engine
 
-```bash
-python -m unittest discover -s analysis -p 'test_*.py'
-```
+The engine retains 12 calculation paths: achieved-time pacing, earlier-benchmark opening, exact-threshold nearby finishes, age contrasts, terrain, opening/late pacing, checkpoints, course outcome spread, edition-weighted temperature, threshold context, paired returns and earlier-best gains. The primary ten are mapped in `lib/ten-analyses.ts`; the earlier guide remains at `/research/personalized`.
 
-The calculation additionally checks that cohort exclusions reconcile, normalized
-individual profiles integrate to zero, pattern shares sum to 100%, and signed
-rank changes sum to zero within each edition. The site verification checks pack
-provenance, table denominators, all routes, null handling, source links, same-cohort
-forecast comparisons, prediction coverage, mirrored course comparisons, transition
-probabilities and exact reconciliation of personal-best section gains.
+Targets are every whole minute from 90 through 720 with strict finish < target. Achieved-time bands use 43 fifteen-minute presets; exact thresholds do not interpolate. Exact ages are 18–24, then five-year bands through 85–89. Previous time selects a 15-minute band of recorded bests in the two earlier years. Broader cohorts are explicitly labeled; a course never silently falls back to another city.
+
+Checkpoint cells use 20/30/35 km, two-minute elapsed bands with an exclusive upper endpoint, and optional recent-section trend; they do not use a prior-time filter. Their historical proportions are not validated individual probabilities. A separate forecast pack trains only before the latest three observed years and evaluates all models on the same later eligible cohort.
+
+## Outputs, provenance and workflows
+
+Each broad pack has metadata, summary and aggregate CSV tables. Metadata records source/export timestamps, archive/manifest/script hashes, live-context timestamp, raw and eligible counts, source-quality audit and written methods. Personalized metadata also records linkage, target range and JSON transport hashes. Later prose-only edits must be distinguished from numerical recalculation.
+
+The **Marathon pacing analysis** workflow responds to matching release publication, relevant PR changes and manual dispatch. It produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection`; it does not import or deploy. The **Weather evidence screen** workflow accepts an explicit tag and produces `weather-evidence`, also without import or deployment. Record exact tag, code commit and artifacts; artifacts can expire, so preserve durable audit reports.
+
+The original sustained-slowdown definition remains unchanged: at least 25% slowing for at least 5 km after 20 km versus the 5–20 km baseline, with a neutral [published-method citation](https://doi.org/10.1371/journal.pone.0251513). Source inclusion changes in the extensions do not recalculate the dated core figures.

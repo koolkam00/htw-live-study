@@ -11,15 +11,35 @@ from pathlib import Path
 
 import duckdb
 from build_pacing import COMMON_METHOD, MIN_CELL, POINTS, PATTERNS, Publisher, chart, filter_for, prepare, records
+from source_quality import source_quality_report
 
 HISTORY_METHOD = [
-    'Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.',
+    'For explicitly audited canonical-ID releases, validate unique matching CORE/FULL ID sets and matching recorded edition/name labels, then join by record ID with matching finish and all nine section durations. Legacy exports retain the one-to-one edition, trimmed lowercase name and full-timing join because their IDs are incompatible. Durations are compared to milliseconds. Keep only supplied non-ambiguous runner identities without conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. These are candidate cross-race identities, not independently verified people; unlinked runners are absent. The linkage audit records which join was used.',
     'Recompute the benchmark as the fastest eligible finish in the two strictly earlier calendar years. The current race and every other race in its calendar year are excluded. This avoids guessing within-year chronology and prevents current-outcome leakage. It is a recent recorded best, not a fitness measurement, an expected finish, or a lifetime personal best.',
     'Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.',
 ]
 OBSERVATIONAL = 'These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.'
 OPENINGS = ['Faster opening', 'Similar opening', 'Slower opening']
 SERIES_SPREAD = [{'key':'p10','label':'10th percentile'}, {'key':'median','label':'Median'}, {'key':'p90','label':'90th percentile'}]
+CANONICAL_ID_RELEASES = {'private-export-20260911-1107'}
+
+
+def canonical_id_contract(db, source):
+    """Use numeric IDs only for a reviewed release, checking alignment every run."""
+    provenance_path = source / 'provenance.json'
+    tag = json.loads(provenance_path.read_text()).get('release_tag') if provenance_path.exists() else None
+    if tag not in CANONICAL_ID_RELEASES:
+        return False
+    location = str(source / 'race_records.parquet').replace("'", "''")
+    db.execute(f"CREATE TEMP VIEW canonical_raw AS SELECT * FROM read_parquet('{location}')")
+    for table, key in [('canonical_raw', 'id'), ('features', 'record_id')]:
+        assert db.execute(f'SELECT count(*)=count({key}) AND count(*)=count(DISTINCT {key}) FROM {table}').fetchone()[0], 'Canonical record IDs must be unique and non-null'
+    assert db.execute('''SELECT count(*) FROM canonical_raw r FULL JOIN features f ON r.id=f.record_id
+      WHERE r.id IS NULL OR f.record_id IS NULL''').fetchone()[0] == 0, 'Canonical CORE/FULL ID sets differ'
+    assert db.execute('''SELECT count(*) FROM canonical_raw r JOIN features f ON r.id=f.record_id
+      WHERE r.city IS DISTINCT FROM f.city OR r.year IS DISTINCT FROM f.year
+      OR r.race IS DISTINCT FROM f.race OR lower(trim(r.runner)) IS DISTINCT FROM lower(trim(f.runner_name))''').fetchone()[0] == 0, 'Canonical ID labels disagree'
+    return True
 
 
 def size(db, table, where='true'):
@@ -30,6 +50,7 @@ def prepare_history(db, source):
     location = str(source/'features.parquet').replace("'", "''")
     db.execute(f"CREATE TEMP VIEW features AS SELECT * FROM read_parquet('{location}')")
     assert db.execute('SELECT count(*)=count(DISTINCT record_id) FROM features').fetchone()[0], 'Feature record IDs are not unique'
+    canonical = canonical_id_contract(db, source)
     db.execute('''CREATE TEMP TABLE safe_ids AS SELECT runner_id FROM features
       WHERE runner_id IS NOT NULL AND NOT is_ambiguous GROUP BY runner_id
       HAVING count(DISTINCT CASE WHEN lower(trim(sex)) IN ('m','male','men','man') THEN 'm'
@@ -46,12 +67,12 @@ def prepare_history(db, source):
       AND year(min(try_cast(race_date AS DATE)))=year''')
     segment_names=['05','10','15','20','25','30','35','40','42']
     timing_match=' AND '.join(f'round(f.seg_{name}*60,3)=round(e.t{i}-'+(f'e.t{i-1}' if i else '0')+',3)' for i,name in enumerate(segment_names))
+    identity_match = 'f.record_id=e.rid' if canonical else 'f.city=e.city AND f.year=e.year AND f.race=e.race AND lower(trim(f.runner_name))=lower(trim(u.runner))'
     db.execute(f'''CREATE TEMP TABLE candidate_links AS SELECT e.rid,f.record_id,f.runner_id,
       count(*) OVER(PARTITION BY e.rid) AS raw_matches,
       count(*) OVER(PARTITION BY f.record_id) AS feature_matches
       FROM eligible e JOIN unique_records u USING(rid)
-      JOIN features f ON f.city=e.city AND f.year=e.year AND f.race=e.race
-        AND lower(trim(f.runner_name))=lower(trim(u.runner))
+      JOIN features f ON {identity_match}
         AND round(f.finish_time*60,3)=round(e.t8,3) AND {timing_match}
       WHERE f.runner_id IS NOT NULL AND NOT f.is_ambiguous''')
     db.execute('''CREATE TEMP TABLE linked AS SELECT e.*,f.runner_id AS uid,w.event_date,
@@ -95,7 +116,11 @@ def prepare_history(db, source):
       WHERE a.year_n=1 AND a.next_year_n=1 AND a.next_year>a.year AND a.next_year<=a.year+3''')
     assert db.execute('SELECT count(*) FROM prior p JOIN linked a USING(rid) JOIN linked b ON b.rid=p.earlier_best_rid WHERE b.year>=a.year').fetchone()[0]==0
     return {'feature_rows':size(db,'features'),'safe_identity_groups':size(db,'safe_ids'),
-            'natural_key_candidate_rows':size(db,'candidate_links'),
+            'record_join_method':'canonical_record_id' if canonical else 'natural_key',
+            'canonical_id_contract_verified':canonical,
+            'candidate_link_rows':size(db,'candidate_links'),
+            'natural_key_candidate_rows':0 if canonical else size(db,'candidate_links'),
+            'canonical_id_candidate_rows':size(db,'candidate_links') if canonical else 0,
             'ambiguous_cross_export_matches':size(db,'candidate_links','raw_matches>1 OR feature_matches>1'),
             'linked_eligible_finishes':size(db,'linked'),'recent_benchmark_finishes':size(db,'history'),
             'consecutive_cross_year_pairs':size(db,'pairs'),
@@ -593,7 +618,7 @@ def run(source,output,live_as_of,personalized_output=None):
     diagnostics=prepare_history(db,source)
     assert diagnostics['recent_benchmark_finishes']>=100, 'Insufficient verified linked histories'
     print(json.dumps(diagnostics),flush=True)
-    pub=ExtendedPublisher(output,provenance,manifest,counts,live_as_of)
+    pub=ExtendedPublisher(output,provenance,manifest,counts,live_as_of,source_quality=source_quality_report(db,source))
     for function in [strategy_analyses,checkpoint_analyses,course_analyses,history_analyses,qualifying_analysis]:
         function(db,pub)
         print(f'{function.__name__}: {len(pub.packs)} aggregate packs calculated',flush=True)
