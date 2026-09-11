@@ -1,6 +1,6 @@
 # Ten analyses for Marathon Pacing Study
 
-The site presents ten ranked analyses at `/analyses/{slug}`. The 1107 full refresh recalculates their shared personalized engine from **`private-export-20260911-1107`**: **3,328,159 eligible finishes**, **1,170,588 with exact age** and **524,323 with a recent earlier-year benchmark**, with 28 cities plus All courses. Input timestamp: `2026-09-11T15:10:45Z`; calculation timestamp: `2026-09-11T16:07:06Z`. [REFRESH_20260911_1107.md](REFRESH_20260911_1107.md) distinguishes calculation, import and production verification.
+The site presents ten ranked analyses at `/analyses/{slug}`. The 1107 full refresh recalculates their shared personalized engine from **`private-export-20260911-1107`**: **3,328,159 eligible finishes**, **1,170,588 with exact age** and **524,323 with a recent earlier-year benchmark**, with 28 cities plus All courses. Input timestamp: `2026-09-11T15:10:45Z`; calculation timestamp: `2026-09-11T16:28:51Z`. [REFRESH_20260911_1107.md](REFRESH_20260911_1107.md) distinguishes calculation, import and production verification.
 
 The original ten-page redesign shipped in [PR #32](https://github.com/koolkam00/htw-live-study/pull/32), main `3e32bf8`, using September 7 data. That is historical deployment evidence, not the current source vintage.
 The order prioritizes an understandable runner decision, then strength and availability of the evidence, then additional information beyond the preceding cards. The ranking stays fixed; changing a profile updates results and availability without shuffling priorities.

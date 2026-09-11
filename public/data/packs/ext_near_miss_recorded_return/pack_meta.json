@@ -4,7 +4,7 @@
   "question_id": "r19_near_miss_return",
   "title": "Does a near miss bring people back?",
   "status": "ready",
-  "as_of": "2026-09-11T15:59:16Z",
+  "as_of": "2026-09-11T16:28:17Z",
   "n": 202208,
   "input_export_id": "private-20260911-1107",
   "input_as_of": "2026-09-11T15:10:45Z",
@@ -146,7 +146,7 @@
   "source_quality_script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6",
   "observation_unit": "eligible finishes",
   "evidence_scope": "partial comparison",
-  "supporting_script_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "supporting_script_sha256": "7c6959b427fa1b06bb9600bb3377ecb226257d14aa0ec61a71a63f42bc87a3dd",
   "linkage_audit": {
     "feature_rows": 4207456,
     "safe_identity_groups": 2715330,

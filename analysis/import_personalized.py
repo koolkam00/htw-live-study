@@ -9,6 +9,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 from source_quality import validate_source_quality
+from calculation_provenance import validate_calculation_provenance
 
 PACK='ext_personalized_guide'
 LENGTHS=[5]*8+[2.195]
@@ -57,6 +58,7 @@ def validate_archive(archive,expected_export):
     c=meta['cohort']
     assert sum(c[k] for k in ['duplicates_removed','missing_or_unparsed','non_increasing','outside_quality_bounds','eligible'])+c.get('source_quality_excluded',0)==c['raw']
     validate_source_quality(meta)
+    validate_calculation_provenance(meta)
     assert summary['n']==meta['n']==c['eligible'] and 0<summary['age_n']<=summary['n']
     expected={f'{PACK}/pack_meta.json',f'{PACK}/summary.json'}
     cohorts_seen=0;checkpoint_seen=0

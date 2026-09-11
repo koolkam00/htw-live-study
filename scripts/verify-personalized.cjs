@@ -14,6 +14,13 @@ const { getPersonalSummary } = require('../lib/personalized-data.ts');
 const root = 'public/data/packs/ext_personalized_guide';
 const summary = getPersonalSummary();
 const meta = JSON.parse(fs.readFileSync(`${root}/pack_meta.json`, 'utf8'));
+if (meta.input_export_id === 'private-20260911-1107') {
+  for (const [key, file] of Object.entries({analysis_script_sha256: 'build_personalized.py', supporting_script_sha256: 'build_extended.py', pacing_script_sha256: 'build_pacing.py', transport_script_sha256: 'import_personalized.py'})) {
+    const bytes = fs.readFileSync(`analysis/${file}`);
+    assert.ok(bytes.length, `Cannot verify empty source: ${file}`);
+    assert.equal(meta[key], crypto.createHash('sha256').update(bytes).digest('hex'), `${key}: personalized calculation/transport code mismatch`);
+  }
+}
 assert.equal(PERSONAL_QUESTIONS.length, 12);
 assert.equal(new Set(PERSONAL_QUESTIONS.map(q => q.id)).size, 12);
 assert.equal(GOAL_MIN, 90);

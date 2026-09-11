@@ -48,6 +48,11 @@ for (const pack of PACKS) assert.ok(ids.includes(pack.id) || EXTRA_TITLES[pack.i
 for (const question of questions) assert.ok(THEMES.some(theme => theme.id === question.theme), `${question.id}: inaccessible research theme`);
 
 const registry = JSON.parse(fs.readFileSync('analysis/pack_registry.json', 'utf8'));
+const scriptHash = file => {
+  const bytes = fs.readFileSync(`analysis/${file}`);
+  assert.ok(bytes.length, `Cannot verify empty source: ${file}`);
+  return crypto.createHash('sha256').update(bytes).digest('hex');
+};
 assert.deepEqual(extensions.map(extension => extension.id).sort(), Object.keys(registry).sort(), 'All owned analyses must be present');
 assert.equal(new Set(extensions.map(extension => extension.questionId)).size, 33);
 for (const extension of extensions) {
@@ -57,6 +62,12 @@ for (const extension of extensions) {
   assert.equal(question.answer, extension.answer.answer, 'Question must use its verified extension result');
   const metadata = JSON.parse(fs.readFileSync(`public/data/packs/${extension.id}/pack_meta.json`, 'utf8'));
   for (const key of ['input_asset_sha256', 'input_manifest_sha256', 'analysis_script_sha256']) assert.match(metadata[key], /^[a-f0-9]{64}$/);
+  if (metadata.input_export_id === 'private-20260911-1107') {
+    assert.ok([1, 2].includes(metadata.analysis_version));
+    assert.equal(metadata.analysis_script_sha256, scriptHash(metadata.analysis_version === 1 ? 'build_pacing.py' : 'build_extended.py'), `${extension.id}: calculation code mismatch`);
+    if (metadata.analysis_version === 2) assert.equal(metadata.supporting_script_sha256, scriptHash('build_pacing.py'), `${extension.id}: eligibility parser mismatch`);
+    if (metadata.narrative_script_sha256) assert.equal(metadata.narrative_script_sha256, scriptHash('write_findings.py'));
+  }
   assert.ok(Number.isFinite(Date.parse(metadata.live_json_as_of)));
   const c = metadata.cohort;
   assert.equal(c.raw, c.duplicates_removed + c.missing_or_unparsed + c.non_increasing + c.outside_quality_bounds + (c.source_quality_excluded || 0) + c.eligible);
