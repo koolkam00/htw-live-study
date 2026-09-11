@@ -1,0 +1,58 @@
+name: Weather evidence screen
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Export tag (blank uses analysis/weather-release.json)
+        required: false
+        type: string
+  pull_request:
+    paths:
+      - 'analysis/build_weather.py'
+      - 'analysis/test_weather.py'
+      - 'analysis/weather-release.json'
+      - 'analysis/requirements.txt'
+      - '.github/workflows/weather-analysis.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r analysis/requirements.txt
+      - name: Check weather measurements and screening rules
+        run: python -m unittest discover -s analysis -p 'test_weather.py'
+      - name: Select the explicit weather source
+        env:
+          REQUESTED_WEATHER_TAG: ${{ inputs.release_tag }}
+        run: |
+          python - <<'PY'
+          import json, os, re
+          tag = os.environ.get('REQUESTED_WEATHER_TAG') or json.load(open('analysis/weather-release.json'))['tag']
+          if not re.fullmatch(r'private-export-\d{8}-\d{4}', tag):
+              raise ValueError('Unexpected export tag')
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write('WEATHER_RELEASE_TAG=' + tag + '\n')
+          PY
+      - name: Download the verified source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python analysis/download_release.py --bundle FULL --tag "$WEATHER_RELEASE_TAG" --output "$RUNNER_TEMP/weather-input"
+      - name: Calculate all three candidates
+        run: python analysis/build_weather.py --input "$RUNNER_TEMP/weather-input" --output "$RUNNER_TEMP/weather-output/evidence.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weather-evidence
+          path: ${{ runner.temp }}/weather-output/evidence.json
+          if-no-files-found: error
+          retention-days: 30

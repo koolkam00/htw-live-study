@@ -11,10 +11,12 @@ import { EXAMPLE_PROFILE, profileSearch, readAnalysisProfile, sameProfile } from
 import { loadAnalysisAggregate } from '@/lib/analysis-aggregates';
 import AnalysisChart from './AnalysisChart';
 import CheckpointExplorer from './CheckpointExplorer';
+import { weatherHref } from '@/lib/weather-catalog';
+import type { WeatherDefinition } from '@/lib/weather-types';
 
 const EMPTY_CITY: CityData = { city: 'All courses', cohorts: {}, terrain: [] };
 
-export default function AnalysisExplorer({ definition, summary, initialAnswer }: { definition: AnalysisDefinition; summary: PersonalSummary; initialAnswer: GuideAnswer }) {
+export default function AnalysisExplorer({ definition, summary, initialAnswer, weatherQuestions = [] }: { definition: AnalysisDefinition; summary: PersonalSummary; initialAnswer: GuideAnswer; weatherQuestions?: WeatherDefinition[] }) {
   const { units } = useUnits();
   const text = (value: string | undefined) => unitText(value || '', units);
   const [profile, setProfile] = useState<Profile>(EXAMPLE_PROFILE);
@@ -98,6 +100,7 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer }:
           <section className={'analysis-finding' + (!hasResults ? ' empty-comparison' : '')}><p className="eyebrow">{hasResults ? 'What the data shows' : 'This comparison needs more data'}</p><h2>{text(visibleAnswer)}</h2>{answer.detail && <p>{text(answer.detail)}</p>}{answer.comparison && <p className="comparison-context">{text(answer.comparison)}.{answer.sample ? ' ' + count(answer.sample.n) + ' finishes across ' + answer.sample.editions + ' race editions.' : ' Each group shows its own sample size.'}</p>}{answer.widened && <p className="coverage-notice">{text(answer.widened)}</p>}{!hasResults && <button className="button-secondary" type="button" onClick={() => applyProfile(EXAMPLE_PROFILE)}>Explore the all-course example</button>}</section>
           {hasResults && <AnalysisChart charts={answer.charts} analysisId={definition.id + profileSearch(profile)} />}
         </>}
+        {definition.id === 'weather' && weatherQuestions.length > 0 && <section className="weather-related"><p className="eyebrow">Look beyond the starting temperature</p><h2>Explore more weather questions.</h2><p>Separate comparisons from the September 11 export, with race editions as the unit of evidence.</p><div>{weatherQuestions.map(item => <Link key={item.id} href={weatherHref(item)} className="text-link">{item.shortTitle} <span aria-hidden="true">↗</span></Link>)}</div></section>}
         <section className="analysis-reading"><div><h2>How to read this</h2><p>{text(definition.readChart)}</p></div><div><h2>Keep in mind</h2><p>{text(definition.caution)}</p></div></section>
         <details className="analysis-method"><summary>How we calculated this</summary><div><p>{text(answer?.method || initialAnswer.method)}</p><p>Runner comparison groups contain at least 100 eligible observations. Broader comparisons are labeled; a finish can belong to a runner with several races. Elevation describes the supplied course profile.</p><p>Input data: {new Date(summary.input_as_of).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}. <Link href="/methodology#personalized">Read the full methods in source units</Link> or <a href="https://github.com/koolkam00/htw-live-study/releases">download the complete data</a>.</p></div></details>
       </>}
