@@ -114,7 +114,7 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
       city: summary.cities.some(c => c.city === cityParam) ? cityParam! : initial.city,
       age: AGE_OPTIONS.includes(params.get('age') || '') ? params.get('age')! : 'all',
       gender: ['Men', 'Women'].includes(params.get('gender') || '') ? params.get('gender')! : 'all',
-      goal: Number.isInteger(goal) && goal >= 150 && goal <= 270 ? goal : 180,
+      goal: Number.isInteger(goal) && goal >= 90 && goal <= 720 ? goal : 180,
       previous: params.has('previous') && Number.isInteger(previous) && previous >= 90 && previous <= 720 ? previous : null,
       focus: ['prepare', 'choose', 'review'].includes(params.get('focus') || '') ? params.get('focus') as Focus : 'prepare',
     };
@@ -149,7 +149,7 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
     <form className="guide-profile guide-form" onSubmit={event => {
       event.preventDefault();
       const goal = parseMinutes(goalText), previous = previousText.trim() ? parseMinutes(previousText) : null;
-      if (goal === null || goal < 150 || goal > 270) { setFormError('Enter a target from 2:30 to 4:30 in hours:minutes, such as 2:57.'); return; }
+      if (goal === null || goal < 90 || goal > 720) { setFormError('Enter a target from 1:30 to 12:00 in hours:minutes, such as 2:57.'); return; }
       if (previousText.trim() && (previous === null || previous < 90 || previous > 720)) { setFormError('Enter the earlier marathon time as hours:minutes, such as 3:10, or leave it blank.'); return; }
       const next = { ...draft, goal, previous }; setProfile(next); setDraft(next); setFormError('');
       const params = new URLSearchParams({ race: next.city, age: next.age, goal: String(goal), gender: next.gender, focus: next.focus });
@@ -178,6 +178,6 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
       <div className="question-list">{answers.map((answer, i) => <Answer key={answer.id} answer={answer} number={i + 1} summary={summary} profile={profile} />)}</div>
     </>}
     <p className="guide-source study-meta">Data through {new Date(summary.input_as_of).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}. <a href={`${basePath}/data/packs/${GUIDE_PACK}/pack_meta.json`}>Coverage and calculation details</a>. Historical route validity and runners’ declared goals are unavailable.</p>
-    <p><Link href="/">Explore the 35 broader research questions</Link></p>
+    <p><Link href="/packs">Explore the broader research archive</Link></p>
   </article>;
 }

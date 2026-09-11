@@ -1,0 +1,140 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const Module = require('node:module');
+const ts = require('typescript');
+
+process.chdir(path.resolve(__dirname, '..'));
+for (const extension of ['.ts', '.tsx']) require.extensions[extension] = (module, filename) => module._compile(
+  ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true, jsx: ts.JsxEmit.ReactJSX },
+  }).outputText, filename,
+);
+const resolveFilename = Module._resolveFilename;
+Module._resolveFilename = function (request, ...args) {
+  return resolveFilename.call(this, request.startsWith('@/') ? path.join(process.cwd(), request.slice(2)) : request, ...args);
+};
+
+const React = require('react');
+const { renderToStaticMarkup } = require('react-dom/server');
+const { EXAMPLE_PROFILE, readAnalysisProfile, profileSearch, sameProfile } = require('../lib/analysis-profile.ts');
+const { TEN_ANALYSES, analysisBySlug, analysisHref } = require('../lib/ten-analyses.ts');
+const { getAnalysisStart } = require('../lib/analysis-server.ts');
+const { loadAnalysisAggregate } = require('../lib/analysis-aggregates.ts');
+const QuestionViz = require('../components/QuestionViz.tsx').default;
+const AnalysisChart = require('../components/AnalysisChart.tsx').default;
+const { summary, answers } = getAnalysisStart();
+
+assert.equal(TEN_ANALYSES.length, 10);
+assert.equal(new Set(TEN_ANALYSES.map(item => item.slug)).size, 10);
+assert.deepEqual(TEN_ANALYSES.map(item => item.rank), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+for (const definition of TEN_ANALYSES) {
+  assert.equal(analysisBySlug(definition.slug), definition);
+  assert.equal(analysisHref(definition), '/analyses/' + definition.slug);
+  assert.ok(answers.find(answer => answer.id === definition.id), `${definition.id}: the curated question must have an implemented answer`);
+}
+assert.equal(analysisBySlug('unpublished-question'), undefined);
+
+// Query links must preserve every active comparison, including hidden refinements.
+for (const city of summary.cities.map(item => item.city)) for (const goal of [90, 177, 240, 360, 720]) {
+  const profile = { ...EXAMPLE_PROFILE, city, goal, age: '30–34', gender: 'Women', previous: 255 };
+  assert.deepEqual(readAnalysisProfile(profileSearch(profile), summary), profile);
+  assert.ok(sameProfile(readAnalysisProfile(profileSearch(profile), summary), profile));
+}
+assert.deepEqual(readAnalysisProfile('', summary), EXAMPLE_PROFILE);
+assert.equal(readAnalysisProfile('?race=NYC&goal=360', summary).city, 'New York');
+for (const goal of ['', '89', '721', '177.5', 'NaN', 'Infinity', '3:00']) assert.equal(readAnalysisProfile('?goal=' + goal, summary).goal, 240);
+for (const previous of ['', '89', '721', '177.5', 'NaN']) assert.equal(readAnalysisProfile('?previous=' + previous, summary).previous, null);
+assert.deepEqual(readAnalysisProfile('?race=Missing&age=unknown&gender=unknown', summary), EXAMPLE_PROFILE);
+assert.ok(!sameProfile(EXAMPLE_PROFILE, { ...EXAMPLE_PROFILE, previous: 255 }));
+assert.ok(!sameProfile(EXAMPLE_PROFILE, { ...EXAMPLE_PROFILE, goal: 241 }));
+
+const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
+const rangeSpec = {
+  title: 'Recorded finish range', unit: 'finish', xLabel: 'Group', kind: 'bars',
+  series: [{ key: 'low', label: '10th percentile' }, { key: 'value', label: 'Median' }, { key: 'high', label: '90th percentile' }],
+  rows: [{ label: 'Comparable finishes', low: 205, value: 240, high: 282, n_low: 200, n_value: 200, n_high: 200 }],
+};
+const rangeHtml = render(QuestionViz, { spec: rangeSpec });
+assert.match(rangeHtml, /class="range-chart"/);
+assert.match(rangeHtml, /class="range-values"><strong aria-label="Median: 4:00">4:00<\/strong><\/div>/, 'The compact range column needs one visible number and an accessible median label');
+const timeAxis = rangeHtml.match(/class="range-axis"[^>]*>(.*?)<\/div>/)[1];
+assert.doesNotMatch(timeAxis, />-/, 'Observed finish-time ranges must not acquire negative padded times');
+assert.doesNotMatch(rangeHtml, /class="range-zero"/, 'Do not place an off-scale zero reference on a finish-time range');
+for (const text of ['10th percentile', '90th percentile', '3:25', '4:00', '4:42', '200']) assert.ok(rangeHtml.includes(text), 'The exact-values table must preserve ' + text);
+const signedSpec = { ...rangeSpec, unit: '% change', rows: [{ label: 'Course A', low: -10, value: -2, high: 8 }] };
+const signedHtml = render(QuestionViz, { spec: signedSpec });
+assert.match(signedHtml, /class="range-zero"/);
+assert.match(signedHtml, /class="range-zero-label"[^>]*>0%<\/span>/, 'The faster/slower reference needs a visible zero label');
+assert.match(signedHtml, /Median: -2%/);
+for (const match of signedHtml.matchAll(/(?:left|width):([\d.-]+)%/g)) assert.ok(Number(match[1]) >= 0 && Number(match[1]) <= 100, 'Range marks must stay inside their shared scale');
+const alternativeKeys = { ...signedSpec, series: [{ key: 'p10', label: '10th percentile' }, { key: 'median', label: 'Median' }, { key: 'p90', label: '90th percentile' }], rows: [{ label: 'Course A', p10: -10, median: -2, p90: 8 }] };
+assert.match(render(QuestionViz, { spec: alternativeKeys }), /class="range-chart"/);
+assert.doesNotMatch(render(QuestionViz, { spec: { ...rangeSpec, series: [{ key: 'low', label: 'Lower confidence bound' }, { key: 'value', label: 'Estimate' }, { key: 'high', label: 'Upper confidence bound' }] } }), /class="range-chart"/, 'Confidence intervals must not be relabeled as runner percentiles');
+assert.doesNotMatch(render(QuestionViz, { spec: { ...rangeSpec, rows: [{ label: 'Partial', low: null, value: 240, high: 282 }] } }), /class="range-span"/, 'Do not draw an invented range when an endpoint is missing');
+assert.match(render(QuestionViz, { spec: { ...rangeSpec, rows: [] } }), /No published values for this selection/);
+assert.match(render(QuestionViz, { spec: rangeSpec, headingLevel: 2 }), /<h2[^>]*>Recorded finish range<\/h2>/);
+
+const profileAnswer = answers.find(answer => answer.id === 'profile');
+const profileHtml = render(QuestionViz, { spec: profileAnswer.charts[0] });
+assert.match(profileHtml, /40–42\.195 km/);
+assert.match(profileHtml, /lines do not locate pace changes within a section/);
+assert.match(profileHtml, /Course section/);
+const choices = Array.from({ length: 4 }, (_, index) => ({ ...rangeSpec, title: 'Comparison ' + (index + 1) }));
+const buttonsHtml = render(AnalysisChart, { analysisId: 'example', charts: choices.slice(0, 2) });
+assert.equal([...buttonsHtml.matchAll(/aria-pressed="true"/g)].length, 1);
+assert.equal([...buttonsHtml.matchAll(/aria-pressed="false"/g)].length, 1);
+assert.match(render(AnalysisChart, { analysisId: 'example', charts: choices }), /<select[^>]+aria-controls=/);
+assert.match(render(AnalysisChart, { analysisId: 'empty', charts: [] }), /role="status"/);
+
+async function verifyTransport() {
+  const previousFetch = global.fetch;
+  const requests = [];
+  let reply = () => ({ city: 'Test course', cohorts: {}, terrain: [] });
+  global.fetch = async (url, options) => {
+    requests.push({ url, options });
+    const data = await reply(url, options);
+    return { ok: true, json: async () => data };
+  };
+  const signal = new AbortController().signal;
+  const load = (file, vintage, city = 'Test course') => loadAnalysisAggregate(file, city, vintage, signal);
+  try {
+    await assert.rejects(load('../city_01.json', 'invalid'), /not available/);
+    assert.equal(requests.length, 0, 'Invalid filenames must never reach the network');
+    const first = await load('city_01.json', '2026-09-11 12:00');
+    assert.ok(requests[0].url.endsWith('city_01.json?v=2026-09-11%2012%3A00'));
+    assert.equal(requests[0].options.signal, signal);
+    assert.equal(await load('city_01.json', '2026-09-11 12:00'), first);
+    assert.equal(requests.length, 1, 'An unchanged city and vintage reuse the aggregate');
+    await load('city_01.json', 'new-vintage');
+    assert.equal(requests.length, 2, 'A different vintage must not reuse stale data');
+    await assert.rejects(load('city_01.json', 'new-vintage', 'Different course'), /incomplete/, 'The cache must never return the wrong course');
+    reply = () => ({ city: 'Test course', cohorts: {} });
+    await assert.rejects(load('city_02.json', 'retry'), /incomplete/);
+    reply = () => ({ city: 'Test course', cohorts: {}, terrain: [] });
+    await load('city_02.json', 'retry');
+    assert.equal(requests.filter(request => request.url.includes('city_02.json')).length, 2, 'Malformed responses must allow a clean retry');
+    reply = () => { throw new Error('Offline'); };
+    await assert.rejects(load('city_03.json', 'retry'), /Offline/);
+    reply = () => ({ city: 'Test course', cohorts: {}, terrain: [] });
+    await load('city_03.json', 'retry');
+    reply = () => ({ city: 'Test course', rows: [] });
+    assert.deepEqual(await load('checkpoint_03.json', 'empty'), { city: 'Test course', rows: [] }, 'An empty valid checkpoint file is a coverage result, not a transport error');
+    const controller = new AbortController();
+    reply = (_url, options) => new Promise((_resolve, reject) => {
+      options.signal.addEventListener('abort', () => reject(new DOMException('Cancelled', 'AbortError')), { once: true });
+    });
+    const pending = loadAnalysisAggregate('city_04.json', 'Test course', 'cancelled', controller.signal);
+    controller.abort();
+    await assert.rejects(pending, error => error.name === 'AbortError');
+    reply = () => ({ city: 'Test course', cohorts: {}, terrain: [] });
+    await load('city_04.json', 'cancelled');
+    assert.equal(requests.filter(request => request.url.includes('city_04.json')).length, 2, 'A cancelled request must not poison the next request');
+  } finally {
+    global.fetch = previousFetch;
+  }
+}
+
+verifyTransport().then(() => {
+  console.log('Verified the ten analysis routes, shareable profile round trips, exact accessible chart values, range units, comparison controls, aggregate vintage isolation, cancellation and retry behavior.');
+}).catch(error => { console.error(error); process.exitCode = 1; });

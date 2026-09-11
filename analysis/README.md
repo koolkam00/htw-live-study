@@ -6,7 +6,7 @@ forecast, course and linked-history analyses. Some answers are explicitly partia
 or proxy comparisons. Group running and congestion cannot be calculated without
 absolute timing and start-offset data. It does not scrape races, change the
 database or overwrite core packs. Its chart output contains aggregates; complete
-individual records are available separately in the source releases.
+individual records are available separately in the source releases. The main website selects ten ranked analyses from the personalized engine at `/analyses/{slug}`. The 33 broad packs form the research archive; the engine still has 12 calculation paths. See the [ten-analysis map](../docs/TOP_TEN_ANALYSES.md).
 
 ## Access and refresh
 
@@ -15,10 +15,10 @@ The full dataset is intended for anyone to download and open without an account,
 token, password or decryption key. See [ACCESS.md](ACCESS.md) for direct links.
 `release.json` pins the default release for reproducibility.
 
-The pin and checked-in numerical outputs remain `private-export-20260907-1318`.
+The pin and checked-in numerical outputs retain source release `private-export-20260907-1318`. The personalized pack was recalculated at `2026-09-11T09:15:27Z` from that same source to expand exact target support to 90–720 minutes; its input timestamp remains `2026-09-07T13:19:23Z`.
 The September 11 takeover verified matching CORE/FULL canonical IDs in the newer
 September 10 export, but also confirmed archive and feature-schema incompatibilities
-with the current downloader/history builder. Its latest refresh still failed,
+with the current downloader/history builder. At the September 11 takeover inspection, the latest relevant refresh had failed,
 with no retry found. Follow [ACCESS.md](ACCESS.md) and
 [known issues](../docs/KNOWN_ISSUES.md) before attempting that vintage. All 401
 production aggregate files matched the checkout before this branch's later
@@ -98,6 +98,8 @@ aggregate values with their sample counts.
 Numerical-run script checksums identify the code that produced those calculations.
 Later presentation-only text revisions are recorded separately; they do not change
 the input vintage, calculation timestamp, numerical values or inherited method.
+The September 11 personalized range expansion is an actual recalculation with
+updated script hashes and calculation timestamp, while preserving the source release.
 
 The site discovers ready extension packs at build time. Each declares a
 `question_id`; the latest input vintage supplies that question's answer,
@@ -123,13 +125,28 @@ are rendered both on the question and the site's Methodology page. Narrative
 findings are regenerated from the aggregate CSVs by `write_findings.py`, with a
 separate narrative-script checksum. They do not introduce new numerical inputs.
 
-## Personalized race guide
+## Personalized engine and the ten-analysis explorer
 
-The `/your-race` page adds 12 personalized questions to the 35 broader questions.
-Visitors select course, exact-age band and a whole-minute threshold from 2:30 to
-4:30, with 15-minute presets, optional recorded gender and previous marathon time.
-Prepare, choose and review reorder the same questions. No historical goals or
-historical route changes are required or inferred.
+The primary experience has ten ranked questions at `/analyses/{slug}`. Its order
+and visible controls are defined by `lib/ten-analyses.ts`; the 35-question broader
+catalog is a research archive. All 12 backing engine paths remain implemented,
+including downhill opening and same-course returns beyond the main ten. The
+full earlier guide remains at `/research/personalized`; `/your-race` preserves
+old links by forwarding mapped questions and profile parameters.
+
+The initial profile is an explicitly labeled All courses / 4:00 example, all ages,
+all recorded genders and no earlier time. Supported controls vary by analysis:
+course comparison spans courses, weather has no target filter, age comparison
+varies age, and checkpoint comparison has no previous-time filter. Terrain asks
+for an explicit course selection. There is no arbitrary city fallback or universal
+age × speed × gender × weather × elevation filter. Historical goals and
+historical route changes are not inferred.
+
+Visitors can enter every whole-minute target from 1:30 through 12:00. The engine
+uses 15-minute presets for achieved-time buckets; exact threshold counts retain
+one-minute precision. Published samples remain sparse for some courses,
+demographic/history combinations and extreme times. The accepted input range
+does not promise that every comparison has a result.
 
 `build_personalized.py` reuses the validated source tables inside the extended
 calculation. The workflow passes `--personalized-output` and uploads the separate
@@ -149,7 +166,7 @@ and checkpoint files load only when requested. HTTP compression is left to the
 host and requires no browser-specific decompressor. The original 33-pack importer
 and registry retain their existing ownership boundary.
 
-The guide publishes achieved-time pacing bands, earlier-benchmark opening
+The engine publishes achieved-time pacing bands, earlier-benchmark opening
 comparisons, exact-threshold near finishes, age contrasts, supplied terrain
 alignment, opening/late-pace comparisons, checkpoint outcomes, course outcome
 spread, edition-weighted weather, threshold distributions, paired returns and
@@ -164,7 +181,7 @@ Per-course results never silently substitute another course. Cross-course and
 age-comparison panels deliberately vary the dimension they compare.
 
 Custom threshold counts use strict finish < target at every integer minute from
-150 through 270. No interpolation is used. Achieved-time profile and improvement
+90 through 720. No interpolation is used. Achieved-time profile and improvement
 cohorts use the displayed 15-minute bucket centered on the nearest preset. Near
 finishes use [target−5,target) and [target,target+5) minute intervals. Checkpoints
 use two-minute elapsed bands with an exclusive upper endpoint, optional recent

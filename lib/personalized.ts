@@ -25,8 +25,13 @@ export const priorBand = (previous: number | null) => previous === null ? 'all' 
 export const targetBucket = (target: number) => Math.round(target / 15) * 15;
 export const finishBand = (target: number) => `${clock(targetBucket(target) * 60 - 450, true)}–${clock(targetBucket(target) * 60 + 450, true)}`;
 export const cohortKey = (age: string, gender: string, prior: string) => `${age}|${gender}|${prior}`;
-export const percentUnder = (row: Distribution, target: number) => 100 * row.cdf[target - 150] / row.n;
-export const fmt = (value: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
+export const percentUnder = (row: Distribution, target: number): number | null => {
+  const index = target - (row.cdf_min ?? 150);
+  if (!Number.isInteger(index) || index < 0 || index >= row.cdf.length || row.n <= 0) return null;
+  const hits = row.cdf[index];
+  return Number.isFinite(hits) && hits >= 0 && hits <= row.n ? 100 * hits / row.n : null;
+};
+export const fmt = (value: number | null) => value === null ? 'Not available' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
 export const count = (value: number) => new Intl.NumberFormat('en-US').format(value);
 const pace = (seconds: number) => `${Math.floor(Math.round(seconds) / 60)}:${String(Math.round(seconds) % 60).padStart(2, '0')}/km`;
 
@@ -93,9 +98,9 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
         if (withClimb.length) answer.charts.splice(1, 0, bars('Supplied climbing and descending estimates', 'm', withClimb.map(t => ({ label: sectionLabel(t.end), gain: t.gain, loss: Math.abs(t.loss!) })), [{ key: 'gain', label: 'Climbing' }, { key: 'loss', label: 'Descending' }], 'These supplied estimates do not fully reconcile with the separately supplied net changes. They are route proxies, not verified historical elevations.'));
       }
     } else if (question.id === 'opening' || question.id === 'downhill') {
-      const cohort = chooseCohort(data, profile, c => Object.keys(c.openings).length >= 2);
+      const cohort = chooseCohort(data, profile, c => Object.values(c.openings).filter(row => question.id === 'downhill' || percentUnder(row, target) !== null).length >= 2);
       if (!cohort) return answer;
-      const groups = ['Faster opening', 'Similar opening', 'Slower opening'].filter(g => cohort.openings[g]);
+      const groups = ['Faster opening', 'Similar opening', 'Slower opening'].filter(g => cohort.openings[g] && (question.id === 'downhill' || percentUnder(cohort.openings[g], target) !== null));
       const n = groups.reduce((sum, group) => sum + cohort.openings[group].n, 0);
       use(cohort); answer.sample = undefined;
       const rows = groups.map(label => ({ label, value: question.id === 'opening' ? percentUnder(cohort.openings[label], target) : cohort.openings[label].late, n_value: cohort.openings[label].n }));
@@ -161,10 +166,10 @@ export function buildGuide(data: CityData, summary: PersonalSummary, profile: Pr
       answer.detail = weather.map(w => `${w.band}: ${fmt(w.value)}% average of edition medians (${w.editions} editions)`).join('; ') + '. Values compare finishes with earlier recorded bests, not the visitor’s chosen target. Every edition has equal weight.';
       answer.charts = [bars('Performance relative to earlier best, by start-hour temperature', '% change', weather.map(w => ({ label: w.band, value: w.value, n_value: w.n })), undefined, 'At least three editions and 100 finishes per band. This does not isolate a temperature penalty.')];
     } else if (question.id === 'ambition') {
-      const cohort = chooseCohort(data, profile, () => true); if (!cohort) return answer; use(cohort);
+      const cohort = chooseCohort(data, profile, c => percentUnder(c, target) !== null); if (!cohort) return answer; use(cohort);
       answer.answer = `${fmt(percentUnder(cohort, target))}% of this historical comparison group finished below ${clock(target * 60)}. Its median finish was ${clock(cohort.finish[1], true)}.`;
       answer.detail = cohort.prior === 'all' ? 'This is a field comparison without an earlier-time restriction. It does not estimate your fitness or personal chance of success.' : 'These runners had earlier recorded bests in the displayed time band. The proportion is descriptive, not a calibrated prediction of your next race.';
-      answer.charts = [{ title: 'Fraction finishing below each threshold', unit: '%', xLabel: 'Finish-time threshold', xUnit: 'finish', xNumeric: true, kind: 'line', rows: cohort.cdf.map((hits, i) => ({ label: 150 + i, value: 100 * hits / cohort.n, n_value: cohort.n })), series: [{ key: 'value', label: 'Below threshold' }], note: 'Changing the target changes the threshold being counted, not the underlying performances.' }];
+      answer.charts = [{ title: 'Fraction finishing below each threshold', unit: '%', xLabel: 'Finish-time threshold', xUnit: 'finish', xNumeric: true, kind: 'line', rows: cohort.cdf.map((hits, i) => ({ label: (cohort.cdf_min ?? 150) + i, value: 100 * hits / cohort.n, n_value: cohort.n })), series: [{ key: 'value', label: 'Below threshold' }], note: 'Changing the target changes the threshold being counted, not the underlying performances.' }];
     } else if (question.id === 'return') {
       const cohort = chooseCohort(data, profile, c => !!c.repeat); if (!cohort) return answer;
       const row = cohort.repeat!; use(cohort, row);
@@ -190,7 +195,7 @@ export function checkpointResult(data: CheckpointData, profile: Profile, checkpo
   const keys = candidates({ ...profile, previous: null });
   for (const requestedTrend of [...new Set([trend, 'all'])]) for (const key of keys) {
     const [age, gender] = key.split('|');
-    const row = data.rows.find(r => r.checkpoint === checkpoint && r.elapsed === elapsedBand && r.trend === requestedTrend && r.age === age && r.gender === gender);
+    const row = data.rows.find(r => r.checkpoint === checkpoint && r.elapsed === elapsedBand && r.trend === requestedTrend && r.age === age && r.gender === gender && percentUnder(r, profile.goal) !== null);
     if (row) return { row, trendWidened: requestedTrend !== trend, comparison: `${data.city} · ${age === 'all' ? 'all ages' : age} · ${gender === 'all' ? 'all recorded categories' : gender} · ${clock(elapsedBand * 60)} to under ${clock((elapsedBand + 2) * 60)} at ${checkpoint} km · ${requestedTrend === 'all' ? 'all recent pace trends' : requestedTrend.toLowerCase()}`, widened: widening({ ...profile, previous: null }, { age, gender, prior: 'all' }) };
   }
   return null;

@@ -1,9 +1,10 @@
 import './globals.css';
 import Link from 'next/link';
+import SiteNav from '@/components/SiteNav';
 
 export const metadata = {
-  title: 'Marathon Pacing Study | Every split of the race',
-  description: 'Explore marathon strategy, course conditions, finishing goals, runner differences, and improvement through answers, charts, and transparent methods.',
+  title: 'Marathon Pacing Study | Understand your next 42.195 km',
+  description: 'Ten clear, interactive analyses of marathon pacing, courses, conditions and improvement, drawn from millions of recorded finishes.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,22 +14,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">Skip to content</a>
         <header className="site-header">
           <div className="container header-inner">
-            <Link href="/" className="site-title">Marathon Pacing Study</Link>
-            <nav aria-label="Main navigation" className="main-nav">
-              <Link href="/your-race">Your race</Link>
-              <Link href="/">Questions</Link>
-              <Link href="/methodology">Methodology</Link>
-            </nav>
+            <Link href="/" className="site-title"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>Marathon<br className="brand-break" /> Pacing Study</span></Link>
+            <SiteNav />
           </div>
         </header>
         <main id="main" className="container main-content">{children}</main>
         <footer className="container footer">
-          <p>How marathons are run, split by split.</p>
+          <div className="footer-brand"><Link href="/">Marathon Pacing Study</Link><p>Every split tells part of the story.</p></div>
           <nav aria-label="More research">
-            <Link href="/courses">By course</Link>
-            <Link href="/packs">All analyses</Link>
-            <Link href="/slowdown">Sustained slowdown</Link>
-            <Link href="/methodology">Sources &amp; methodology</Link>
+            <Link href="/analyses">The ten analyses</Link>
+            <Link href="/about">About the study</Link>
+            <Link href="/methodology">Methods &amp; sources</Link>
+            <Link href="/packs">Research archive</Link>
+            <a href="https://github.com/koolkam00/htw-live-study/releases">Download the data ↗</a>
           </nav>
         </footer>
       </body>

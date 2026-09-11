@@ -1,5 +1,5 @@
 export type Sample = { n: number; editions: number };
-export type Distribution = Sample & { finish: number[]; cdf: number[]; retention: number; late: number; pace: number[][] };
+export type Distribution = Sample & { finish: number[]; cdf: number[]; cdf_min?: number; retention: number; late: number; pace: number[][] };
 export type NearResult = { target: number; below: Sample & { durations: number[] }; above: Sample & { durations: number[] } };
 export type PersonalCohort = Distribution & {
   age: string; gender: string; prior: string;
@@ -19,6 +19,7 @@ export type CourseResult = Sample & { city: string; age: string; gender: string;
 export type PersonalSummary = {
   schema_version: 1; pack_id: string; as_of: string; export_id: string; input_as_of: string;
   n: number; age_n: number; history_n: number; analyses: number;
+  target_min?: number; target_max?: number;
   cities: { city: string; file: string; checkpoint_file: string; n: number }[];
   courses: CourseResult[];
 };

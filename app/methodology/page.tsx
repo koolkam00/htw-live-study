@@ -3,6 +3,7 @@ import { getLive, getStudyAnswer, getQuestions } from '@/lib/research-data';
 import { QUESTIONS } from '@/lib/question-catalog';
 import { getExtensions } from '@/lib/extension-data';
 import { getPersonalMethod, getPersonalSummary } from '@/lib/personalized-data';
+import { TEN_ANALYSES, analysisHref } from '@/lib/ten-analyses';
 import { PERSONAL_QUESTIONS } from '@/lib/personalized-catalog';
 
 export const metadata = { title: 'Methodology | Marathon Pacing Study' };
@@ -36,18 +37,18 @@ export default function MethodologyPage() {
       <li><strong>Development:</strong> how the same runner’s approach and results change across marathons.</li>
     </ul>
     <h2>What is available now?</h2>
-    {extension && <p>The latest analyzed export contains {new Intl.NumberFormat('en-US').format(extension.corpus.n_records)} race records across {extension.corpus.n_cities} cities and {extension.corpus.n_race_years} race editions. These charts summarize individual splits. The complete records are available in <a href="https://github.com/koolkam00/htw-live-study/releases">public data downloads</a> without login.</p>}
+    {extension && <p>The export used by the current analyses contains {new Intl.NumberFormat('en-US').format(extension.corpus.n_records)} race records across {extension.corpus.n_cities} cities and {extension.corpus.n_race_years} race editions. These charts summarize individual splits. The complete records are available in <a href="https://github.com/koolkam00/htw-live-study/releases">public data downloads</a> without login.</p>}
     {live?.corpus && <p>The sustained slowdown analysis has its own snapshot: {new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Its counts are separate from the newer pacing analyses.</p>}
     <p>{calculated.length} of the {QUESTIONS.length} questions have results recalculated from the public export. Some are partial answers: a course comparison cannot isolate the course’s causal effect, and a route proxy cannot establish the hills used in an old edition. Group running and congestion require start and checkpoint clock times that are absent from this export.</p>
     <p>A finish is one performance, so a runner can contribute several. Individual tables can have smaller samples or earlier publication dates than the main snapshot. Each question links its source and reports counts where available.</p>
-    <h2 id="personalized">Twelve questions for your race</h2>
+    <h2 id="personalized">The ten essential analyses</h2>
     {personalized && <p>The personalized guide uses {new Intl.NumberFormat('en-US').format(personalized.n)} eligible finishes, including {new Intl.NumberFormat('en-US').format(personalized.age_n)} with an exact usable age. The usable earlier-benchmark cohort contains {new Intl.NumberFormat('en-US').format(personalized.history_n)} finishes. Combining course, age, recorded gender and earlier-time filters can make samples much smaller.</p>}
-    <p>A visitor can choose a marathon, an age group, a threshold from 2:30 to 4:30, and optional recorded gender and previous marathon time. Preparing for a race, choosing a course and reviewing a past result reorder the same twelve questions. They do not change the evidence.</p>
+    <p>A visitor can choose a marathon, an age group, a threshold from 1:30 to 12:00, and optional recorded gender and previous marathon time. The ten primary analyses are ranked by usefulness to runners and strength of the evidence. Each page shows the controls that apply to its question. The twelve underlying comparisons remain available in the research archive.</p>
     {getPersonalMethod().map((method, index) => <p key={`personal-common-${index}`}>{method}</p>)}
     <p>The visitor’s previous marathon time is compared with bands of earlier recorded bests, not an exact last-race match. A custom target can be any whole minute; success counts and nearby-finish comparisons use that exact threshold. Pacing profiles and improvement breakdowns use the clearly displayed 15-minute achieved-time band centered on the nearest preset, with the upper boundary excluded.</p>
     <p>Fallbacks keep the selected course and try broader age and gender groups before dropping an earlier-time restriction. Each answer prints its actual comparison group and identifies broadened filters. Cross-course comparisons use one common set of filters across all displayed courses. A missing comparison is not shown as zero. Age-group and course comparisons deliberately vary the dimension being compared.</p>
     <p>Checkpoint comparisons use current elapsed progress instead of previous marathon time. They match a two-minute elapsed-time interval and, when entered, the most recent 5 km pace relative to elapsed average pace. The entered time determines the required remaining pace exactly, while historical outcomes describe the full matching interval. These retrospective proportions have not been calibrated as personal forecasts.</p>
-    {PERSONAL_QUESTIONS.map(question => <details className="methodology" key={question.id}><summary>{question.title}</summary><div className="methodology-content"><p>{question.method}</p><Link href={`/your-race#guide-${question.id}`}>Open this personalized question</Link></div></details>)}
+    {PERSONAL_QUESTIONS.map(question => <details className="methodology" key={question.id}><summary>{question.title}</summary><div className="methodology-content"><p>{question.method}</p><Link href={TEN_ANALYSES.find(item => item.id === question.id) ? analysisHref(TEN_ANALYSES.find(item => item.id === question.id)!) : `/research/personalized#guide-${question.id}`} >Open this personalized question</Link></div></details>)}
     <p><a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/data/packs/ext_personalized_guide/pack_meta.json`}>Personalized analysis coverage, provenance and calculation details</a></p>
     <h2>How to read the pacing charts</h2>
     <p><strong>“40 km” means the 35–40 km section.</strong> Pace profiles show section averages at the section’s end distance, not instantaneous pace at that timing mat. An upward movement means slower pace. Joining two averages with a line does not establish a sudden change at either checkpoint.</p>
@@ -87,7 +88,7 @@ export default function MethodologyPage() {
     <p>Predictions must use information available at the checkpoint being studied and be tested on unseen race editions. Declared goals should be distinguished from inferred time landmarks. An absence from the database does not establish that a runner stopped racing.</p>
     <p>Splits measure time and pace. Physiological effort, fueling, intentions, and training need additional evidence. Terrain-adjusted pace is an estimated proxy, especially when a 5 km section contains both climbs and descents.</p>
     <h2>How the questions fit together</h2>
-    <p>The {QUESTIONS.length} questions are organized around race strategy, courses and conditions, goals and finishing, runner differences, and learning over time. The original question lists are incorporated, alongside six additions about successful strategies, personal-best gains, congestion, consistency, and course adaptation.</p>
+    <p>The research archive’s {QUESTIONS.length} questions are organized around race strategy, courses and conditions, goals and finishing, runner differences, and learning over time. The original question lists are incorporated, alongside six additions about successful strategies, personal-best gains, congestion, consistency, and course adaptation.</p>
     <h2 id="question-methods">Methods for every question</h2>
     <p>Open a question for its actual definitions, comparison groups, sample rules and limits. The result page contains the answer and charts.</p>
     {questions.map(question => <details className="methodology" key={question.id}>
@@ -123,6 +124,6 @@ export default function MethodologyPage() {
         <p>Hourly wind plus route direction can estimate headwind exposure. Route geometry can estimate turn counts. Crowd density, shade, training, shoes, and individual fueling are harder to reconstruct consistently over 20 years and should not be assumed.</p>
       </div>
     </details>
-    <div className="source-links"><Link href="/">Return to the questions</Link><a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/data/live.json`}>Download the study snapshot</a></div>
+    <div className="source-links"><Link href="/">Return to the study</Link><a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/data/live.json`}>Download the study snapshot</a></div>
   </article>;
 }
