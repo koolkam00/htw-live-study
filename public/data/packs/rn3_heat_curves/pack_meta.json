@@ -51,7 +51,7 @@
     "wx_mean_temp_c"
   ],
   "notes": "Heat decomposition on full features_v2_wx. C3 cool/mild/warm/hot from wx_temp_c_05\u2192wx_mean_temp_c. Null weather never invented as zero. api vs local_fallback reported in coverage. Melbourne elev N/A irrelevant.",
-  "method": "Streaming aggregates from features_v2_wx; valid_splits + resolvable weather; C3 WEATHER_BANDS; Smyth HTW + severity + splits + finish quantiles; no race_records writes",
+  "method": "Streaming aggregates from features_v2_wx; valid_splits + resolvable weather; C3 WEATHER_BANDS; sustained slowdown + severity + splits + finish quantiles; no race_records writes",
   "tables": [
     "tables/wx_coverage.csv",
     "tables/weather_band_counts.csv",
@@ -64,8 +64,8 @@
   ],
   "canonical": true,
   "deprecated": false,
-  "answer_prose": "Among 2,315,085 valid-split finishers with resolvable race weather (wx_temp_c_05\u2192wx_mean_temp_c; C3 bands cool<10 / mild[10,15) / warm[15,21) / hot\u226521 \u00b0C), HTW by band: cool 26.3% (n=881,673), mild 31.6% (n=1,117,386), warm 34.6% (n=228,884), hot 31.1% (n=87,142) \u2014 peak in warm, with hot smaller-n and mixed city mix. Mean severity still climbs with heat (0.108 \u2192 0.121 \u2192 0.130 \u2192 0.132). Positive-split rate: cool 87.8%, hot 93.4%; mean split_ratio cool 1.1039 vs hot 1.1413. Finish median (p50 min): cool 241.0, mild 250.3, warm 255.1, hot 282.0. Men\u2019s hot HTW 37.7% vs women\u2019s 20.5%. Weather coverage on full corpus: wx_mean_temp_c nonnull 88.2%, wx_source=api 89.9%, local_fallback 10.1% (nulls never treated as zero).",
-  "methodology_prose": "Source: features_v2_wx.parquet (n_features=3,167,990). Analysis rows: valid_splits==True and resolvable weather temp (priority wx_temp_c_05 then wx_mean_temp_c; race_morning_temp_c/temp_c absent on this file). C3 weather bands (\u00b0C): cool <10; mild [10,15); warm [15,21); hot \u226521; null if missing \u2014 never invented. n_rows_used=2,315,085; of those, valid+hourly+temp=2,315,085. HTW = Smyth binary flag (unchanged). Severity = features_v2 continuous wall severity. positive_split is the signed float on the dump (rate = share >0); split_ratio = second/first half pace. Finish quantiles in minutes. Late-race table bands mean of wx_temp_c_35/40/42 vs gap_dos_*/severity. City table keeps cities with \u22655,000 banded rows. wx_source distinguished api vs local_fallback in coverage. Maps to S9/R15. No race_records writes.",
+  "answer_prose": "Among 2,315,085 valid-split finishers with resolvable race weather (wx_temp_c_05\u2192wx_mean_temp_c; C3 bands cool<10 / mild[10,15) / warm[15,21) / hot\u226521 \u00b0C), sustained slowdown by band: cool 26.3% (n=881,673), mild 31.6% (n=1,117,386), warm 34.6% (n=228,884), hot 31.1% (n=87,142) \u2014 peak in warm, with hot smaller-n and mixed city mix. Mean severity still climbs with heat (0.108 \u2192 0.121 \u2192 0.130 \u2192 0.132). Positive-split rate: cool 87.8%, hot 93.4%; mean split_ratio cool 1.1039 vs hot 1.1413. Finish median (p50 min): cool 241.0, mild 250.3, warm 255.1, hot 282.0. Men\u2019s hot sustained slowdown 37.7% vs women\u2019s 20.5%. Weather coverage on full corpus: wx_mean_temp_c nonnull 88.2%, wx_source=api 89.9%, local_fallback 10.1% (nulls never treated as zero).",
+  "methodology_prose": "Source: features_v2_wx.parquet (n_features=3,167,990). Analysis rows: valid_splits==True and resolvable weather temp (priority wx_temp_c_05 then wx_mean_temp_c; race_morning_temp_c/temp_c absent on this file). C3 weather bands (\u00b0C): cool <10; mild [10,15); warm [15,21); hot \u226521; null if missing \u2014 never invented. n_rows_used=2,315,085; of those, valid+hourly+temp=2,315,085. sustained slowdown = Smyth binary flag (unchanged). Severity = features_v2 continuous slowdown severity. positive_split is the signed float on the dump (rate = share >0); split_ratio = second/first half pace. Finish quantiles in minutes. Late-race table bands mean of wx_temp_c_35/40/42 vs gap_dos_*/severity. City table keeps cities with \u22655,000 banded rows. wx_source distinguished api vs local_fallback in coverage. Maps to S9/R15. No race_records writes.",
   "prose_as_of": "2026-09-07T01:27:03Z",
   "ux": {
     "requires": [
@@ -74,5 +74,13 @@
       "viz"
     ],
     "note": "Sight must not invent copy; numbers from Analyst dumps only."
+  },
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  },
+  "method_reference": {
+    "label": "Published slowdown method (2021)",
+    "url": "https://doi.org/10.1371/journal.pone.0251513"
   }
 }

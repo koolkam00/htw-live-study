@@ -1,0 +1,121 @@
+{
+  "core": [
+    {
+      "name": "race_records.parquet",
+      "size": 160237095,
+      "sha256": "a7c82defa6f8f26a353a5f9a49b5567f41c900cd043ea3b894b5ff711bf1580c"
+    },
+    {
+      "name": "race_conditions.parquet",
+      "size": 191626,
+      "sha256": "8c8342d6449a900ea2634280603a6e4f20419b2d1508f13994279bb63dda0160"
+    },
+    {
+      "name": "course_profiles.parquet",
+      "size": 183559,
+      "sha256": "c4778f2ea3a82ec95cdd677fb607c1d13e30f3c012642484f10b3befb9b9d6f1"
+    },
+    {
+      "name": "course_segments.parquet",
+      "size": 29500,
+      "sha256": "2d3fece603481f7c92f3020e51ea12aec94884d6e5ff411ff37ffe6632f7b266"
+    },
+    {
+      "name": "sources.parquet",
+      "size": 24540,
+      "sha256": "8584273441d22b3214487e156b64756a119ccd6463978999c4f8b2ebe01c1d5c"
+    },
+    {
+      "name": "races_summary.json",
+      "size": 20206,
+      "sha256": "c7a32384b03b6a9618f0c1c041a71b128357c141ac2ca1ebf16ceed6fd0f471e"
+    },
+    {
+      "name": "MANIFEST.json",
+      "size": 1976,
+      "sha256": "ebf8af479c4bcc3167caae63e46cc843a9d5ac33412aa556bfcfd1329f8ef3ad"
+    },
+    {
+      "name": "README.md",
+      "size": 946,
+      "sha256": "2fe458a5cd9fc026e0d37db489609eee93c1bb635395e541ad84abf0f13bdb06"
+    },
+    {
+      "name": "ID-CONTRACT.md",
+      "size": 1160,
+      "sha256": "3129e0e2583099754ed6f3e85b5f5c95582722eed31aed2a05c6eaecc5e5ff2b"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 1013,
+      "sha256": "f141254f22133f95d025a194a6c3b11354c883820c68082c7fa7748f6d8c9dda"
+    }
+  ],
+  "full": [
+    {
+      "name": "README.md",
+      "size": 946,
+      "sha256": "2fe458a5cd9fc026e0d37db489609eee93c1bb635395e541ad84abf0f13bdb06"
+    },
+    {
+      "name": "sources.parquet",
+      "size": 24540,
+      "sha256": "8584273441d22b3214487e156b64756a119ccd6463978999c4f8b2ebe01c1d5c"
+    },
+    {
+      "name": "FEATURE-FIELD-NOTES.md",
+      "size": 3237,
+      "sha256": "18339bf65599601790a7769ba5b172863c5095b71f9b08a00ae95022d3d379ab"
+    },
+    {
+      "name": "races_summary.json",
+      "size": 20206,
+      "sha256": "c7a32384b03b6a9618f0c1c041a71b128357c141ac2ca1ebf16ceed6fd0f471e"
+    },
+    {
+      "name": "race_records.parquet",
+      "size": 160237095,
+      "sha256": "a7c82defa6f8f26a353a5f9a49b5567f41c900cd043ea3b894b5ff711bf1580c"
+    },
+    {
+      "name": "COUNT-DIFF.md",
+      "size": 3615,
+      "sha256": "a7bcf7ac29981ec3fd84670363cced3e5477dfe1cd88610e1aaf799656bcdd4a"
+    },
+    {
+      "name": "course_segments.parquet",
+      "size": 29500,
+      "sha256": "2d3fece603481f7c92f3020e51ea12aec94884d6e5ff411ff37ffe6632f7b266"
+    },
+    {
+      "name": "features.parquet",
+      "size": 917598853,
+      "sha256": "c3e4ce74db7ce16e60d26cf406f1c118229b667cf8cf31f3c37e595ec0b1b3ee"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 1013,
+      "sha256": "f141254f22133f95d025a194a6c3b11354c883820c68082c7fa7748f6d8c9dda"
+    },
+    {
+      "name": "course_profiles.parquet",
+      "size": 183559,
+      "sha256": "c4778f2ea3a82ec95cdd677fb607c1d13e30f3c012642484f10b3befb9b9d6f1"
+    },
+    {
+      "name": "ID-CONTRACT.md",
+      "size": 1160,
+      "sha256": "3129e0e2583099754ed6f3e85b5f5c95582722eed31aed2a05c6eaecc5e5ff2b"
+    },
+    {
+      "name": "race_conditions.parquet",
+      "size": 191626,
+      "sha256": "8c8342d6449a900ea2634280603a6e4f20419b2d1508f13994279bb63dda0160"
+    },
+    {
+      "name": "MANIFEST.json",
+      "size": 1976,
+      "sha256": "ebf8af479c4bcc3167caae63e46cc843a9d5ac33412aa556bfcfd1329f8ef3ad"
+    }
+  ]
+}

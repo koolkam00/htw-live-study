@@ -17,7 +17,7 @@ export default function Fig2({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW by age and by ability will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="Sustained slowdown by age and recorded ability will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 2 chart">

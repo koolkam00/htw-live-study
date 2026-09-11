@@ -105,9 +105,9 @@ export default function PackClientPage({
     return (
       <div className="panel">
         <div className="figure-title">{info.title}</div>
-        <div className="site-subtitle">This pack surfaces the HTW Smyth 2021 paper dashboard.</div>
+        <div className="site-subtitle">Explore sustained late-race slowing within the Marathon Pacing Study.</div>
         <div style={{ marginTop: '0.75rem' }}>
-          <Link href="/htw">Open the HTW dashboard</Link>
+          <Link href="/slowdown">Explore sustained slowdown</Link>
         </div>
       </div>
     );

@@ -1,0 +1,72 @@
+{
+  "5km": {
+    "raw_parseable": 3505204,
+    "feature_nonnull": 3505204,
+    "comparable": 3505204,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "10km": {
+    "raw_parseable": 3504690,
+    "feature_nonnull": 3485167,
+    "comparable": 3485167,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "15km": {
+    "raw_parseable": 3418832,
+    "feature_nonnull": 3385124,
+    "comparable": 3385124,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "20km": {
+    "raw_parseable": 3157035,
+    "feature_nonnull": 3119117,
+    "comparable": 3119117,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "25km": {
+    "raw_parseable": 3419685,
+    "feature_nonnull": 3112821,
+    "comparable": 3112821,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "30km": {
+    "raw_parseable": 3505553,
+    "feature_nonnull": 3105776,
+    "comparable": 3105776,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "35km": {
+    "raw_parseable": 3481255,
+    "feature_nonnull": 3096697,
+    "comparable": 3096697,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "40km": {
+    "raw_parseable": 3492790,
+    "feature_nonnull": 3088492,
+    "comparable": 3088492,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "42_2km": {
+    "raw_parseable": 3551028,
+    "feature_nonnull": 3070882,
+    "comparable": 3070882,
+    "mismatch_over_1ms": 0,
+    "valid_rows_mismatch_or_missing": 0
+  },
+  "finish_time_vs_raw_seconds": {
+    "comparable": 3551028,
+    "mismatch_over_1ms": 0,
+    "median_feature_minutes": 252.45
+  },
+  "all_9_checkpoints_equal_within_1ms": 3070882,
+  "valid_rows_all_9_equal": 2807231
+}

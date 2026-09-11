@@ -60,12 +60,12 @@ export const ANALYSIS_PLANS: Record<string, AnalysisPlan> = {
   r07_wall_clock_vs_distance: {
     measure: 'The beginning of acceleration, gradual fading, recovery, and sustained slowing.',
     compare: 'Distance-based and elapsed-time-based models across ability groups, using the same change definitions and unseen races for validation.',
-    needs: 'Individual complete split histories and arrival times. Existing wall-episode summaries cover only one kind of pacing change.',
+    needs: 'Individual complete split histories and arrival times. Existing sustained slowdown summaries cover only one kind of pacing change.',
   },
   r21_learn_from_blowup: {
     measure: 'Changes in opening pace, variability, terrain responses, finishing speed, and performance across appearances.',
     compare: 'Each runner with their earlier races, separating first observed appearance from actual marathon debut and adjusting for conditions.',
-    needs: 'Linked race histories, prior ability and start-to-start intervals. An analysis of repeated wall episodes cannot establish learning.',
+    needs: 'Linked race histories, prior ability and start-to-start intervals. An analysis of repeated sustained slowdowns cannot establish learning.',
   },
   r22_aging_changes: {
     measure: 'Opening speed, consistency, pace retention, and performance as the same runners get older.',

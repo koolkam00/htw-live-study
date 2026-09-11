@@ -17,7 +17,7 @@ export default function Fig1({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW proportion vs DoS/LoS thresholds (sensitivity) will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="Sustained slowdown frequency across thresholds will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 1 chart">

@@ -12,7 +12,7 @@
     0.9
   ],
   "schema_doc": "docs/C4-QUANTILE-LOOKUP.md",
-  "serverless_use": "Live Study Sight / Wall Analyst P2 halfway calculator: load city JSON, map cum_20 (or pace_first_half) into bin, read finish_time p10\u2013p90. No live DB required.",
+  "serverless_use": "P2 halfway calculator: load city JSON, map cum_20 (or pace_first_half) into bin, read finish_time p10\u2013p90. No live DB required.",
   "courses": [
     {
       "city": "Berlin",

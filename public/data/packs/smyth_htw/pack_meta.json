@@ -1,8 +1,8 @@
 {
   "pack_id": "smyth_htw",
   "slug": "smyth_htw",
-  "display_id": "HTW",
-  "title": "Smyth 2021 Hitting the Wall (Figs 1\u20136)",
+  "display_id": "sustained slowdown",
+  "title": "Sustained slowdown (Figures 1\u20136)",
   "status": "ok",
   "readiness": "ready",
   "as_of": "2026-09-06T23:31:51Z",
@@ -32,6 +32,14 @@
     "tables/table_repeaters_by_sex.csv",
     "live.json"
   ],
-  "method": "Smyth 2021",
-  "notes": "Primary delivery is live.json PUT; folder mirrors summary tables."
+  "method": "Published slowdown method (2021)",
+  "notes": "Primary delivery is live.json PUT; folder mirrors summary tables.",
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  },
+  "method_reference": {
+    "label": "Published slowdown method (2021)",
+    "url": "https://doi.org/10.1371/journal.pone.0251513"
+  }
 }

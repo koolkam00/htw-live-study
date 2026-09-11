@@ -728,13 +728,13 @@
   },
   "figures": {
     "fig1": {
-      "caption": "HTW proportion vs DoS/LoS thresholds (sensitivity)",
+      "caption": "Sustained slowdown proportion vs DoS/LoS thresholds (sensitivity)",
       "panels": [
         {
           "title": "LoS 5 km",
           "type": "line",
           "xLabel": "DoS",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "all-5",
@@ -823,7 +823,7 @@
           "title": "LoS 10 km",
           "type": "line",
           "xLabel": "DoS",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "all-10",
@@ -912,7 +912,7 @@
           "title": "LoS 15 km",
           "type": "line",
           "xLabel": "DoS",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "all-15",
@@ -1001,7 +1001,7 @@
           "title": "LoS 20 km",
           "type": "line",
           "xLabel": "DoS",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "all-20",
@@ -1089,13 +1089,13 @@
       ]
     },
     "fig2": {
-      "caption": "HTW proportion by age and by ability",
+      "caption": "Sustained slowdown proportion by age and by ability",
       "panels": [
         {
           "title": "by age",
           "type": "line",
           "xLabel": "age group",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1145,7 +1145,7 @@
           "title": "by ability",
           "type": "line",
           "xLabel": "recent PB (min)",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1254,13 +1254,13 @@
       ]
     },
     "fig3": {
-      "caption": "HTW vs years before/after a PB",
+      "caption": "sustained slowdown vs years before/after a PB",
       "panels": [
         {
           "title": "by year from PB",
           "type": "line",
           "xLabel": "years from PB",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1458,7 +1458,7 @@
           "title": "PB periods",
           "type": "line",
           "xLabel": "period",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1505,7 +1505,7 @@
           "title": "(a) Age < 40, PB < 4 h",
           "type": "line",
           "xLabel": "years from PB",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1703,7 +1703,7 @@
           "title": "(b) Age >= 40, PB < 4 h",
           "type": "line",
           "xLabel": "years from PB",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -1897,7 +1897,7 @@
           "title": "(c) Age < 40, PB >= 4 h",
           "type": "line",
           "xLabel": "years from PB",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -2095,7 +2095,7 @@
           "title": "(d) Age >= 40, PB >= 4 h",
           "type": "line",
           "xLabel": "years from PB",
-          "yLabel": "HTW proportion",
+          "yLabel": "Sustained slowdown proportion",
           "series": [
             {
               "id": "M",
@@ -2292,7 +2292,7 @@
       ]
     },
     "fig5": {
-      "caption": "HTW start, distance, slowdown by age and ability",
+      "caption": "sustained slowdown start, distance, slowdown by age and ability",
       "panels": [
         {
           "title": "(a) start by age",
@@ -2777,7 +2777,7 @@
       ]
     },
     "fig6": {
-      "caption": "HTW finish-time and cost by age and ability",
+      "caption": "sustained slowdown finish-time and cost by age and ability",
       "panels": [
         {
           "title": "(a) time by age",
@@ -3362,5 +3362,9 @@
     "boston_2024_n_ids": 25389,
     "boston_2026_n_ids": 28552,
     "boston_overlap": 3692
+  },
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
   }
 }

@@ -9,11 +9,28 @@ Evidence date: 2026-09-11. Read [project status](PROJECT_HANDOFF.md) before trea
 | Live database | `/workspace/race-data-platform/data/platform.sqlite` on ingestion machine | Producer's documented active database; not this checkout |
 | Consistent export snapshot | September 7 manifest: `/workspace/race-data-platform/data/export/_snapshot_platform.sqlite` | Snapshot used for raw export |
 | Historical feature source | `/workspace/wall-analyst/output-api-dump-2026-09-07/features.parquet` | Separate Analyst output used in September 7 FULL |
-| Online durable backups/exports | [Private GitHub Releases](https://github.com/koolkam00/htw-live-study/releases) | Downloadable SQLite gzip backups and CORE/FULL tar.gz exports |
+| Online durable backups/exports | [Private GitHub Releases](https://github.com/koolkam00/htw-live-study/releases) | Private full-record SQLite gzip backups and CORE/FULL tar.gz exports; compression is not encryption |
 | Reproducible analysis input | [release.json](../analysis/release.json) | Pinned export; currently September 7 |
 | Website data | [public/data](../public/data) | Public aggregate JSON/CSV; no direct live SQLite queries |
 
-Do not confuse database backup tags `htw-db-*`, export tags `private-export-*`, and pack bundle IDs `private-*`. A backup does not trigger a successful site refresh. The September 10 backup reports approximately 3,543,512 records; a later September 10 export reports 3,580,279. They are distinct snapshots.
+Do not confuse database backup tags `htw-db-*`, export tags `private-export-*`, and pack bundle IDs `private-*`. A backup does not trigger a successful site refresh. The September 10 backup reports approximately 3,543,512 records; the later September 10 export was audited at 3,580,279. They are distinct snapshots. Full records remain in private Releases, never public website assets.
+
+## September 10 verified export
+
+Both `private-export-20260910-1412` archives were size/SHA-256 verified outside the checkout during the September 11 takeover. Shared CORE members have matching hashes in FULL. [Archive evidence](evidence/2026-09-11/archive-members-audit.json) records each member and digest.
+
+| Table | Rows | Current contract |
+| --- | ---: | --- |
+| race_records.parquet | 3,580,279 | Raw records; unique, non-null canonical `id` |
+| features.parquet | 3,580,279 | 138 columns; matching unique, non-null `record_id`; different row order |
+| race_conditions.parquet | 207 | All 207 supplied dates populated |
+| course_profiles.parquet | 32 | Historical validity columns still entirely null |
+| course_segments.parquet | 288 | Supplied course sections |
+| sources.parquet | 378 | `last_ingested` populated for 148 rows |
+
+The ID sets match exactly. City, year and age match on the canonical ID. Feature sex differs only for 552 raw `X` values normalized to null. Comparable cumulative and finish timings agree within 1 ms after conversion from feature minutes to raw seconds; all 2,807,231 feature-valid records have all nine matching checkpoints. This checks export row alignment, not the truth of cross-race runner identities. See [ID audit](evidence/2026-09-11/id-contract-audit.json), [timing audit](evidence/2026-09-11/timing-unit-contract-audit.json) and [normalization audit](evidence/2026-09-11/sex-normalization-audit.json).
+
+The new feature schema lacks `race`, `runner_name` and `split_mode_in`; all feature `race_date` values remain null. The current history builder still requires the September 7 name/edition fields. Archive extraction also fails the current allowlist: CORE adds `ID-CONTRACT.md` and `SHA256SUMS.txt`; FULL adds those plus `FEATURE-FIELD-NOTES.md` and `COUNT-DIFF.md`. Resolve these verified compatibility failures through a producer-compatible export or reviewed version-specific consumer adapter before calculating or adopting a new vintage. The pin and deployed numerical analyses remain September 7.
 
 ## September 7 inspected tables
 
@@ -38,7 +55,7 @@ September 7 raw exact age is populated in 1,068,374 rows (~31%); age-group label
 
 ### Feature families and limitations
 
-FULL includes normalized names; runner_id/match_key/ambiguity/repeater flags; race sequence; section/cumulative times and paces; checkpoint ranks; HTW severity/onset/cost; PB and ability; pace changes; target outcomes; and next-race fields. These are derived columns, not all independent observations or pre-race covariates.
+September 7 FULL includes normalized names; runner_id/match_key/ambiguity/repeater flags; race sequence; section/cumulative times and paces; checkpoint ranks; sustained-slowdown severity/onset/cost; PB and ability; pace changes; target outcomes; and next-race fields. These are derived columns, not all independent observations or pre-race covariates. Do not assume every field exists in a later export.
 
 For September 7, all 3,382,000 feature race_date values are null; all split_mode_in values report cumulative. Supplied runner_id covers 2,826,696 rows and 2,242,270 distinct IDs; 372,916 IDs repeat. These IDs are not independently verified people. 18,310 rows are marked ambiguous.
 
@@ -47,7 +64,7 @@ Supplied PB/ability can include current-race information. The current extension 
 ### Join contract by vintage
 
 - **September 7 audited:** CORE id and FULL record_id are incompatible. Raw rows exceed feature rows by 69,055. Numeric joining produced 3,106,398 apparent matches, just five with agreeing runner names. Existing [prepare_history](../analysis/build_extended.py) matches edition, normalized name and all split/finish durations, requires one-to-one matches, and screens supplied identities for ambiguity, gender/birth-year conflicts and duplicate editions.
-- **September 10 release claim:** raw/features are 1:1 and features.record_id equals race_records.id. Verify uniqueness, referential integrity, row identity and units on the downloaded new export before adopting a version-specific join. This claim does not repair the old files retroactively.
+- **September 10 audited:** raw/features have matching unique ID sets and matching city/year/age and comparable timings. Join `features.record_id` to `race_records.id`, never row position, only under this verified release-specific contract. The current code has not yet adopted this join, and the fix does not repair old files retroactively. Missing feature name/edition fields still require a producer-compatible export or reviewed version-specific consumer adapter.
 - Existing weather analysis aggregates only unambiguous city/year dates. A stable race-edition key is recommended for future exports; it is not an implemented key in the old schema.
 - Existing terrain joins use supplied unique city/section profiles. Both valid_from_year and valid_to_year columns exist but contain zero non-null values in September 7. “Validity absent” in older prose means values are missing, not columns.
 
@@ -61,4 +78,4 @@ Profiles contain course_key, geometry points, distance, gain/loss/min/max, start
 
 September 7 foundation filtering yields 2,739,842 eligible finishes from 3,451,055 raw rows: 489,593 missing/unparsed, 217,245 non-increasing, 4,375 outside bounds, zero exact duplicates removed. FULL valid_splits reports 2,646,005, a different cohort. Linked eligible finishes are 2,366,740; recent benchmark finishes 373,955; consecutive qualifying cross-year pairs 383,860. These are results/pairs, not unique people. Source: [pack metadata](../public/data/packs/ext_pacing_shapes/pack_meta.json) and [access audit](../analysis/ACCESS.md).
 
-September 10 notes report valid_splits 2,807,231. Do not substitute it for the extension pipeline's eligible count without recalculation.
+September 10's feature `valid_splits` count was audited at 2,807,231. Do not substitute it for the extension pipeline's eligible count without recalculation. Supplied runner IDs cover 2,994,501 rows and 2,366,070 distinct identifiers; 396,353 identifiers repeat and 18,561 rows are marked ambiguous. These are supplied identities, not independently verified people.

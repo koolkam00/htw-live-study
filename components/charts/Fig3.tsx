@@ -17,7 +17,7 @@ export default function Fig3({
     Array.isArray(dataset?.series) ? dataset.series : [];
   const canRender = status === 'ready' && safeSeries.length > 0;
 
-  if (!canRender) return <ChartPlaceholder note="HTW vs years before/after a recent PB will appear here." />;
+  if (!canRender) return <ChartPlaceholder note="Sustained slowdown before and after a recorded personal best will appear here." />;
 
   return (
     <div className="chart" role="img" aria-label="Figure 3 chart">
