@@ -1,5 +1,7 @@
 'use client';
-import Link from 'next/link';
+import { UnitLink as Link, useUnits } from './UnitsProvider';
+import { unitText } from '@/lib/units';
+import { findingText } from '@/lib/analysis-display';
 import { useEffect, useMemo, useState } from 'react';
 import type { CityData, PersonalSummary } from '@/lib/personalized-types';
 import { AGE_OPTIONS, GOAL_MIN, GOAL_MAX, type Profile } from '@/lib/personalized-catalog';
@@ -13,6 +15,8 @@ import CheckpointExplorer from './CheckpointExplorer';
 const EMPTY_CITY: CityData = { city: 'All courses', cohorts: {}, terrain: [] };
 
 export default function AnalysisExplorer({ definition, summary, initialAnswer }: { definition: AnalysisDefinition; summary: PersonalSummary; initialAnswer: GuideAnswer }) {
+  const { units } = useUnits();
+  const text = (value: string | undefined) => unitText(value || '', units);
   const [profile, setProfile] = useState<Profile>(EXAMPLE_PROFILE);
   const [draft, setDraft] = useState<Profile>(EXAMPLE_PROFILE);
   const [timeText, setTimeText] = useState('4:00');
@@ -53,18 +57,18 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer }:
   const needsCourse = definition.id === 'terrain' && profile.city === 'All courses';
   const hasResults = !!answer?.charts.length && !needsCourse;
   const previous = TEN_ANALYSES[definition.rank - 2], next = TEN_ANALYSES[definition.rank];
-  const search = profileSearch(profile);
+  const search = profileSearch(profile) + '&units=' + units;
   const applyProfile = (nextProfile: Profile) => {
     setSelection(nextProfile); setChanged(true); setFormError('');
-    window.history.pushState(null, '', window.location.pathname + profileSearch(nextProfile));
+    window.history.pushState(null, '', window.location.pathname + profileSearch(nextProfile) + '&units=' + units);
   };
   const visibleAnswer = definition.id === 'courses' && answer?.charts[0]?.rows.length
     ? 'Compare ' + answer.charts[0].rows.length + ' courses with enough results to show a meaningful range.'
-    : answer?.answer;
+    : answer ? findingText(answer, units) : '';
   return <div className="analysis-layout">
-    <aside className="analysis-sidebar"><Link href="/analyses" className="sidebar-heading">The essential ten</Link><nav aria-label="The ten ranked analyses"><ol>{TEN_ANALYSES.map(item => <li key={item.id}><Link href={analysisHref(item) + search} aria-current={item.id === definition.id ? 'page' : undefined}><span>{String(item.rank).padStart(2, '0')}</span>{item.shortTitle}</Link></li>)}</ol></nav><p>One question at a time.<br />Your comparisons travel with you.</p></aside>
+    <aside className="analysis-sidebar"><Link href="/analyses" className="sidebar-heading">The essential ten</Link><nav aria-label="The ten ranked analyses"><ol>{TEN_ANALYSES.map(item => <li key={item.id}><Link href={analysisHref(item) + search} aria-current={item.id === definition.id ? 'page' : undefined}><span>{String(item.rank).padStart(2, '0')}</span>{text(item.shortTitle)}</Link></li>)}</ol></nav><p>One question at a time.<br />Your comparisons travel with you.</p></aside>
     <article className="analysis-main">
-      <header className="analysis-heading"><Link href="/analyses" className="eyebrow">Analysis {String(definition.rank).padStart(2, '0')} of 10 <span aria-hidden="true"> / </span> {definition.category}</Link><h1>{definition.title}</h1><p>{definition.purpose}</p></header>
+      <header className="analysis-heading"><Link href="/analyses" className="eyebrow">Analysis {String(definition.rank).padStart(2, '0')} of 10 <span aria-hidden="true"> / </span> {definition.category}</Link><h1>{text(definition.title)}</h1><p>{text(definition.purpose)}</p></header>
       <form className="comparison-controls" onSubmit={event => {
         event.preventDefault();
         const goal = definition.controls.time ? parseMinutes(timeText) : draft.goal;
@@ -91,13 +95,13 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer }:
       <div className="sr-only" role="status">{loading ? 'Loading your comparison.' : changed && answer ? 'Comparison updated. ' + (answer.comparison || '') : ''}</div>
       {loading ? <div className="analysis-loading" aria-hidden="true"><span /><span /><span /><div /></div> : error ? <div className="feedback-error" role="alert"><p>{error}</p><button onClick={() => setRetry(value => value + 1)} type="button">Try loading again</button></div> : <>
         {definition.id === 'checkpoint' ? <CheckpointExplorer summary={summary} profile={profile} /> : needsCourse ? <section className="empty-comparison"><p className="eyebrow">Every course has its own shape</p><h2>Choose your marathon above.</h2><p>Elevation belongs to a particular course. Select a city to compare its supplied rises and falls with observed pacing.</p></section> : answer && <>
-          <section className={'analysis-finding' + (!hasResults ? ' empty-comparison' : '')}><p className="eyebrow">{hasResults ? 'What the data shows' : 'This comparison needs more data'}</p><h2>{visibleAnswer}</h2>{answer.detail && <p>{answer.detail}</p>}{answer.comparison && <p className="comparison-context">{answer.comparison}.{answer.sample ? ' ' + count(answer.sample.n) + ' finishes across ' + answer.sample.editions + ' race editions.' : ' Each group shows its own sample size.'}</p>}{answer.widened && <p className="coverage-notice">{answer.widened}</p>}{!hasResults && <button className="button-secondary" type="button" onClick={() => applyProfile(EXAMPLE_PROFILE)}>Explore the all-course example</button>}</section>
-          {hasResults && <AnalysisChart charts={answer.charts} analysisId={definition.id + search} />}
+          <section className={'analysis-finding' + (!hasResults ? ' empty-comparison' : '')}><p className="eyebrow">{hasResults ? 'What the data shows' : 'This comparison needs more data'}</p><h2>{text(visibleAnswer)}</h2>{answer.detail && <p>{text(answer.detail)}</p>}{answer.comparison && <p className="comparison-context">{text(answer.comparison)}.{answer.sample ? ' ' + count(answer.sample.n) + ' finishes across ' + answer.sample.editions + ' race editions.' : ' Each group shows its own sample size.'}</p>}{answer.widened && <p className="coverage-notice">{text(answer.widened)}</p>}{!hasResults && <button className="button-secondary" type="button" onClick={() => applyProfile(EXAMPLE_PROFILE)}>Explore the all-course example</button>}</section>
+          {hasResults && <AnalysisChart charts={answer.charts} analysisId={definition.id + profileSearch(profile)} />}
         </>}
-        <section className="analysis-reading"><div><h2>How to read this</h2><p>{definition.readChart}</p></div><div><h2>Keep in mind</h2><p>{definition.caution}</p></div></section>
-        <details className="analysis-method"><summary>How we calculated this</summary><div><p>{answer?.method || initialAnswer.method}</p><p>Runner comparison groups contain at least 100 eligible observations. Broader comparisons are labeled; a finish can belong to a runner with several races. Elevation describes the supplied course profile.</p><p>Input data: {new Date(summary.input_as_of).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}. <Link href="/methodology#personalized">Read the full methods</Link> or <a href="https://github.com/koolkam00/htw-live-study/releases">download the complete data</a>.</p></div></details>
+        <section className="analysis-reading"><div><h2>How to read this</h2><p>{text(definition.readChart)}</p></div><div><h2>Keep in mind</h2><p>{text(definition.caution)}</p></div></section>
+        <details className="analysis-method"><summary>How we calculated this</summary><div><p>{text(answer?.method || initialAnswer.method)}</p><p>Runner comparison groups contain at least 100 eligible observations. Broader comparisons are labeled; a finish can belong to a runner with several races. Elevation describes the supplied course profile.</p><p>Input data: {new Date(summary.input_as_of).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}. <Link href="/methodology#personalized">Read the full methods in source units</Link> or <a href="https://github.com/koolkam00/htw-live-study/releases">download the complete data</a>.</p></div></details>
       </>}
-      <nav className="analysis-pagination" aria-label="Continue exploring">{previous ? <Link href={analysisHref(previous) + search}><span>← Previous question</span><strong>{previous.shortTitle}</strong></Link> : <Link href="/analyses"><span>← Choose a question</span><strong>All ten analyses</strong></Link>}{next ? <Link href={analysisHref(next) + search}><span>Next question →</span><strong>{next.shortTitle}</strong></Link> : <Link href="/analyses"><span>Back to the ten ↗</span><strong>Keep exploring</strong></Link>}</nav>
+      <nav className="analysis-pagination" aria-label="Continue exploring">{previous ? <Link href={analysisHref(previous) + search}><span>← Previous question</span><strong>{text(previous.shortTitle)}</strong></Link> : <Link href="/analyses"><span>← Choose a question</span><strong>All ten analyses</strong></Link>}{next ? <Link href={analysisHref(next) + search}><span>Next question →</span><strong>{text(next.shortTitle)}</strong></Link> : <Link href="/analyses"><span>Back to the ten ↗</span><strong>Keep exploring</strong></Link>}</nav>
     </article>
   </div>;
 }

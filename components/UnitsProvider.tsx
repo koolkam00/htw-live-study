@@ -1,0 +1,59 @@
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { createContext, useCallback, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react';
+import { DEFAULT_UNITS, unitText, type UnitSystem } from '@/lib/units';
+import { unitsFromSearch, withUnits } from '@/lib/unit-preference';
+
+const STORAGE_KEY = 'marathon-study-units';
+const UnitsContext = createContext<{ units: UnitSystem; setUnits: (units: UnitSystem) => void }>({ units: DEFAULT_UNITS, setUnits: () => {} });
+export const useUnits = () => useContext(UnitsContext);
+
+export default function UnitsProvider({ children }: { children: ReactNode }) {
+  const [units, updateUnits] = useState<UnitSystem>(DEFAULT_UNITS);
+  const pathname = usePathname();
+  useEffect(() => {
+    const restore = () => {
+      const requested = unitsFromSearch(window.location.search);
+      let stored: string | null = null;
+      try { stored = window.localStorage.getItem(STORAGE_KEY); } catch { /* Storage may be unavailable. URL preference still works. */ }
+      const next = requested || (stored === 'mi' || stored === 'km' ? stored : DEFAULT_UNITS);
+      updateUnits(next);
+      if (requested) { try { window.localStorage.setItem(STORAGE_KEY, requested); } catch {} }
+    };
+    restore();
+    window.addEventListener('popstate', restore);
+    return () => window.removeEventListener('popstate', restore);
+  }, [pathname]);
+  const setUnits = useCallback((next: UnitSystem) => {
+    updateUnits(next);
+    try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
+    window.history.replaceState(window.history.state, '', withUnits(window.location.pathname + window.location.search + window.location.hash, next));
+  }, []);
+  return <UnitsContext.Provider value={{ units, setUnits }}>{children}</UnitsContext.Provider>;
+}
+
+export function UnitSwitch() {
+  const { units, setUnits } = useUnits();
+  const path = usePathname();
+  if (path !== '/' && path !== '/about' && !path.startsWith('/analyses')) return null;
+  return <div className="unit-switch" role="group" aria-label="Distance and pace units">
+    <button type="button" aria-pressed={units === 'mi'} onClick={() => setUnits('mi')}>Miles</button>
+    <button type="button" aria-pressed={units === 'km'} onClick={() => setUnits('km')}>Kilometres</button>
+  </div>;
+}
+
+export function UnitText({ children }: { children: string }) {
+  const { units } = useUnits();
+  return <>{unitText(children, units)}</>;
+}
+
+export function MarathonDistance() {
+  const { units } = useUnits();
+  return <>{units === 'mi' ? '26.2 miles' : '42.195 km'}</>;
+}
+
+export function UnitLink({ href, ...props }: ComponentProps<typeof Link>) {
+  const { units } = useUnits();
+  return <Link {...props} href={typeof href === 'string' ? withUnits(href, units) : href} />;
+}

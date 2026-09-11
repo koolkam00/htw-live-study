@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import { UnitLink as Link } from './UnitsProvider';
 import { usePathname } from 'next/navigation';
 
 export default function SiteNav() {

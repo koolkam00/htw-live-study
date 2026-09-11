@@ -35,6 +35,6 @@ export default function ResearchQuestion({ question, standalone = false, heading
         {question.related?.length ? <div className="source-links">{question.related.map(link => <Link key={link.href} href={link.href}>{link.label}</Link>)}</div> : null}
       </div>
     </details>
-    {question.charts.map((spec, i) => <QuestionViz key={`${question.id}-${i}`} spec={spec} />)}
+    {question.charts.map((spec, i) => <QuestionViz key={`${question.id}-${i}`} spec={spec} unitSystem="km" />)}
   </article>;
 }

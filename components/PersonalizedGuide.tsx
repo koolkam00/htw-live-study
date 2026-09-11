@@ -74,7 +74,7 @@ function CheckpointComparison({ summary, profile }: { summary: PersonalSummary; 
       <p className="answer-detail">{remaining !== null && remaining > 0 ? `Reaching your target from the entered time requires ${Math.floor(Math.round(remaining) / 60)}:${String(Math.round(remaining) % 60).padStart(2, '0')}/km over the remaining ${fmt(42.195 - submitted.checkpoint)} km.` : 'The selected target time has already elapsed at this checkpoint.'} This historical group is not a calibrated personal prediction.</p>
       <p className="study-meta guide-coverage">{result.comparison}. {result.row.editions} race editions. Previous marathon time is not used in this checkpoint comparison.</p>
       {(result.widened || result.trendWidened) && <p className="study-meta guide-widened">{result.widened} {result.trendWidened && 'Recent pace trend was also broadened to all trends.'}</p>}
-      <QuestionViz spec={{ title: 'Historical finish-time range', unit: 'finish', xLabel: 'Percentile', kind: 'bars', series: [{ key: 'value', label: 'Finish time' }], rows: ['10th percentile', 'Median', '90th percentile'].map((label, i) => ({ label, value: result.row.finish[i] / 60, n_value: result.row.n })), note: 'These percentiles show variation among complete eligible finishers, including repeated runners. Non-finishers and missing-split records are absent.' }} />
+      <QuestionViz unitSystem="km" spec={{ title: 'Historical finish-time range', unit: 'finish', xLabel: 'Percentile', kind: 'bars', series: [{ key: 'value', label: 'Finish time' }], rows: ['10th percentile', 'Median', '90th percentile'].map((label, i) => ({ label, value: result.row.finish[i] / 60, n_value: result.row.n })), note: 'These percentiles show variation among complete eligible finishers, including repeated runners. Non-finishers and missing-split records are absent.' }} />
     </div>}
   </div>;
 }
@@ -88,7 +88,7 @@ function Answer({ answer, number, summary, profile }: { answer: GuideAnswer; num
     {answer.comparison && <p className="study-meta guide-coverage">Comparison: {answer.comparison}.{answer.sample && ` ${count(answer.sample.n)} observations across ${answer.sample.editions} race editions.`}</p>}
     {answer.widened && <p className="study-meta guide-widened">{answer.widened}</p>}
     <details className="methodology"><summary>Methodology</summary><div className="methodology-content"><p>{answer.method}</p><p>Every published result contains at least 100 observations. Variation bands describe performances, not certainty in an estimate. Each answer labels its actual comparison group, including broader filters where needed.</p><Link href="/methodology#personalized">Full personalized methodology</Link></div></details>
-    {answer.id === 'checkpoint' ? <CheckpointComparison summary={summary} profile={profile} /> : answer.charts.map((chart, i) => <QuestionViz key={`${answer.id}-${i}`} spec={chart} />)}
+    {answer.id === 'checkpoint' ? <CheckpointComparison summary={summary} profile={profile} /> : answer.charts.map((chart, i) => <QuestionViz key={`${answer.id}-${i}`} spec={chart} unitSystem="km" />)}
   </section>;
 }
 

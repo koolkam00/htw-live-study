@@ -76,7 +76,7 @@ assert.match(render(QuestionViz, { spec: { ...rangeSpec, rows: [] } }), /No publ
 assert.match(render(QuestionViz, { spec: rangeSpec, headingLevel: 2 }), /<h2[^>]*>Recorded finish range<\/h2>/);
 
 const profileAnswer = answers.find(answer => answer.id === 'profile');
-const profileHtml = render(QuestionViz, { spec: profileAnswer.charts[0] });
+const profileHtml = render(QuestionViz, { spec: profileAnswer.charts[0], unitSystem: 'km' });
 assert.match(profileHtml, /40–42\.195 km/);
 assert.match(profileHtml, /lines do not locate pace changes within a section/);
 assert.match(profileHtml, /Course section/);

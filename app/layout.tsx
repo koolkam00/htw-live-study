@@ -1,21 +1,22 @@
 import './globals.css';
-import Link from 'next/link';
+import { UnitLink as Link, UnitSwitch } from '@/components/UnitsProvider';
+import UnitsProvider from '@/components/UnitsProvider';
 import SiteNav from '@/components/SiteNav';
 
 export const metadata = {
-  title: 'Marathon Pacing Study | Understand your next 42.195 km',
+  title: 'Marathon Pacing Study | Understand your next 26.2 miles',
   description: 'Ten clear, interactive analyses of marathon pacing, courses, conditions and improvement, drawn from millions of recorded finishes.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body><UnitsProvider>
         <a className="skip-link" href="#main">Skip to content</a>
         <header className="site-header">
           <div className="container header-inner">
             <Link href="/" className="site-title"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>Marathon<br className="brand-break" /> Pacing Study</span></Link>
-            <SiteNav />
+            <div className="header-controls"><SiteNav /><UnitSwitch /></div>
           </div>
         </header>
         <main id="main" className="container main-content">{children}</main>
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="https://github.com/koolkam00/htw-live-study/releases">Download the data ↗</a>
           </nav>
         </footer>
-      </body>
+      </UnitsProvider></body>
     </html>
   );
 }
