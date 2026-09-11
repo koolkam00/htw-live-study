@@ -4,6 +4,8 @@ Updated September 11, 2026 for the ten-analysis redesign; source and deployment 
 
 ## How to read the catalog
 
+- Two additional primary weather pages are documented in [WEATHER_ANALYSES.md](WEATHER_ANALYSES.md): first-four-hours warming and start wind speed. Both use the September 11 export through standalone `build_weather.py` and `public/data/weather/evidence.json`; the 33-pack registry and twelve personalized engine paths below are unchanged. Humidity was evaluated alongside them and withheld because its interval was inconclusive. All three results remain in the screening evidence.
+
 - The primary site has [ten ranked analyses](TOP_TEN_ANALYSES.md), defined in [lib/ten-analyses.ts](../lib/ten-analyses.ts) and served at `/analyses/{slug}`. They reuse ten of the twelve personalized calculation paths below.
 - 35 broader research-archive questions are defined in [lib/question-catalog.ts](../lib/question-catalog.ts). 33 have registered extension packs; group running and congestion remain measurement-limited.
 - Eight foundation packs are calculated by [analysis/build_pacing.py](../analysis/build_pacing.py); the other 25 by [analysis/build_extended.py](../analysis/build_extended.py). [analysis/write_findings.py](../analysis/write_findings.py) generates narrative findings from aggregates.

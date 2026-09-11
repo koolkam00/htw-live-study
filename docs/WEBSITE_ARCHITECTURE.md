@@ -4,6 +4,8 @@ Takeover evidence and current branch changes are distinguished in [PROJECT_HANDO
 
 ## Runtime and routes
 
+The original ten are now accompanied by two separately validated weather pages at `/analyses/warming-and-pacing` and `/analyses/wind-and-pacing`. `WeatherIndex` adds their links to the homepage/directory; the temperature page links them as well. `weather-data.ts` exposes only candidates marked ready in `public/data/weather/evidence.json`; withheld humidity has no generated route. `WeatherAnalysis` renders the adjusted percentage-point estimate and uncertainty plus a course browser for unadjusted edition observations. Browsing does not refit the overall estimate. These pages use the September 11 source; the ten keep September 7. See [weather methods and decisions](WEATHER_ANALYSES.md).
+
 [package.json](../package.json) pins Next.js 14.2.5, React 18.3.1, Recharts 2.12.7 and TypeScript 5.5.4. [next.config.mjs](../next.config.mjs) sets static export, unoptimized images and optional NEXT_PUBLIC_BASE_PATH/assetPrefix. The documented public host is [Marathon Pacing Study](https://htw-live-study.vercel.app).
 
 | Route | Source / renderer | Purpose |
@@ -52,6 +54,8 @@ Course pages use `lib/course-data.ts`: names come from `live.json` table `t1` an
 The homepage, About page and ten primary analyses default to miles and minutes per mile. The Miles / Kilometres switch updates these pages together, including distance labels, pace values and axes, exact-value tables, checkpoint controls, and explanatory prose. Miles mode also displays elevation in feet; finish durations, percentages, cohort membership and sample sizes do not change. Weather retains its published temperature bands.
 
 The URL parameter `units=mi|km` makes a shared comparison explicit. A valid URL selection takes precedence over the saved browser preference; absent either, the default is miles. The browser remembers changes, and navigation among analysis pages retains the selection. Unit changes are presentation state, not a reason to download or recalculate new cohorts.
+
+The new weather pages also display °F differences and mph in miles mode, or °C differences and km/h in kilometres mode. Their percentage-point outcomes stay unchanged. Course browsing is stored as `course=` and survives unit changes/reloads. The original temperature analysis keeps its published °C bands.
 
 All underlying distances and analytical definitions remain in kilometres. Use the exact conversion of 1 mile = 1.609344 km and 1 foot = 0.3048 m before rounding for display. For example, 5:00/km is approximately 8:03/mile. A source 5 km timing section displays as 3.11 miles, and the 20, 30 and 35 km checkpoint choices retain those exact underlying checkpoint keys. The site does not invent timing mats, halfway readings or individual-mile splits. Distinguish elapsed time for a recorded section from per-mile pace; converting units never changes the elapsed time.
 

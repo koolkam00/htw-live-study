@@ -5,7 +5,7 @@ import SiteNav from '@/components/SiteNav';
 
 export const metadata = {
   title: 'Marathon Pacing Study | Understand your next 26.2 miles',
-  description: 'Ten clear, interactive analyses of marathon pacing, courses, conditions and improvement, drawn from millions of recorded finishes.',
+  description: 'Ten essential runner questions and new weather comparisons, drawn from millions of recorded marathon finishes.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="container footer">
           <div className="footer-brand"><Link href="/">Marathon Pacing Study</Link><p>Every split tells part of the story.</p></div>
           <nav aria-label="More research">
-            <Link href="/analyses">The ten analyses</Link>
+            <Link href="/analyses">Explore analyses</Link>
             <Link href="/about">About the study</Link>
             <Link href="/methodology">Methods &amp; sources</Link>
             <Link href="/packs">Research archive</Link>

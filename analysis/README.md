@@ -1,5 +1,7 @@
 # Marathon pacing analyses
 
+The separate [weather evidence screen](../docs/WEATHER_ANALYSES.md) evaluates humidity, four-hour warming and wind from the September 11 export. Warming and wind meet the prespecified takeaway rule; humidity is withheld. `build_weather.py` writes `public/data/weather/evidence.json` through an explicit review step, independent of the 33-pack and personalized importers. Its input pin is `weather-release.json`; the original pipeline's `release.json` stays September 7. Run the **Weather evidence screen** workflow or the documented local commands to reproduce all three decisions.
+
 This pipeline reads the complete public FULL export (including CORE tables) and produces
 33 aggregate question packs: eight foundation analyses and 25 whole-race,
 forecast, course and linked-history analyses. Some answers are explicitly partial
