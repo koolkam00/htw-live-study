@@ -12,7 +12,8 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Private analysis inputs never belong in the site repository.
+# Large release binaries and local analysis scratch files are ignored to keep clones small.
+# Complete source records are public GitHub Release assets; this is not an access restriction.
 *.parquet
 *.tar.gz
 analysis/private/

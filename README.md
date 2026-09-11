@@ -2,13 +2,15 @@
 
 Marathon Pacing Study helps runners explore pacing patterns, compare courses, prepare for a race and understand a past result. It contains 35 broader research questions, 33 calculated aggregate answers, a guide with 12 personalized questions, course summaries and sustained-slowdown figures.
 
-The website is a static Next.js application. It reads reviewed aggregate JSON and CSV files in `public/data`; private runner records stay outside the website checkout and in private GitHub Releases. Compression of an archive is not encryption. The website has no direct connection to the ingestion database.
+The website is a static Next.js application that renders aggregate JSON and CSV files in `public/data`. Project policy makes the source code, complete runner records, database snapshots, exports and overlays available for anyone to open and download without an account. Use ordinary unencrypted Parquet/SQLite files; compression is optional. Large binary datasets are best distributed through public [GitHub Releases](https://github.com/koolkam00/htw-live-study/releases). The website has no direct connection to the ingestion database.
+
+See the dated [public-access verification status](docs/PROJECT_HANDOFF.md#public-access-policy-and-verification) for the latest anonymous-download checks. Legacy tags containing `private` are retained identifiers, not access requirements.
 
 ## Project handoff and current data
 
 Start with [AGENTS.md](AGENTS.md) and [Project handoff](docs/PROJECT_HANDOFF.md), then the [data architecture](docs/DATA_ARCHITECTURE.md), [website architecture](docs/WEBSITE_ARCHITECTURE.md), [analysis catalog](docs/ANALYSIS_CATALOG.md) and [operations runbook](docs/OPERATIONS.md).
 
-The analysis pin and checked-in calculated packs use `private-export-20260907-1318`. A takeover audit on September 11, 2026 verified that all 401 production aggregate files matched that checkout before the presentation changes in this branch. The newer September 10 export has verified CORE/FULL ID alignment, but archive and feature-schema incompatibilities still prevent the current refresh pipeline from consuming it. See [known issues](docs/KNOWN_ISSUES.md) and [verified export access](analysis/ACCESS.md). A new export does not automatically update the website.
+The analysis pin and checked-in calculated packs use `private-export-20260907-1318`. A takeover audit on September 11, 2026 verified that all 401 production aggregate files matched that checkout before the September 11 presentation changes. The newer September 10 export has verified CORE/FULL ID alignment, but archive and feature-schema incompatibilities still prevent the current refresh pipeline from consuming it. See [known issues](docs/KNOWN_ISSUES.md) and [verified export access](analysis/ACCESS.md). A new export does not automatically update the website.
 
 ## Sustained-slowdown measure
 
@@ -34,4 +36,4 @@ npm run build
 
 The build creates static output in `out/`. The configured public host is [Marathon Pacing Study](https://htw-live-study.vercel.app); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
 
-Private calculations, checksums, imports and per-release ID contracts are documented in [analysis/README.md](analysis/README.md). Keep missing measurements explicit, preserve source citations and publish only reviewed aggregates. Existing repository names, file keys and compatibility URLs remain stable where required by the data contract.
+Calculations, checksums, imports and per-release ID contracts are documented in [analysis/README.md](analysis/README.md). Keep missing measurements explicit, preserve source citations and make the full underlying data available alongside the chart aggregates. Existing repository names, file keys and compatibility URLs remain stable where required by the data contract.

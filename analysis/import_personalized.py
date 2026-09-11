@@ -109,7 +109,7 @@ def main():
     files,audit=validate_archive(args.archive,args.expected_export)
     if not args.check_only:
         output=Path(__file__).resolve().parents[1]/'public/data/packs'
-        # Publish inspectable aggregate JSON, never an opaque archive or runner rows.
+        # Write the chart aggregate JSON expected by the personalized renderer.
         # The host may compress HTTP responses; the source remains reviewable.
         with tempfile.TemporaryDirectory(prefix='personalized-import-') as tmp:
             staging=Path(tmp)/PACK;(staging/'tables').mkdir(parents=True)

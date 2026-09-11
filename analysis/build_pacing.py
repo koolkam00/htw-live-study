@@ -1,4 +1,4 @@
-"""Recompute aggregate pacing packs from a verified private CORE export.
+"""Recompute aggregate pacing packs from a verified CORE export.
 
 No network calls, runner-level outputs, identity matching, or core-pack writes.
 """
@@ -121,14 +121,12 @@ class Publisher:
         for filename, rows in tables.items():
             if not rows:
                 raise ValueError(f'No publishable observations for {pack}/{filename}')
-            if any(k in {'runner', 'name', 'id', 'source_url'} for row in rows for k in row):
-                raise ValueError('Individual identifiers cannot be published.')
             for row in rows:
                 for key, value in row.items():
                     if isinstance(value, float) and not math.isfinite(value):
                         raise ValueError('Non-finite aggregate')
                     if key.startswith('n_') and value is not None and value < MIN_CELL:
-                        raise ValueError('Small public cell')
+                        raise ValueError('Insufficient observations for a chart estimate')
             with (target / 'tables' / filename).open('w', newline='') as stream:
                 writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
                 writer.writeheader()
@@ -174,7 +172,7 @@ def run(source, output, live_as_of):
     largest = max(patterns, key=lambda row:row['value'])
     pub.publish('pacing_shapes', 'r10_unravel_typology', 'How do people actually pace a marathon?',
         f"The most common pattern is {largest['label'].lower()}: {largest['value']:.1f}% of eligible finishes. The full-course profile also shows how pace changes within those broad blocks.",
-        f"Calculated directly from {number(n)} complete, plausible split records in the private export.",
+        f"Calculated directly from {number(n)} complete, plausible split records in the public export.",
         ['For each runner, divide section pace by their full-marathon average pace and subtract one. Plot the median of these individual percentages at each checkpoint; zero is that runner’s own marathon pace. A median curve is not itself one runner’s race and need not integrate to zero.',
          'Compare elapsed time over 0–20 km with 20–40 km. Faster: more than 2% faster; similar: within 2%; moderate slowing: more than 2% through 10%; pronounced slowing: more than 10%. The final 2.195 km appears in the profile but not this equal-distance classification. These are descriptive categories, not slowdown episodes or measured half-marathon splits.'],
         [chart('The typical pace profile', 'profile.csv', '% pace', kind='line', xNumeric=True, xLabel='Distance (km)', note='Median of individually normalized section paces. Below zero is faster than the runner’s own marathon average.'),

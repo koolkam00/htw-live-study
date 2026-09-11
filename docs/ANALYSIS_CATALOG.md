@@ -8,7 +8,7 @@ Verified from the repository commit in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md).
 - Eight foundation packs are calculated by [analysis/build_pacing.py](../analysis/build_pacing.py); the other 25 by [analysis/build_extended.py](../analysis/build_extended.py). [analysis/write_findings.py](../analysis/write_findings.py) generates narrative findings from aggregates.
 - Twelve personalized questions share [analysis/build_personalized.py](../analysis/build_personalized.py) and [lib/personalized.ts](../lib/personalized.ts); they are not twelve independent raw datasets.
 - Legacy S/R/RN/P and sustained-slowdown figure folders coexist. Aliases and replacement answers overlap; do not count folders as unique studies.
-- Per-pack methods below follow checked-in metadata and preserve denominators, definitions and limitations; presentation labels use the current Marathon Pacing Study terminology. Ready is a metadata state, not proof of causal identification.
+- Per-pack methods below follow checked-in metadata and preserve denominators, definitions and limitations; presentation labels use the current Marathon Pacing Study terminology. Full runner records and source code are public research material under the current access policy. Older aggregate-only distribution wording is superseded; chart cohort thresholds remain reliability requirements, not restrictions on downloading the full dataset. Ready is a metadata state, not proof of causal identification.
 - All extension entries below use the September 7 bundle in the checked-in metadata. Newer release notes do not update these outputs automatically.
 
 The September 11 takeover confirmed all 33 registered broad packs and the separate personalized guide are ready. Their original numerical-run script hashes matched the checked-in calculation code before the presentation-only terminology changes; subsequent text revisions are recorded separately. Metadata scopes comprise 23 descriptive analyses, seven partial comparisons, one route proxy, one weather proxy and one temporally validated forecast. Ready does not mean that the full original causal question has been resolved.
@@ -103,7 +103,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_opening_tradeoffs
@@ -125,7 +125,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_slow_start_responses
@@ -146,7 +146,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_pace_trend_at_20k
@@ -185,7 +185,7 @@ Methods and limitations from this pack:
 - Report median absolute error for all three methods, plus observed coverage and median width of the nominal 80% prediction interval and the 90th percentile absolute error. Model selection is fixed before examining these results. A runner may occur in training and test in different years; identities are not used. Results apply to complete eligible finishers and do not predict withdrawals.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_bad_patch_recovery
@@ -204,7 +204,7 @@ Methods and limitations from this pack:
 - Every runner contributes at most one patch. The outcome is next-section recovery, not a diagnosis or necessarily a return maintained to the finish. Course sections and different runner mixes can account for differences across distances. Five-kilometer timing cannot distinguish stops, walking, fatigue or terrain.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_split_pattern_success
@@ -225,7 +225,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_successful_race_shapes
@@ -246,7 +246,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_strategy_outcome_spread
@@ -267,7 +267,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_course_pacing_profiles
@@ -304,7 +304,7 @@ Methods and limitations from this pack:
 - The course profiles use GPX geometry and digital elevation models, sometimes smoothed over 800 m. Net grade conceals mixed climbs and descents; bridge decks, tunnels and route changes may be wrong. Historical races are compared with the available city profile as a proxy only. Different terrain groups contain different courses and fields; no causal hill penalty or physiological effort is inferred.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_paired_course_comparisons
@@ -324,7 +324,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_course_outcome_spread
@@ -345,7 +345,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_course_familiarity
@@ -367,7 +367,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_weather_pacing_patterns
@@ -390,7 +390,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_race_day_context
@@ -412,7 +412,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_course_response_profiles
@@ -434,7 +434,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_checkpoint_outcomes
@@ -489,7 +489,7 @@ Methods and limitations from this pack:
 - Plot the median kick and the share finishing strictly below the target. Different courses, ability and fatigue can produce the same projected margin. These are unadjusted associations, not evidence that a milestone caused a sprint.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_qualifying_threshold_comparison
@@ -510,7 +510,7 @@ Methods and limitations from this pack:
 - Official sources: https://www.baa.org/races/boston-marathon/qualify/ ; https://www.baa.org/news/2020-boston-marathon-qualifier-acceptances-announced/ . Historical values verified 2026-09-08.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_goal_slip_recovery
@@ -529,7 +529,7 @@ Methods and limitations from this pack:
 - This uses inferred round-time benchmarks and elapsed chip times. It cannot establish when a runner mentally abandoned a goal. First-crossing groups differ, and results include only complete eligible finishes.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_strong_finish_followup
@@ -549,7 +549,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_distance_and_elapsed_change
@@ -568,7 +568,7 @@ Methods and limitations from this pack:
 - Among runners with such a section, plot the distribution of its end distance. For each distance and early-pace group, show median elapsed arrival at the start and end of that section. The medians bound a typical observation interval; they are not confidence limits. This broader 10% section definition is separate from the sustained slowdown definition.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_pacing_habit_persistence
@@ -588,7 +588,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_age_pacing
@@ -645,7 +645,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_experience_and_pacing
@@ -667,7 +667,7 @@ Methods and limitations from this pack:
 - Performance change is 100 × (current finish / recent recorded best − 1). Negative is faster. Opening change compares 0–10 km pace with that earlier best’s full-marathon pace. Faster opening: more than 2% faster; similar: within 2%; slower: more than 2% slower. The ±2% and ±5% cutoffs are predefined descriptions, not physiological thresholds.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_race_spacing_outcomes
@@ -687,7 +687,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ### ext_pacing_over_time
@@ -725,7 +725,7 @@ Methods and limitations from this pack:
 - Database record IDs differ between CORE and FULL and are never used to join the exports. Match race edition, trimmed lowercase runner name, finish time and all nine section durations, rounding durations to milliseconds. Keep only one-to-one matches with a supplied non-ambiguous runner ID. Reject identity groups with conflicting recorded gender, inferred birth years spanning more than two years, or duplicate editions. This reduces false links but does not independently validate identity; unlinked runners are absent.
 - Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.
 - Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.
-- Only aggregate tables leave the private analysis job. Every published chart cell has at least 100 eligible observations. Counts refer to finishes, linked pairs or event observations as specified in that answer.
+- Full source records are available in public GitHub Releases. These chart tables require at least 100 eligible observations per cell for estimate reliability. Counts refer to finishes, linked pairs or event observations as specified in that answer.
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 
 ## Personalized question map and methods

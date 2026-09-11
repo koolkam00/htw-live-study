@@ -1,15 +1,18 @@
 # Marathon pacing analyses
 
-This pipeline reads the private FULL export (including CORE tables) and produces
+This pipeline reads the complete public FULL export (including CORE tables) and produces
 33 aggregate question packs: eight foundation analyses and 25 whole-race,
 forecast, course and linked-history analyses. Some answers are explicitly partial
 or proxy comparisons. Group running and congestion cannot be calculated without
 absolute timing and start-offset data. It does not scrape races, change the
-database, overwrite core packs or publish individual records.
+database or overwrite core packs. Its chart output contains aggregates; complete
+individual records are available separately in the source releases.
 
 ## Access and refresh
 
-The private source is a GitHub Release in `koolkam00/htw-live-study`.
+The source is a public [GitHub Release](https://github.com/koolkam00/htw-live-study/releases) in `koolkam00/htw-live-study`.
+The full dataset is intended for anyone to download and open without an account,
+token, password or decryption key. See [ACCESS.md](ACCESS.md) for direct links.
 `release.json` pins the default release for reproducibility.
 
 The pin and checked-in numerical outputs remain `private-export-20260907-1318`.
@@ -21,18 +24,22 @@ with no retry found. Follow [ACCESS.md](ACCESS.md) and
 production aggregate files matched the checkout before this branch's later
 presentation edits; that observation does not imply those edits are deployed.
 
-Full records and backups stay in private Releases; downloaded inputs remain
-outside this checkout. The release archives are compressed, not encrypted.
+Full records, names, features and backups are public release assets. The owner
+has removed earlier runner-data privacy restrictions. Releases are preferred for
+large binary files to keep clones and website builds small; downloaded inputs may
+be placed in any chosen data directory. The archives are compressed, not encrypted.
+The legacy `private-export-*` names remain technical identifiers, not access rules.
 
-The **Private marathon pacing analysis** workflow downloads and verifies FULL,
-runs the calculations privately, and returns `pacing-aggregate-packs` containing
+The **Marathon pacing analysis** workflow downloads and verifies FULL,
+runs the calculations, and returns `pacing-aggregate-packs` containing
 only JSON and CSV aggregates. The workflow has read-only repository permission.
-It does not upload either private archive or runner records to Actions artifacts.
+Its Actions artifacts contain calculation results; full source archives and runner
+records are distributed through Releases rather than duplicated in those artifacts.
 
 Publishing a new `private-export-*` release triggers the workflow on the default
 branch. It can also be run manually
-with a release tag. Changes to `analysis/` in same-repository PRs run against the
-pinned release. No schedule, scraping job, automatic merge, or production update
+with a release tag. Changes to `analysis/` in relevant PRs run against the pinned release, including fork PRs subject to
+GitHub workflow approval. No schedule, scraping job, automatic merge, or production update
 is created.
 
 To update the site after a successful run:
@@ -51,15 +58,16 @@ To update the site after a successful run:
    Andrew or the site owner merges it for Vercel publication. Updating
    `analysis/release.json` keeps subsequent PR checks on the new release.
 
-For an analyst with an authenticated GitHub CLI, the same computation runs
-locally. Use Python 3.12 and an input directory outside this checkout:
+Anyone can run the same computation locally with Python 3.12. The downloader
+uses ordinary HTTPS and requires no GitHub CLI or login. An optional `GH_TOKEN`
+or `GITHUB_TOKEN` can raise API rate limits. Choose an input directory:
 
 ```bash
 python -m pip install -r analysis/requirements.txt
-python analysis/download_release.py --bundle FULL --output /private/path/pacing-input
-python analysis/build_pacing.py --input /private/path/pacing-input --output /private/path/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/build_extended.py --input /private/path/pacing-input --output /private/path/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/write_findings.py --output /private/path/pacing-aggregates
+python analysis/download_release.py --bundle FULL --output /path/to/pacing-input
+python analysis/build_pacing.py --input /path/to/pacing-input --output /path/to/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/build_extended.py --input /path/to/pacing-input --output /path/to/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/write_findings.py --output /path/to/pacing-aggregates
 ```
 
 Fetch `https://htw-live-study.vercel.app/data/live.json` first and use its actual
@@ -69,13 +77,13 @@ The import requires every pack in `pack_registry.json`; partial refreshes fail.
 ## Inspecting the additional FULL data
 
 `download_release.py --bundle FULL` verifies and extracts the complete release,
-including `features.parquet`, outside the checkout. The separate **Inspect
-complete private marathon export** workflow does the same on relevant PR changes
+including `features.parquet`, into the chosen directory. The separate **Inspect
+complete marathon export** workflow does the same on relevant PR changes
 or a manual run. It returns table schemas, non-null counts, aggregate identifier
 coverage, and export documentation in `pacing-full-export-inspection`.
 
-All columns remain queryable inside the private job. It does not upload the
-archive or individual rows as artifacts. Inspecting a derived feature confirms
+All columns are available in the downloadable source release. The inspection job
+returns its reports without duplicating the source archive in its artifacts. Inspecting a derived feature confirms
 its availability, not the validity of its definition or identity-matching method.
 Compare its coverage with raw CORE before using it for longitudinal analyses.
 
@@ -123,7 +131,7 @@ Visitors select course, exact-age band and a whole-minute threshold from 2:30 to
 Prepare, choose and review reorder the same questions. No historical goals or
 historical route changes are required or inferred.
 
-`build_personalized.py` reuses the validated private tables inside the extended
+`build_personalized.py` reuses the validated source tables inside the extended
 calculation. The workflow passes `--personalized-output` and uploads the separate
 **pacing-personalized-aggregates** artifact. It contains only fixed aggregate
 cohorts and checkpoint cells. Import it separately after review:
@@ -167,7 +175,7 @@ not validated individual probabilities and exclude non-finishers.
 targets, optional history, sparse cities, explicit fallbacks, sample counts,
 finite charts, checkpoint boundaries and the actual JSON response decoder.
 `test_personalized.py` tests strict finish boundaries and section reconciliation
-on hand-checkable synthetic data inside the private workflow.
+on hand-checkable synthetic data inside the analysis workflow.
 
 ## Shared definitions and limits
 
@@ -184,7 +192,8 @@ on hand-checkable synthetic data inside the private workflow.
 - Matching uses the same city, year, race, and floored minute at 20 km, with at
   least 20 observations per group. The smallest group supplies a common weight
   for all groups in each stratum. Published sample counts are actual observations.
-- Public chart estimates require at least 100 observations. Finish counts are not
+- Chart estimates require at least 100 observations for statistical reliability,
+  not as a restriction on access to the underlying records. Finish counts are not
   unique runner counts. The opening comparison has a 500-draw edition-clustered
   bootstrap (seed 20260908); it does not also cluster repeated runners. Other
   outcome percentiles describe variation, not uncertainty in estimates.

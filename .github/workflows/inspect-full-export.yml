@@ -1,16 +1,17 @@
-name: Inspect complete private marathon export
+name: Inspect complete marathon export
 
 on:
   pull_request:
     paths:
       - 'analysis/download_release.py'
+      - 'analysis/test_download_release.py'
       - 'analysis/inspect_export.py'
       - 'analysis/audit_expanded.py'
       - '.github/workflows/inspect-full-export.yml'
   workflow_dispatch:
     inputs:
       release_tag:
-        description: Private export release tag (blank uses analysis/release.json)
+        description: Export release tag (blank uses analysis/release.json)
         required: false
         type: string
 
@@ -20,8 +21,7 @@ permissions:
 jobs:
   inspect:
     if: >-
-      github.repository == 'koolkam00/htw-live-study' &&
-      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+      github.repository == 'koolkam00/htw-live-study'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -32,15 +32,18 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r analysis/requirements.txt
-      - name: Download and verify FULL privately
+      - name: Check public release downloads
+        run: python -m unittest discover -s analysis -p 'test_download_release.py'
+      - name: Download and verify FULL export
         env:
+          # Optional for API rate limits; public assets download anonymously.
           GH_TOKEN: ${{ github.token }}
           PACING_RELEASE_TAG: ${{ inputs.release_tag || '' }}
-        run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-full-private" --tag "$PACING_RELEASE_TAG"
+        run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-full-input" --tag "$PACING_RELEASE_TAG"
       - name: Inspect every table and column without exporting runner rows
-        run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-full-private" --output "$RUNNER_TEMP/pacing-full-inspection"
+        run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-full-input" --output "$RUNNER_TEMP/pacing-full-inspection"
       - name: Audit linked histories and supplied race overlays
-        run: python analysis/audit_expanded.py --input "$RUNNER_TEMP/pacing-full-private" --output "$RUNNER_TEMP/pacing-full-inspection"
+        run: python analysis/audit_expanded.py --input "$RUNNER_TEMP/pacing-full-input" --output "$RUNNER_TEMP/pacing-full-inspection"
       - uses: actions/upload-artifact@v4
         with:
           name: pacing-full-export-inspection

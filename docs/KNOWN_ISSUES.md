@@ -4,6 +4,7 @@ As of 2026-09-11. “Open” means this handoff has not established resolution; 
 
 | Priority | Issue | Evidence/status | Next verification |
 | --- | --- | --- | --- |
+| Verified | Public source and full-record anonymous downloads | GitHub visibility is public; nine releases and all 21 asset prefixes read without credentials on September 11; see [evidence](evidence/2026-09-11/public-access-audit.json) | Verify every newly published asset anonymously as part of release completion |
 | P0 | September 10 export refresh failed | Latest relevant Actions run remains 34490423926; no retry found at September 11 inspection; archive-selection failure skipped downstream steps | Resolve current compatibility problems, then rerun only in an authorized implementation task |
 | P0 | Current CORE and FULL archives fail downloader | Verified archive bytes: CORE adds ID-CONTRACT.md/SHA256SUMS.txt; FULL also adds FEATURE-FIELD-NOTES.md/COUNT-DIFF.md, with FEATURE-FIELD-NOTES.md the first rejected member | Request a new compatible producer archive with audit sidecars as separate assets; preserve strict extraction safety checks |
 | P0 | September 10 feature schema breaks current history builder | 138 columns; race, runner_name and split_mode_in absent; current code uses name/edition for the September 7 natural join | Request restored name/edition columns in the next export, or agree a validated release-specific adapter; retain old-data semantics |

@@ -2,22 +2,22 @@
 
 Evidence date: 2026-09-11. Read [project status](PROJECT_HANDOFF.md) before treating any historical count as current.
 
-## Storage and transfer boundaries
+## Storage and transfer
 
 | Layer | Location | Meaning |
 | --- | --- | --- |
 | Live database | `/workspace/race-data-platform/data/platform.sqlite` on ingestion machine | Producer's documented active database; not this checkout |
 | Consistent export snapshot | September 7 manifest: `/workspace/race-data-platform/data/export/_snapshot_platform.sqlite` | Snapshot used for raw export |
 | Historical feature source | `/workspace/wall-analyst/output-api-dump-2026-09-07/features.parquet` | Separate Analyst output used in September 7 FULL |
-| Online durable backups/exports | [Private GitHub Releases](https://github.com/koolkam00/htw-live-study/releases) | Private full-record SQLite gzip backups and CORE/FULL tar.gz exports; compression is not encryption |
+| Online durable backups/exports | [GitHub Releases](https://github.com/koolkam00/htw-live-study/releases) | Full-record SQLite backups and CORE/FULL Parquet exports; current policy requires public anonymous downloads in ordinary unencrypted files |
 | Reproducible analysis input | [release.json](../analysis/release.json) | Pinned export; currently September 7 |
 | Website data | [public/data](../public/data) | Public aggregate JSON/CSV; no direct live SQLite queries |
 
-Do not confuse database backup tags `htw-db-*`, export tags `private-export-*`, and pack bundle IDs `private-*`. A backup does not trigger a successful site refresh. The September 10 backup reports approximately 3,543,512 records; the later September 10 export was audited at 3,580,279. They are distinct snapshots. Full records remain in private Releases, never public website assets.
+Do not confuse database backup tags `htw-db-*`, export tags `private-export-*`, and pack bundle IDs `private-*`. A backup does not trigger a successful site refresh. The September 10 backup reports approximately 3,543,512 records; the later September 10 export was audited at 3,580,279. They are distinct snapshots. Full records are public research data. Prefer Release assets for large downloads, while the website renders compact chart aggregates for performance. No rule requires runner data to stay outside the checkout. See [access verification](PROJECT_HANDOFF.md#public-access-policy-and-verification); legacy tags containing `private` do not define access.
 
 ## September 10 verified export
 
-Both `private-export-20260910-1412` archives were size/SHA-256 verified outside the checkout during the September 11 takeover. Shared CORE members have matching hashes in FULL. [Archive evidence](evidence/2026-09-11/archive-members-audit.json) records each member and digest.
+Both `private-export-20260910-1412` archives were size/SHA-256 verified outside the checkout during the initial September 11 takeover under its then-private access policy. Shared CORE members have matching hashes in FULL. [Archive evidence](evidence/2026-09-11/archive-members-audit.json) records each member and digest.
 
 | Table | Rows | Current contract |
 | --- | ---: | --- |
