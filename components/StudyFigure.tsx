@@ -18,7 +18,7 @@ export default function StudyFigure({ figure }: { figure: StudyFigureData }) {
         </select>
       </label>
     </div>
-    <QuestionViz key={choice} spec={figure.charts[choice]} />
+    <QuestionViz key={choice} spec={figure.charts[choice]} unitSystem="km" />
     <details className="methodology">
       <summary>Methodology &amp; sources</summary>
       <div className="methodology-content">

@@ -140,6 +140,40 @@ for (const [unit, value, imperial, metric] of [
   assert.ok(render(chart, 'km').includes(metric), `${unit}: the metric renderer must show ${metric}`);
   assert.match(render(chart), /<td>120<\/td>/, 'Sample sizes must not be converted');
 }
+
+// The legacy slowdown archive keeps its original metric prose and must keep
+// matching metric figures even inside the site's default miles provider.
+const StudyFigure = require('../components/StudyFigure.tsx').default;
+const UnitsProvider = require('../components/UnitsProvider.tsx').default;
+const { getStudyFigures } = require('../lib/study-figures.ts');
+const { formatNumber } = require('../lib/csv.ts');
+const studyFigures = getStudyFigures();
+const renderLegacy = figure => renderToStaticMarkup(React.createElement(UnitsProvider, null, React.createElement(StudyFigure, { figure })));
+const definitionFigure = studyFigures.find(figure => figure.id === 'fig1');
+assert.ok(definitionFigure, 'The regression requires the actual published slowdown definition figure');
+const definitionHtml = renderLegacy(definitionFigure);
+assert.match(definitionHtml, /<h3[^>]*>Slowing sustained for at least 5 km<\/h3>/, 'The chart title must match the original metric definition and comparison selector');
+assert.doesNotMatch(definitionHtml, /3\.11 mi/);
+const onsetFigure = studyFigures.find(figure => figure.id === 'fig5');
+assert.ok(onsetFigure, 'The regression requires the actual published slowdown distance figure');
+assert.equal(onsetFigure.charts[0].unit, 'km');
+const onsetSource = JSON.stringify(onsetFigure);
+const onsetHtml = renderLegacy(onsetFigure);
+assert.match(onsetHtml, /average onset is near 30 km/);
+assert.match(onsetHtml, /Distance \(kilometres\)/);
+assert.doesNotMatch(onsetHtml, /Distance \(miles\)/);
+const onsetChart = onsetFigure.charts[0];
+let checkedDistances = 0;
+for (const row of onsetChart.rows) for (const series of onsetChart.series) {
+  const distance = row[series.key];
+  if (typeof distance === 'number' && Number.isFinite(distance)) {
+    assert.ok(onsetHtml.includes(`<td>${formatNumber(distance, 'km')}</td>`), 'Every original onset distance must remain metric in the exact-values table');
+    checkedDistances++;
+  }
+}
+assert.ok(checkedDistances > 0, 'The distance assertion must cover published numerical values');
+assert.equal(JSON.stringify(onsetFigure), onsetSource, 'The archive renderer must preserve the original figure data');
+
 const { getAnalysisStart } = require('../lib/analysis-server.ts');
 const profileSpec = getAnalysisStart().answers.find(answer => answer.id === 'profile').charts[0];
 const sourceProfile = JSON.stringify(profileSpec);
