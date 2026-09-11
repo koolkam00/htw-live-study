@@ -136,17 +136,17 @@ export function getStudyAnswer(): ResearchAnswer {
   const start = finite(d.base_pace_from_km ?? d.base_window_km?.[0]);
   const end = finite(d.base_pace_to_km ?? d.base_window_km?.[1]);
   const definition = threshold !== null && length !== null && after !== null && start !== null && end !== null
-    ? `A runner meets this study's wall definition when their pace is at least ${formatNumber(threshold * 100, '%')} slower for ${length} km or more after ${after} km, compared with their average pace from ${start} to ${end} km.`
+    ? `A runner meets this study's sustained slowdown definition when their pace is at least ${formatNumber(threshold * 100, '%')} slower for ${length} km or more after ${after} km, compared with their average pace from ${start} to ${end} km.`
     : 'The slowdown threshold and reference window are not available for this snapshot.';
-  const chart = sexChart(liveRows('t2'), 'age_group', 'pct_htw', 'Runners meeting the wall definition', '%');
+  const chart = sexChart(liveRows('t2'), 'age_group', 'pct_htw', 'Runners meeting the sustained slowdown definition', '%');
   chart.xLabel = 'Age group';
   chart.note = 'Age groups use only records with a reported age. Each percentage uses the runners in that age and gender group.';
   return { id: 'smyth_htw', title: EXTRA_TITLES.smyth_htw, aliases: [], available: rate !== null,
-    answer: rate !== null ? `About ${formatNumber(rate, '%')} of recorded finishes meet the study’s definition of hitting the wall.` : 'The study-wide result is not available in this snapshot.',
+    answer: rate !== null ? `About ${formatNumber(rate, '%')} of recorded finishes meet the study’s definition of sustained slowdown.` : 'The study-wide result is not available in this snapshot.',
     detail: rate !== null ? `That is about ${Math.round(rate)} in every 100 recorded finishes, across ${count(total)} results. A runner can appear more than once.` : undefined,
     method: [definition, 'The overall percentage is weighted by the number of finishes in each city. The age chart has a smaller denominator because some records have no age group.', 'A timing pattern is a proxy for sustained slowing. It cannot distinguish glycogen depletion from injury, fatigue, deliberate walking, or another cause.'],
     charts: chart.rows.length ? [chart] : [], published: live?.as_of ?? null,
-    sources: [{ href: `${basePath}/data/live.json`, label: 'Study data' }, { href: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513', label: 'Original research' }] };
+    sources: [{ href: `${basePath}/data/live.json`, label: 'Study data' }, { href: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513', label: 'Published slowdown method (2021)' }] };
 }
 
 export function getWallTimingAnswer(): ResearchAnswer {
@@ -154,12 +154,12 @@ export function getWallTimingAnswer(): ResearchAnswer {
   const rows = table(pack, 'htw_start_distance.csv');
   const clock = table('s6_wall_distance_vs_time', 'wall_distance_vs_clock.csv');
   const women = clock.find(row => row.sex === 'F'), men = clock.find(row => row.sex === 'M');
-  const spec = sexChart(rows, 'htw_start_km', 'pct', 'Where detected wall episodes begin', '%', 100, [], row => `${row.htw_start_km}–${Math.min(42.195, Number(row.htw_start_km) + 5)} km`);
+  const spec = sexChart(rows, 'htw_start_km', 'pct', 'Where sustained slowdown episodes begin', '%', 100, [], row => `${row.htw_start_km}–${Math.min(42.195, Number(row.htw_start_km) + 5)} km`);
   spec.rows = spec.rows.map(row => ({ ...row, n_women: sum(rows.filter(r => r.sex === 'F'), 'n'), n_men: sum(rows.filter(r => r.sex === 'M'), 'n') }));
   return {
-    id: 'wall-timing', title: 'When do detected wall episodes begin?', aliases: [], available: rows.length > 0,
-    answer: women && men ? `Mean onset is near 30 km for women and men in this table. Mean elapsed time differs: ${formatNumber(Number(women.mean_htw_elapsed_min), 'finish')} for women and ${formatNumber(Number(men.mean_htw_elapsed_min), 'finish')} for men (hours:minutes).` : 'Wall-episode timing is not available in this snapshot.',
-    method: ['These summaries include only finishes with a detected wall episode. The distance identifies the beginning of the first qualifying timing segment, not an exact onset point.', 'Similar average distances do not establish that distance is a better predictor than elapsed time. This table also does not describe acceleration or recovery across all marathon finishes.'],
+    id: 'wall-timing', title: 'When do sustained slowdown episodes begin?', aliases: [], available: rows.length > 0,
+    answer: women && men ? `Mean onset is near 30 km for women and men in this table. Mean elapsed time differs: ${formatNumber(Number(women.mean_htw_elapsed_min), 'finish')} for women and ${formatNumber(Number(men.mean_htw_elapsed_min), 'finish')} for men (hours:minutes).` : 'Sustained slowdown timing is not available in this snapshot.',
+    method: ['These summaries include only finishes with a detected sustained slowdown episode. The distance identifies the beginning of the first qualifying timing segment, not an exact onset point.', 'Similar average distances do not establish that distance is a better predictor than elapsed time. This table also does not describe acceleration or recovery across all marathon finishes.'],
     charts: spec.rows.length ? [spec] : [], published: readJson(`packs/${pack}/pack_meta.json`)?.as_of || null,
     sources: [{ href: `${basePath}/data/packs/${pack}/tables/htw_start_distance.csv`, label: 'Episode distances (CSV)' }, { href: `${basePath}/data/packs/s6_wall_distance_vs_time/tables/wall_distance_vs_clock.csv`, label: 'Elapsed-time comparison (CSV)' }],
   };
@@ -232,8 +232,8 @@ export function getResearchAnswer(def: QuestionDefinition): ResearchAnswer {
       read('htw_start_distance.csv');
       add('s6_wall_distance_vs_time', 'wall_distance_vs_clock.csv');
       result.answer = 'The study has not yet compared all pacing changes on a distance and elapsed-time basis.';
-      result.method = ['The existing timing tables describe only detected wall episodes. They cannot identify when acceleration, gradual fading, or recovery begins across all runners.', 'A complete comparison needs the same change definitions applied to each runner’s split sequence, then distance and elapsed-time models evaluated on unseen races.'];
-      result.related = [{ href: '/htw', label: 'The focused study of hitting the wall' }]; break;
+      result.method = ['The existing timing tables describe only sustained slowdown episodes. They cannot identify when acceleration, gradual fading, or recovery begins across all runners.', 'A complete comparison needs the same change definitions applied to each runner’s split sequence, then distance and elapsed-time models evaluated on unseen races.'];
+      result.related = [{ href: '/slowdown', label: 'The sustained slowdown analysis' }]; break;
     }
     case 'r08_early_blowup_signal': {
       read('early_blowup_signal.csv');
@@ -257,7 +257,7 @@ export function getResearchAnswer(def: QuestionDefinition): ResearchAnswer {
       const counts = groups.map(group => ({ group, n: sum(rows.filter(row => row.fade_type === group), 'n') }));
       const mostCommon = [...counts].sort((a, b) => b.n - a.n)[0];
       if (mostCommon && total) result.answer = `The most common recorded pattern is ${readableLabel(mostCommon.group).toLowerCase()}, accounting for ${pct(mostCommon.n / total)} of classified finishes. Even pacing, faster second halves, and recovery after a fade also appear.`;
-      result.method = ['The full-course line uses published mean segment paces, normalized by each course’s distance-weighted mean over 42.195 km. This is a course-average profile, not a median individual profile or a curve for a pacing-pattern group.', 'Pattern shares add the counts across reported genders and wall flags, then divide by all classified finishes. The pattern table and course-profile table have different coverage.', 'The published pattern labels describe the race broadly. Their exact classification cutoffs need documentation; individual normalized split profiles are needed to show the typical curve and spread for each pattern.'];
+      result.method = ['The full-course line uses published mean segment paces, normalized by each course’s distance-weighted mean over 42.195 km. This is a course-average profile, not a median individual profile or a curve for a pacing-pattern group.', 'Pattern shares add the counts across reported genders and sustained slowdown flags, then divide by all classified finishes. The pattern table and course-profile table have different coverage.', 'The published pattern labels describe the race broadly. Their exact classification cutoffs need documentation; individual normalized split profiles are needed to show the typical curve and spread for each pattern.'];
       chart(getCoursePacingChart());
       chart({ title: 'The mix of recorded pacing patterns', unit: '%', xLabel: 'Pattern', series: [{ key: 'value', label: 'Share of classified finishes' }], rows: counts.map(({ group, n }) => ({ label: readableLabel(group), value: total ? n / total * 100 : null, n_value: total })) });
       break;
@@ -429,7 +429,7 @@ export function getExtraAnswer(id: string): ResearchAnswer {
   if (id === 'rn1_wall_severity') {
     const rows = add('severity_band_counts.csv');
     result.answer = 'Most recorded finishes have an average positive late-race slowdown below 10%. A small share average 40% or more.';
-    result.method = ['For each finish, take segment slowing relative to the 5–20 km reference pace, floor negative values at zero, and average the second-half values weighted by distance.', 'These severity bands describe the average slowdown. They are separate from the wall definition, which requires a sustained threshold breach. The lowest band is not necessarily zero slowdown.'];
+    result.method = ['For each finish, take segment slowing relative to the 5–20 km reference pace, floor negative values at zero, and average the second-half values weighted by distance.', 'These severity bands describe the average slowdown. They are separate from the sustained slowdown definition, which requires a sustained threshold breach. The lowest band is not necessarily zero slowdown.'];
     const spec = singleChart(rows, 'severity_band', 'pct', 'Distribution of average positive late-race slowing', '%');
     // The source uses "mild" for a severity band, not a weather band.
     spec.rows = rows.map(row => ({ label: ({ none: 'Below 10%', mild: '10 to <25%', moderate: '25 to <40%', severe: '40% or more' } as Record<string,string>)[String(row.severity_band)], value: num(row, 'pct'), n_value: num(row, 'n') })); result.charts = [spec];

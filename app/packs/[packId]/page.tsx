@@ -12,7 +12,8 @@ export default function Page({ params }: { params: { packId: string } }) {
   if (!routes.includes(params.packId)) notFound();
   return <><ResearchQuestion question={getExtraAnswer(params.packId)} standalone /><p><Link href="/">All research questions</Link></p></>;
 }
-export function generateStaticParams() { return routes.map(packId => ({ packId })); }
+// The dedicated compatibility page owns this path in the static export.
+export function generateStaticParams() { return routes.filter(packId => packId !== 'smyth_htw').map(packId => ({ packId })); }
 export function generateMetadata({ params }: { params: { packId: string } }) {
   return { title: `${getExtraAnswer(params.packId).title} | Marathon Pacing Study` };
 }

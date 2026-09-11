@@ -2,13 +2,13 @@
   "pack_id": "rn1_wall_severity",
   "slug": "rn1_wall_severity",
   "display_id": "RN1",
-  "title": "Wall severity spectrum",
+  "title": "Slowdown severity spectrum",
   "status": "ready",
   "readiness": "ready",
   "as_of": "2026-09-07T00:23:31Z",
   "n_features": 3167990,
   "n_rows_used": 2512860,
-  "maps_to": "extends HTW / R7\u2013R10",
+  "maps_to": "extends sustained slowdown / R7\u2013R10",
   "source_features": "/workspace/wall-analyst/output-api-dump-2026-09-06/features.parquet",
   "sidecar_severity": "/workspace/wall-analyst/output-api-dump-2026-09-06/features_severity.parquet",
   "band_thresholds": {
@@ -40,7 +40,7 @@
       "hi_note": "unbounded"
     }
   ],
-  "notes": "Continuous wall severity = distance-weighted mean of positive second-half DoS (DoS<=0 \u2192 0). Ordinal bands: none [0,0.10); mild [0.10,0.25); moderate [0.25,0.40); severe >=0.40. Computed via gap_substrate.severity.compute_severity; Smyth htw binary flag is never overwritten. Full corpus (not majors-only sample).",
+  "notes": "Continuous slowdown severity = distance-weighted mean of positive second-half DoS (DoS<=0 \u2192 0). Ordinal bands: none [0,0.10); mild [0.10,0.25); moderate [0.25,0.40); severe >=0.40. Computed via gap_substrate.severity.compute_severity; Smyth htw binary flag is never overwritten. Full corpus (not majors-only sample).",
   "method": "gap_substrate.severity.compute_severity on full features.parquet; no weather API",
   "tables": [
     "tables/severity_histogram.csv",
@@ -52,8 +52,8 @@
   ],
   "canonical": true,
   "deprecated": false,
-  "answer_prose": "Across 2,512,860 Smyth-valid finishers in the current dump, continuous wall severity (distance-weighted mean of positive second-half slowdown) averages 0.117 (median 0.090). Band mix: none 53.9%, mild 35.2%, moderate 8.7%, severe 2.1%. Binary HTW stays separate: severity fills the spectrum below the paper threshold while keeping Smyth\u2019s flag untouched.",
-  "methodology_prose": "Severity uses gap_substrate.severity.compute_severity on the Analyst feature dump: second-half segment DoS (pace vs Smyth base pace from 5\u201320 km), negatives floored at 0, then distance-weighted mean. Bands: none [0,0.10), mild [0.10,0.25), moderate [0.25,0.40), severe \u22650.40. Smyth binary HTW (s=0.25, d=5 km after 20 km) unchanged. Tables use valid_splits only (n_features=3,167,990). No invented weather/elev; race_records untouched.",
+  "answer_prose": "Across 2,512,860 eligible finishers in the current dump, continuous slowdown severity (distance-weighted mean of positive second-half slowdown) averages 0.117 (median 0.090). Band mix: none 53.9%, mild 35.2%, moderate 8.7%, severe 2.1%. Binary sustained slowdown stays separate: severity fills the spectrum below the paper threshold while keeping Smyth\u2019s flag untouched.",
+  "methodology_prose": "Severity uses gap_substrate.severity.compute_severity on the Analyst feature dump: second-half segment DoS (pace vs reference pace from 5\u201320 km), negatives floored at 0, then distance-weighted mean. Bands: none [0,0.10), mild [0.10,0.25), moderate [0.25,0.40), severe \u22650.40. Smyth binary sustained slowdown (s=0.25, d=5 km after 20 km) unchanged. Tables use valid_splits only (n_features=3,167,990). No invented weather/elev; race_records untouched.",
   "prose_as_of": "2026-09-07T00:42:25Z",
   "ux": {
     "requires": [
@@ -62,5 +62,13 @@
       "viz"
     ],
     "note": "Sight must not invent copy; numbers from Analyst dumps only."
+  },
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  },
+  "method_reference": {
+    "label": "Published slowdown method (2021)",
+    "url": "https://doi.org/10.1371/journal.pone.0251513"
   }
 }

@@ -12,8 +12,8 @@ export interface PackInfo {
 // Registry of packs (ids and titles). Status here is a default/fallback used only
 // when no pack_meta.json exists on disk; actual readiness comes from pack_meta.
 export const PACKS: PackInfo[] = [
-  { id: 'smyth_htw', title: 'HTW — Smyth 2021', status: 'ready', group: 'paper' },
-  { id: 'rn1_wall_severity', title: 'RN1 — Wall severity spectrum', status: 'ready', group: 'RN' },
+  { id: 'smyth_htw', title: 'Sustained slowdown', status: 'ready', group: 'paper' },
+  { id: 'rn1_wall_severity', title: 'RN1 — Slowdown severity spectrum', status: 'ready', group: 'RN' },
   { id: 'rn3_heat_curves', title: 'RN3 — Heat curves', status: 'ready', group: 'RN' },
   { id: 'rn4_reference_dependence', title: 'RN4 — Reference dependence', status: 'ready', group: 'RN' },
   { id: 'p4_even_effort_gap', title: 'P4 — Even-effort GAP splits', status: 'ready', group: 'P' },
@@ -25,7 +25,7 @@ export const PACKS: PackInfo[] = [
   { id: 's3_course_breaks', title: 'S3 — Where each marathon breaks people', status: 'enrichment', group: 'S', enrichment: true },
   { id: 's4_time_translation', title: 'S4 — Translate your time to another course', status: 'enrichment', group: 'S', enrichment: true },
   { id: 's5_pacing_vs_difficult_day', title: 'S5 — Pacing vs. difficult race day', status: 'enrichment', group: 'S', enrichment: true },
-  { id: 's6_wall_distance_vs_time', title: 'S6 — Wall: distance vs elapsed time', status: 'enrichment', group: 'S', enrichment: true },
+  { id: 's6_wall_distance_vs_time', title: 'S6 — Slowdown: distance vs elapsed time', status: 'enrichment', group: 'S', enrichment: true },
   { id: 's7_learn_after_blowup', title: 'S7 — Do runners learn after blowing up?', status: 'ready', group: 'S' },
   { id: 's8_age_speed_vs_endurance', title: 'S8 — Age: speed or endurance?', status: 'ready', group: 'S' },
   { id: 's9_weather_penalty', title: 'S9 — Weather penalty for different runners', status: 'enrichment', group: 'S', enrichment: true },
@@ -38,7 +38,7 @@ export const PACKS: PackInfo[] = [
   { id: 'r04_on_pace_goal_hits', title: 'R4 — On-pace goal hits', status: 'ready', group: 'R' },
   { id: 'r05_exceptional_vs_prior', title: 'R5 — Exceptional vs prior', status: 'ready', group: 'R' },
   { id: 'r06_decided_after_30k', title: 'R6 — Decided after 30k', status: 'ready', group: 'R' },
-  { id: 'r07_wall_clock_vs_distance', title: 'R7 — Wall clock vs distance', status: 'ready', group: 'R' },
+  { id: 'r07_wall_clock_vs_distance', title: 'R7 — Slowdown timing vs distance', status: 'ready', group: 'R' },
   { id: 'r08_early_blowup_signal', title: 'R8 — How early blowup shows', status: 'ready', group: 'R' },
   { id: 'r09_bad_patch_recoverable', title: 'R9 — Bad patch recoverable', status: 'ready', group: 'R' },
   { id: 'r10_unravel_typology', title: 'R10 — Unravel typology', status: 'ready', group: 'R' },

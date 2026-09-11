@@ -1,22 +1,17 @@
-import StudyFigure from '@/components/StudyFigure';
-import { getStudyFigures } from '@/lib/study-figures';
-import ResearchQuestion from '@/components/ResearchQuestion';
-import { getStudyAnswer, getWallTimingAnswer } from '@/lib/research-data';
+import Link from 'next/link';
 
 export const metadata = {
-  title: 'Hitting the wall | Marathon Pacing Study',
-  description: 'Explore the wall definition, age, ability, and patterns around personal bests.',
+  title: 'Sustained slowdown | Marathon Pacing Study',
+  description: 'Explore the sustained slowdown analysis at its new address.',
+  alternates: { canonical: 'https://htw-live-study.vercel.app/slowdown' },
+  robots: { index: false, follow: true },
 };
 
-export default function Page() {
-  const figures = getStudyFigures();
-  return <>
-    <section className="study-intro">
-      <h1>Understanding the wall.</h1>
-      <p>A focused study of one form of late-race slowing, within the wider analysis of marathon pacing.</p>
-    </section>
-    <ResearchQuestion question={getStudyAnswer()} />
-    <ResearchQuestion question={getWallTimingAnswer()} />
-    {figures.length ? figures.map(figure => <StudyFigure key={figure.id} figure={figure} />) : <p>Study figures are not available in this snapshot.</p>}
-  </>;
+// Keep earlier bookmarks usable in the static export.
+export default function LegacySlowdownPage() {
+  return <section className="study-intro">
+    <h1>Sustained slowdown analysis</h1>
+    <p>This analysis has moved to a new address.</p>
+    <p><Link href="/slowdown">Explore sustained slowdown</Link></p>
+  </section>;
 }

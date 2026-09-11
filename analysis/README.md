@@ -12,13 +12,25 @@ database, overwrite core packs or publish individual records.
 The private source is a GitHub Release in `koolkam00/htw-live-study`.
 `release.json` pins the default release for reproducibility.
 
+The pin and checked-in numerical outputs remain `private-export-20260907-1318`.
+The September 11 takeover verified matching CORE/FULL canonical IDs in the newer
+September 10 export, but also confirmed archive and feature-schema incompatibilities
+with the current downloader/history builder. Its latest refresh still failed,
+with no retry found. Follow [ACCESS.md](ACCESS.md) and
+[known issues](../docs/KNOWN_ISSUES.md) before attempting that vintage. All 401
+production aggregate files matched the checkout before this branch's later
+presentation edits; that observation does not imply those edits are deployed.
+
+Full records and backups stay in private Releases; downloaded inputs remain
+outside this checkout. The release archives are compressed, not encrypted.
+
 The **Private marathon pacing analysis** workflow downloads and verifies FULL,
 runs the calculations privately, and returns `pacing-aggregate-packs` containing
 only JSON and CSV aggregates. The workflow has read-only repository permission.
 It does not upload either private archive or runner records to Actions artifacts.
 
-After this workflow is merged into the default branch, publishing a new
-`private-export-*` release triggers a recalculation. It can also be run manually
+Publishing a new `private-export-*` release triggers the workflow on the default
+branch. It can also be run manually
 with a release tag. Changes to `analysis/` in same-repository PRs run against the
 pinned release. No schedule, scraping job, automatic merge, or production update
 is created.
@@ -74,6 +86,10 @@ Metadata includes the export ID, input and calculation dates, current public
 snapshot date, archive and manifest checksums, script checksum, engine version,
 raw and eligible counts, exclusions, and written methodology. Chart files contain
 aggregate values with their sample counts.
+
+Numerical-run script checksums identify the code that produced those calculations.
+Later presentation-only text revisions are recorded separately; they do not change
+the input vintage, calculation timestamp, numerical values or inherited method.
 
 The site discovers ready extension packs at build time. Each declares a
 `question_id`; the latest input vintage supplies that question's answer,
@@ -176,10 +192,15 @@ on hand-checkable synthetic data inside the private workflow.
   fallbacks and prediction intervals use only training years and checkpoint-known
   features. Median/90th-percentile absolute error, interval width and actual 80%
   interval coverage are published. It describes complete eligible finishers.
-- CORE and FULL record IDs do not correspond. Join edition, normalized name and
+- In the September 7 input, CORE and FULL record IDs do not correspond. Join edition, normalized name and
   all section/finish durations, require one-to-one matches, and use only supplied
   non-ambiguous identities passing gender, birth-year and duplicate-edition checks.
   Do not invent cross-race identities from names alone.
+- September 10 canonical IDs were verified to align, but row order differs and
+  its feature name/edition columns are absent. The current pipeline has not adopted
+  that schema. Request a producer-compatible export or review a version-specific
+  consumer adapter. Preserve the September 7 join and do not apply the newer ID
+  contract retroactively.
 - Prior performance is the best in the two strictly earlier calendar years;
   supplied PB/ability fields and same-year performances never enter that benchmark.
   Earlier-best gains compare with the best in all earlier years, so are not a claim
@@ -192,7 +213,11 @@ on hand-checkable synthetic data inside the private workflow.
   or newly scraped. The narrow qualifying comparison uses dated B.A.A. standards,
   not inferred individual qualification or acceptance.
 
-The original Smyth wall definition and `live.json` remain owned by the core study.
+The sustained-slowdown definition and `live.json` remain owned by the core study.
+The inherited [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513)
+is unchanged: at least 25% slowing for at least 5 km after 20 km relative to the
+5–20 km baseline. Marathon Pacing Study retains this source citation and separates
+published reference results from its own data calculations.
 
 ## Verification
 

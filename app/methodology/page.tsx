@@ -37,7 +37,7 @@ export default function MethodologyPage() {
     </ul>
     <h2>What is available now?</h2>
     {extension && <p>The latest analyzed export contains {new Intl.NumberFormat('en-US').format(extension.corpus.n_records)} race records across {extension.corpus.n_cities} cities and {extension.corpus.n_race_years} race editions. Individual splits are analyzed privately; only aggregate results appear here.</p>}
-    {live?.corpus && <p>The original wall study has its own snapshot: {new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Its counts are separate from the newer pacing analyses.</p>}
+    {live?.corpus && <p>The sustained slowdown analysis has its own snapshot: {new Intl.NumberFormat('en-US').format(live.corpus.n_records || 0)} recorded finishes across {live.corpus.n_cities} cities, with reported coverage from {live.corpus.year_min} to {live.corpus.year_max}. Its counts are separate from the newer pacing analyses.</p>}
     <p>{calculated.length} of the {QUESTIONS.length} questions have results recalculated from the private export. Some are partial answers: a course comparison cannot isolate the course’s causal effect, and a route proxy cannot establish the hills used in an old edition. Group running and congestion require start and checkpoint clock times that are absent from this export.</p>
     <p>A finish is one performance, so a runner can contribute several. Individual tables can have smaller samples or earlier publication dates than the main snapshot. Each question links its source and reports counts where available.</p>
     <h2 id="personalized">Twelve questions for your race</h2>
@@ -99,11 +99,11 @@ export default function MethodologyPage() {
       </div>
     </details>)}
     <details className="methodology">
-      <summary>Focused analysis: hitting the wall</summary>
+      <summary>Focused analysis: sustained slowdown</summary>
       <div className="methodology-content">
         <p>{study.method[0]}</p>
         <p>This definition identifies sustained slowing. It cannot determine whether the cause was fuel depletion, injury, fatigue, walking, or another factor. It is one outcome within the wider pacing study.</p>
-        <p>The approach follows <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">Smyth’s 2021 study</a>. <Link href="/htw">Explore the focused wall analysis</Link>.</p>
+        <p>The definition follows the <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">Published slowdown method (2021)</a>. <Link href="/slowdown">Explore the sustained slowdown analysis</Link>.</p>
       </div>
     </details>
     <details className="methodology" id="additional-data">

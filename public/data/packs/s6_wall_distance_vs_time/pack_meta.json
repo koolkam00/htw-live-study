@@ -2,7 +2,7 @@
   "pack_id": "s6_wall_distance_vs_time",
   "slug": "s6_wall_distance_vs_time",
   "display_id": "S6",
-  "title": "Wall linked to distance or elapsed time?",
+  "title": "Slowdown linked to distance or elapsed time?",
   "status": "ready",
   "readiness": "enrichment",
   "as_of": "2026-09-06T23:34:13Z",
@@ -14,5 +14,13 @@
     "summary.json"
   ],
   "notes": "Real course_segments join only; sparse cities omitted",
-  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
+  "method": "Published slowdown method (2021); aggregates from features.parquet only",
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  },
+  "method_reference": {
+    "label": "Published slowdown method (2021)",
+    "url": "https://doi.org/10.1371/journal.pone.0251513"
+  }
 }

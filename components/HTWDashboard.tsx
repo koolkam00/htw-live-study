@@ -35,9 +35,9 @@ function DashboardInner() {
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <div>
               <div className="site-title" style={{ gap: '0.5rem' }}>
-                <span>How recreational marathon runners hit the wall</span>
+                <span>Marathon Pacing Study</span>
               </div>
-              <div className="site-subtitle">Smyth 2021 (PLOS ONE) — live-study recreation</div>
+              <div className="site-subtitle">Sustained slowdown across recorded marathon finishes</div>
             </div>
             <div className="badge">As of: {asOf}</div>
           </div>
@@ -66,7 +66,7 @@ function DashboardInner() {
 
       <div className="grid">
         <FigureCard
-          title="Figure 1: HTW proportion vs DoS/LoS thresholds (sensitivity)"
+          title="Figure 1: Sustained slowdown frequency across thresholds"
           subtitle="Sensitivity analysis across slowdown and window thresholds"
           badge={isReady && data?.figures?.fig1 ? 'Live' : 'Waiting'}
         >
@@ -74,7 +74,7 @@ function DashboardInner() {
         </FigureCard>
 
         <FigureCard
-          title="Figure 2: HTW by age and by ability"
+          title="Figure 2: Sustained slowdown by age and recorded ability"
           subtitle="Sex split available via filters"
           badge={isReady && data?.figures?.fig2 ? 'Live' : 'Waiting'}
         >
@@ -82,7 +82,7 @@ function DashboardInner() {
         </FigureCard>
 
         <FigureCard
-          title="Figure 3: HTW vs years before/after a recent PB"
+          title="Figure 3: Sustained slowdown before and after a recorded personal best"
           subtitle="Relationship to PB proximity"
           badge={isReady && data?.figures?.fig3 ? 'Live' : 'Waiting'}
         >
@@ -98,7 +98,7 @@ function DashboardInner() {
         </FigureCard>
 
         <FigureCard
-          title="Figure 5: HTW start, distance, and slowdown by age and ability"
+          title="Figure 5: Slowdown onset, distance, and severity by age and recorded ability"
           subtitle="Distribution of onset, duration, and slowdown degree"
           badge={isReady && data?.figures?.fig5 ? 'Live' : 'Waiting'}
         >
@@ -106,8 +106,8 @@ function DashboardInner() {
         </FigureCard>
 
         <FigureCard
-          title="Figure 6: HTW finish time and time cost by age and ability"
-          subtitle="Impact on marathon finish time"
+          title="Figure 6: Finish times and estimated slowdown costs by age and recorded ability"
+          subtitle="Descriptive estimates of time associated with slowing"
           badge={isReady && data?.figures?.fig6 ? 'Live' : 'Waiting'}
         >
           <Fig6 status={isReady ? 'ready' : 'empty'} dataset={data?.figures?.fig6} filters={filters} />

@@ -15,6 +15,6 @@ export default function AnalysesPage() {
       <ol className="contents-list">{QUESTIONS.filter(question => question.theme === theme.id).map(question => <li key={question.id}><Link href={`/packs/${question.id}`}><span className="contents-number">{question.number}</span><span>{question.title}</span></Link></li>)}</ol>
     </section>)}
     <h2>Supporting analyses</h2>
-    <ul className="course-list">{Object.entries(EXTRA_TITLES).map(([id, title]) => <li key={id}><Link href={`/packs/${id}`}>{title}</Link></li>)}</ul>
+    <ul className="course-list">{Object.entries(EXTRA_TITLES).map(([id, title]) => <li key={id}><Link href={id === 'smyth_htw' ? '/slowdown' : `/packs/${id}`}>{title}</Link></li>)}</ul>
   </div>;
 }

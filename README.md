@@ -1,68 +1,37 @@
-# HTW live study
+# Marathon Pacing Study
 
-Public live-study recreation of Barry Smyth (2021) PLOS ONE:
-“How recreational marathon runners hit the wall” (10.1371/journal.pone.0251513).
+Marathon Pacing Study helps runners explore pacing patterns, compare courses, prepare for a race and understand a past result. It contains 35 broader research questions, 33 calculated aggregate answers, a guide with 12 personalized questions, course summaries and sustained-slowdown figures.
 
-This is a static, public site with no authentication. It reads a single JSON file to populate
-six live figures and basic corpus stats. Until live data exist, the site shows an honest
-empty/loading state — no numbers are invented.
+The website is a static Next.js application. It reads reviewed aggregate JSON and CSV files in `public/data`; private runner records stay outside the website checkout and in private GitHub Releases. Compression of an archive is not encryption. The website has no direct connection to the ingestion database.
 
-## Methodology (HTW definition)
+## Project handoff and current data
 
-- Base pace = mean pace across 5–10 km, 10–15 km, 15–20 km splits
-- HTW = slowdown ≥25% vs. base pace, sustained ≥5 km, after 20 km
+Start with [AGENTS.md](AGENTS.md) and [Project handoff](docs/PROJECT_HANDOFF.md), then the [data architecture](docs/DATA_ARCHITECTURE.md), [website architecture](docs/WEBSITE_ARCHITECTURE.md), [analysis catalog](docs/ANALYSIS_CATALOG.md) and [operations runbook](docs/OPERATIONS.md).
 
-See `/methodology` for full details.
+The analysis pin and checked-in calculated packs use `private-export-20260907-1318`. A takeover audit on September 11, 2026 verified that all 401 production aggregate files matched that checkout before the presentation changes in this branch. The newer September 10 export has verified CORE/FULL ID alignment, but archive and feature-schema incompatibilities still prevent the current refresh pipeline from consuming it. See [known issues](docs/KNOWN_ISSUES.md) and [verified export access](analysis/ACCESS.md). A new export does not automatically update the website.
 
-## Data contract
+## Sustained-slowdown measure
 
-The app reads `public/data/live.json`:
+The study retains the [Published slowdown method (2021)](https://doi.org/10.1371/journal.pone.0251513): pace at least 25% slower than the 5–20 km baseline, sustained for at least 5 km after 20 km. This inherited timing definition is a descriptive measure, not a diagnosis of its cause. Published reference results remain distinct from calculations on this project's data.
 
-```json
-{
-  "status": "empty" | "ready",
-  "as_of": "2026-08-31T00:00:00Z" | null,
-  "definition": { "dos": 0.25, "los_km": 5, "after_km": 20, "base_window_km": [5, 20] },
-  "corpus": { "races": number|null, "runners": number|null, "records": number|null },
-  "figures": { "fig1": {}, "fig2": {}, "fig3": {}, "fig4": {}, "fig5": {}, "fig6": {} } | null,
-  "tables": { "t1": {}, "t2": {}, "t3": {}, "t4": {} } | null
-}
-```
+The `/slowdown` page presents these figures. Other pacing analyses have their own documented definitions and denominators; complete-split analyses compare 0–20 km with 20–40 km rather than inventing measured halfway times.
 
-Start with `status: "empty"`. When moving to `"ready"`, provide data in a shape that the components
-understand (e.g., `series: [{ "name": "label", "value": 0.0 }]`). Live figures never reuse the
-paper's 2021 numbers; any comparison redraws must be labeled “Smyth 2021 (published)”.
+## Development and verification
 
-## Development
-
-Prereqs: Node 18+
+Install Node.js 18 or newer, then run:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-## Build and static export
-
-This project is configured for static export, suitable for GitHub Pages.
+Open `http://localhost:3000`. Before reviewing website or aggregate changes, run:
 
 ```bash
-npm run build    # emits static site to out/
-```
-
-To deploy on GitHub Pages for a repository `<owner>/<repo>`, set:
-
-```bash
-# Optional: set a base path if served from a subpath like /<repo>
-echo 'NEXT_PUBLIC_BASE_PATH=/<repo>' > .env.production
+npm run verify:data
 npm run build
 ```
 
-Then publish the `out/` directory (e.g., to the `gh-pages` branch or to `docs/` on `main`).
+The build creates static output in `out/`. The configured public host is [Marathon Pacing Study](https://htw-live-study.vercel.app); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
 
-## Notes
-
-- Do not invent live numbers. The default `public/data/live.json` ships with `status: "empty"`.
-- Any S1 redraw for comparison must be clearly labeled “Smyth 2021 (published)”.
+Private calculations, checksums, imports and per-release ID contracts are documented in [analysis/README.md](analysis/README.md). Keep missing measurements explicit, preserve source citations and publish only reviewed aggregates. Existing repository names, file keys and compatibility URLs remain stable where required by the data contract.

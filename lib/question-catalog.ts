@@ -51,7 +51,7 @@ const definitions: Omit<QuestionDefinition, 'number'>[] = [
 export const QUESTIONS: QuestionDefinition[] = definitions.map((question, index) => ({ ...question, number: index + 1 }));
 
 export const EXTRA_TITLES: Record<string, string> = {
-  smyth_htw: 'How often do marathon runners hit the wall?',
+  smyth_htw: 'How often do marathon runners experience sustained slowdown?',
   rn1_wall_severity: 'How severe is late-race slowing?',
   rn3_heat_curves: 'How does pacing vary with temperature?',
   rn4_reference_dependence: 'Do runners bunch just before round-number finish times?',

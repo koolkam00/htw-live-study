@@ -2,7 +2,7 @@
   "pack_id": "r07_wall_clock_vs_distance",
   "slug": "r07_wall_clock_vs_distance",
   "display_id": "R7",
-  "title": "Wall: clock vs distance",
+  "title": "Slowdown: clock vs distance",
   "status": "ready",
   "readiness": "ready",
   "as_of": "2026-09-06T23:32:06Z",
@@ -14,5 +14,13 @@
     "summary.json"
   ],
   "notes": "",
-  "method": "Smyth 2021 HTW; aggregates from features.parquet only"
+  "method": "Published slowdown method (2021); aggregates from features.parquet only",
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  },
+  "method_reference": {
+    "label": "Published slowdown method (2021)",
+    "url": "https://doi.org/10.1371/journal.pone.0251513"
+  }
 }

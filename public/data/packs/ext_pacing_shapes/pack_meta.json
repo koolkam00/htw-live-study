@@ -32,11 +32,15 @@
   },
   "methodology_prose": [
     "For each runner, divide section pace by their full-marathon average pace and subtract one. Plot the median of these individual percentages at each checkpoint; zero is that runner\u2019s own marathon pace. A median curve is not itself one runner\u2019s race and need not integrate to zero.",
-    "Compare elapsed time over 0\u201320 km with 20\u201340 km. Faster: more than 2% faster; similar: within 2%; moderate slowing: more than 2% through 10%; pronounced slowing: more than 10%. The final 2.195 km appears in the profile but not this equal-distance classification. These are descriptive categories, not wall episodes or measured half-marathon splits.",
+    "Compare elapsed time over 0\u201320 km with 20\u201340 km. Faster: more than 2% faster; similar: within 2%; moderate slowing: more than 2% through 10%; pronounced slowing: more than 10%. The final 2.195 km appears in the profile but not this equal-distance classification. These are descriptive categories, not slowdown episodes or measured half-marathon splits.",
     "Use complete, strictly increasing elapsed checkpoints at 5, 10, 15, 20, 25, 30, 35, 40 and 42.195 km. Clock strings must parse as H:MM:SS or M:SS. No missing splits are interpolated.",
     "Remove exact duplicate race records, ignoring database IDs, ingestion timestamps and source URLs. Retain finishes from 90 minutes to 12 hours with every section between 2 and 20 minutes per km. These quality filters can exclude genuine unusual performances; the analysis describes this eligible cohort, not every entrant.",
     "Each observation is a race finish. The same person can appear in multiple races. No runner identities are linked across races. Public cells require at least 100 observations; matched comparisons additionally require at least 20 per group in each stratum."
   ],
   "observational": true,
-  "minimum_public_cell": 100
+  "minimum_public_cell": 100,
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  }
 }

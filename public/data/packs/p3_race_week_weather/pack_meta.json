@@ -35,15 +35,15 @@
     "Race-morning temps are null until Open-Meteo horizon covers race day \u2014 never invent.",
     "Berlin 2026 lead-up window is partial (not race morning); do not treat as start-line advice.",
     "Chicago / New York 2026 are awaiting_forecast_window stubs (null rows OK).",
-    "RN3 HTW-by-band is historical corpus context, not a 2026 forecast.",
+    "RN3 sustained slowdown-by-band is historical corpus context, not a 2026 forecast.",
     "Never writes race_records."
   ],
   "canonical": true,
   "deprecated": false,
-  "implementation": "urllib GET /v1/race_forecasts; CSV tables from summary_json + hourly_json; optional RN3 Berlin HTW-by-band link; mirror to Sight; no race_records.",
+  "implementation": "urllib GET /v1/race_forecasts; CSV tables from summary_json + hourly_json; optional RN3 Berlin sustained slowdown-by-band link; mirror to Sight; no race_records.",
   "never_writes_race_records": true,
-  "answer_prose": "Race-week weather advisory from live /v1/race_forecasts (n=3, API as_of=2026-09-07T01:07:46Z). Cities: Berlin 2026 (partial_window), Chicago 2026 (awaiting_forecast_window), New York 2026 (awaiting_forecast_window). Race-morning summary fields (temp_c / feels_like_c at race start) are NOT YET AVAILABLE for any tracked city \u2014 Open-Meteo horizon has not covered race day; nulls are shown honestly and are never invented. Berlin 2026 (race_date=2026-09-27, start_local=09:15 Europe/Berlin) has a partial race-week lead-up window 2026-09-21..2026-09-22 (race week 2026-09-21..2026-09-27): n_hours=48, temp_c min/mean/max = 11.9/16.4/26.9 \u00b0C, feels_like min/max = 10.2/22.9 \u00b0C, humidity_pct_mean=62.6, precip_mm_sum=0.6, wind_mps mean/max = 3.43/5.6 (45 hourly rows with non-null temperature_2m of 48 listed). Chicago 2026 and New York 2026 remain awaiting_forecast_window stubs (null race-morning and null lead-up). SHOW limited to real lead-up coverage + coverage table; do not treat lead-up temps as race-morning advice. Historical Berlin HTW-by-band from RN3 (corpus, not 2026 forecast): cool HTW 16.8% (n=86,443); mild HTW 20.2% (n=199,341); warm HTW 25.5% (n=119,890); hot HTW 28.0% (n=45,846).",
-  "methodology_prose": "Source: GET http://127.0.0.1:8787/v1/race_forecasts (Open-Meteo forecast UPSERTs via race-data-platform scripts/fetch_race_week_forecast.py; writes race_forecasts only \u2014 never race_records). Pack stamps API n + fetched_at as_of. Race-morning scalars (temp_c, feels_like_c, \u2026) stay null until fetched hours include race_date; pack never fills them. Berlin 2026 berlin_2026_forecast.csv = hourly_json fields only (temperature_2m, apparent_temperature, humidity, dewpoint, precip, weathercode, cloudcover, pressure_msl, wind); trailing null hours preserved. forecast_coverage.csv + null_race_morning_cities.csv list every city status. Optional rn3_berlin_htw_by_band.csv links historical RN3 HTW-by-band for Berlin context (cool/mild/warm/hot) \u2014 not a forecast. Maps to S9. Status=ready when any real lead-up window exists (Berlin partial), else coming-soon; always caveat race-morning null.",
+  "answer_prose": "Race-week weather advisory from live /v1/race_forecasts (n=3, API as_of=2026-09-07T01:07:46Z). Cities: Berlin 2026 (partial_window), Chicago 2026 (awaiting_forecast_window), New York 2026 (awaiting_forecast_window). Race-morning summary fields (temp_c / feels_like_c at race start) are NOT YET AVAILABLE for any tracked city \u2014 Open-Meteo horizon has not covered race day; nulls are shown honestly and are never invented. Berlin 2026 (race_date=2026-09-27, start_local=09:15 Europe/Berlin) has a partial race-week lead-up window 2026-09-21..2026-09-22 (race week 2026-09-21..2026-09-27): n_hours=48, temp_c min/mean/max = 11.9/16.4/26.9 \u00b0C, feels_like min/max = 10.2/22.9 \u00b0C, humidity_pct_mean=62.6, precip_mm_sum=0.6, wind_mps mean/max = 3.43/5.6 (45 hourly rows with non-null temperature_2m of 48 listed). Chicago 2026 and New York 2026 remain awaiting_forecast_window stubs (null race-morning and null lead-up). SHOW limited to real lead-up coverage + coverage table; do not treat lead-up temps as race-morning advice. Historical Berlin sustained slowdown-by-band from RN3 (corpus, not 2026 forecast): cool sustained slowdown 16.8% (n=86,443); mild sustained slowdown 20.2% (n=199,341); warm sustained slowdown 25.5% (n=119,890); hot sustained slowdown 28.0% (n=45,846).",
+  "methodology_prose": "Source: GET http://127.0.0.1:8787/v1/race_forecasts (Open-Meteo forecast UPSERTs via race-data-platform scripts/fetch_race_week_forecast.py; writes race_forecasts only \u2014 never race_records). Pack stamps API n + fetched_at as_of. Race-morning scalars (temp_c, feels_like_c, \u2026) stay null until fetched hours include race_date; pack never fills them. Berlin 2026 berlin_2026_forecast.csv = hourly_json fields only (temperature_2m, apparent_temperature, humidity, dewpoint, precip, weathercode, cloudcover, pressure_msl, wind); trailing null hours preserved. forecast_coverage.csv + null_race_morning_cities.csv list every city status. Optional rn3_berlin_htw_by_band.csv links historical RN3 sustained slowdown-by-band for Berlin context (cool/mild/warm/hot) \u2014 not a forecast. Maps to S9. Status=ready when any real lead-up window exists (Berlin partial), else coming-soon; always caveat race-morning null.",
   "prose_as_of": "2026-09-07T01:29:41Z",
   "ux": {
     "requires": [
@@ -62,5 +62,9 @@
     "caveats"
   ],
   "race_morning_available": false,
-  "leadup_available": true
+  "leadup_available": true,
+  "presentation_revision": {
+    "date": "2026-09-11",
+    "scope": "Terminology and labels only; numerical values, input dates and calculation provenance retained."
+  }
 }

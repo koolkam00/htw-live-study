@@ -6,22 +6,22 @@ type PublishedPanel = { title: string; xLabel: string; yLabel: string; series: {
 
 const definitions = [
   {
-    id: 'fig1', title: 'How much does the wall definition matter?',
-    answer: 'A stricter definition finds fewer wall episodes. Both the amount of slowing and how long it lasts change the reported rate.',
+    id: 'fig1', title: 'How much does the sustained slowdown definition matter?',
+    answer: 'A stricter definition finds fewer sustained slowdown episodes. Both the amount of slowing and how long it lasts change the reported rate.',
     method: ['Each curve changes the minimum slowdown while keeping the minimum distance fixed. The main study uses a 25% slowdown sustained for at least 5 km after 20 km, relative to the 5–20 km reference pace.'],
     titles: ['Slowing sustained for at least 5 km', 'Slowing sustained for at least 10 km', 'Slowing sustained for at least 15 km', 'Slowing sustained for at least 20 km'],
   },
   {
-    id: 'fig2', title: 'How does wall frequency vary by age and ability?',
-    answer: 'Wall rates differ across age and recorded ability groups. These comparisons describe the runners in each group; they do not isolate the effect of age or fitness.',
+    id: 'fig2', title: 'How does sustained slowdown frequency vary by age and ability?',
+    answer: 'Sustained slowdown rates differ across age and recorded ability groups. These comparisons describe the runners in each group; they do not isolate the effect of age or fitness.',
     method: ['Use the published age and recent-personal-best group summaries. These views have different coverage because an age or linked performance history may be missing.'],
-    titles: ['Wall rate by age group', 'Wall rate by recorded recent best'],
+    titles: ['Sustained slowdown rate by age group', 'Sustained slowdown rate by recorded recent best'],
   },
   {
     id: 'fig3', title: 'What happens around a personal best?',
-    answer: 'Wall rates are lower around the year of a recorded personal best. A strong performance and less slowing naturally overlap, so this does not establish a before-and-after training effect.',
+    answer: 'Sustained slowdown rates are lower around the year of a recorded personal best. A strong performance and less slowing naturally overlap, so this does not establish a before-and-after training effect.',
     method: ['Compare recorded races by their year relative to an observed personal best. Year zero includes the personal-best year; it is not a distinct pre-race ability measure.', 'Only linked performance histories can enter this comparison. Unequal follow-up, missing races, and the choice of personal-best window affect the result.'],
-    titles: ['Wall rate by years from a personal best', 'Wall rate in periods before and after a personal best'],
+    titles: ['Sustained slowdown rate by years from a personal best', 'Sustained slowdown rate in periods before and after a personal best'],
   },
   {
     id: 'fig4', title: 'Does the personal-best pattern vary between groups?',
@@ -31,13 +31,13 @@ const definitions = [
   },
   {
     id: 'fig5', title: 'When does slowing begin, and how long does it last?',
-    answer: 'Among runners with a detected wall, average onset is near 30 km across age groups. The distance and severity of slowing provide different views of the same episode.',
-    method: ['These summaries describe detected wall episodes. Start distance is resolved from timing segments, not the exact moment a runner began to struggle.', 'Severity is a pace slowdown relative to the reference; distance is the recorded length of the qualifying episode.'],
+    answer: 'Among runners with a detected sustained slowdown, average onset is near 30 km across age groups. The distance and severity of slowing provide different views of the same episode.',
+    method: ['These summaries describe detected sustained slowdown episodes. Start distance is resolved from timing segments, not the exact moment a runner began to struggle.', 'Severity is a pace slowdown relative to the reference; distance is the recorded length of the qualifying episode.'],
     titles: ['Average start distance by age', 'Average start distance by recorded recent best', 'Average episode length by age', 'Average episode length by recorded recent best', 'Average slowdown by age', 'Average slowdown by recorded recent best'],
   },
   {
-    id: 'fig6', title: 'How much time is associated with the wall?',
-    answer: 'The figures summarize finish times and estimated time costs among runners with a detected wall. An estimated cost is not an amount an individual could necessarily recover.',
+    id: 'fig6', title: 'How much time is associated with sustained slowdown?',
+    answer: 'The figures summarize finish times and estimated time costs among runners with a detected sustained slowdown. An estimated cost is not an amount an individual could necessarily recover.',
     method: ['Finish time and the exported cost measures are separate summaries. The cost formula needs fuller documentation before it can support an individual prediction.', 'These are descriptive group means. Training, conditions, and the reason for slowing are not identified by the timing record.'],
     titles: ['Average finish time by age', 'Average finish time by recorded recent best', 'Estimated time cost by age', 'Estimated time cost by recorded recent best', 'Estimated relative cost by age', 'Estimated relative cost by recorded recent best'],
   },
@@ -53,7 +53,7 @@ export function getStudyFigures(): StudyFigureData[] {
     if (!Array.isArray(panels)) return [];
     const charts = panels.flatMap((panel, index): ChartSpec[] => {
       if (!Array.isArray(panel.series) || !definition.titles[index]) return [];
-      const percent = ['HTW proportion', 'DoS', 'fraction'].includes(panel.yLabel);
+      const percent = ['HTW proportion', 'Sustained slowdown proportion', 'DoS', 'fraction'].includes(panel.yLabel);
       const seriesOrder = ['F', 'M', 'all'];
       const series = [...panel.series].sort((a, b) => seriesOrder.indexOf(a.sex || a.label) - seriesOrder.indexOf(b.sex || b.label));
       const points = new Map<string | number, DataRow>();

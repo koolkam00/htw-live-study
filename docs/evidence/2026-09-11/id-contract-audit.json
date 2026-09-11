@@ -1,0 +1,70 @@
+{
+  "raw_rows": 3580279,
+  "features_rows": 3580279,
+  "raw_unique_ids": 3580279,
+  "feature_unique_record_ids": 3580279,
+  "raw_null_ids": 0,
+  "feature_null_record_ids": 0,
+  "feature_ids_missing_in_raw": 0,
+  "same_order_ids": false,
+  "same_city": 3580279,
+  "same_year": 3580279,
+  "same_sex": 3579727,
+  "same_age": 3580279,
+  "features_coverage": {
+    "race_date": {
+      "non_null": 0
+    },
+    "runner_id": {
+      "non_null": 2994501,
+      "distinct_non_null": 2366070,
+      "repeated_distinct_non_null": 396353
+    },
+    "valid_splits": {
+      "non_null": 3580279,
+      "true_count": 2807231
+    },
+    "is_ambiguous": {
+      "non_null": 3580279,
+      "true_count": 18561
+    },
+    "split_mode_in": {
+      "absent": true
+    },
+    "runner_name": {
+      "absent": true
+    },
+    "race": {
+      "absent": true
+    }
+  },
+  "course_profiles_coverage": {
+    "valid_from_year": {
+      "non_null": 0
+    },
+    "valid_to_year": {
+      "non_null": 0
+    }
+  },
+  "race_conditions_coverage": {
+    "race_date": {
+      "non_null": 207
+    }
+  },
+  "sources_coverage": {
+    "last_ingested": {
+      "non_null": 148
+    }
+  },
+  "race_conditions_id_fields": [
+    "id"
+  ],
+  "course_profiles_id_fields": [
+    "id",
+    "course_key"
+  ],
+  "course_segments_id_fields": [
+    "id",
+    "course_key"
+  ]
+}
