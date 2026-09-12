@@ -1,9 +1,0 @@
-severity_band,htw,n,pct_of_valid,pct_within_band
-none,htw,6596,0.2625,0.4867
-none,no_htw,1348562,53.6664,99.5133
-mild,htw,470529,18.7248,53.1343
-mild,no_htw,415018,16.5158,46.8657
-moderate,htw,218609,8.6996,99.8858
-moderate,no_htw,250,0.0099,0.1142
-severe,htw,53083,2.1125,99.6003
-severe,no_htw,213,0.0085,0.3997

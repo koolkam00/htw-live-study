@@ -241,8 +241,9 @@ input:focus,select:focus { border-color:var(--course); }
 @media (max-width:850px) { .header-controls { flex-wrap:wrap; justify-content:flex-end; } .header-controls .nav-data { display:none; } }
 @media (max-width:600px) {
   .header-controls { display:contents; }
-  .header-controls .main-nav { gap:.75rem; }
-  .header-controls .unit-switch { margin:.4rem 0 0 auto; }
+  .header-controls .main-nav { order:2; flex-basis:100%; justify-content:space-between; gap:.25rem .75rem; }
+  .header-controls .main-nav a { font-size:.75rem; }
+  .header-controls .unit-switch { order:1; margin:0 0 0 auto; }
   .header-inner:has(.unit-switch) { padding-bottom:.7rem; }
 }
 .eyebrow { font-size:.75rem; line-height:1.5; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--slate); }

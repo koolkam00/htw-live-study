@@ -1,3 +1,0 @@
-metric,n,n_rows_used,rate,note
-wx_temp_c_05_nonnull_among_used,0,2512860,0.0,features_v2 built with --no-weather; wx_* schema present but null. Weather band token=null (never invented).
-melbourne_elev,395,2512860,,Melbourne elev N/A — never invent elev (course elev not used in P1).

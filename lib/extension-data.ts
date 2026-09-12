@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import release from '../analysis/release.json';
 import path from 'node:path';
 import { parseCsv } from './csv';
 import type { ChartSpec, ResearchAnswer } from './research-data';
@@ -28,6 +29,7 @@ export function getExtensions(): Extension[] {
     // The personalized guide has its own cohort-shard contract and renderer.
     if (meta.presentation === 'personalized-guide') continue;
     if (meta.status !== 'ready') continue;
+    if (meta.input_export_id !== release.tag.replace('private-export-', 'private-')) throw new Error(`Stale analysis source: ${entry.name}`);
     const summary = JSON.parse(fs.readFileSync(path.join(folder, 'summary.json'), 'utf8'));
     const valid = meta.schema_version === 1 && meta.id === entry.name && typeof meta.question_id === 'string'
       && Number.isInteger(meta.n) && meta.n >= 100 && Number.isFinite(Date.parse(meta.as_of))

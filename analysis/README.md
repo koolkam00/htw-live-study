@@ -10,7 +10,7 @@ The pipeline calculates eight foundation and 25 extended packs, plus the 12-path
 
 `release.json` pins the main pipeline and `weather-release.json` pins the weather screen. Both select 1107 alongside their validated outputs. Pins select inputs; they do not certify analysis or deployment. Source files, calculations and output metadata retain metric units. Miles and per-mile paces are website display conversions.
 
-These builders do not scrape races, operate the live ingestion database or regenerate `public/data/live.json` and original S/R/RN/P packs. Those files remain explicitly dated historical context. `--live-as-of` records their actual timestamp in new metadata; it never claims that they have been recalculated.
+These builders consume immutable exports and do not scrape races or operate the live ingestion database. The public explorer builder recalculates the supporting sustained-slowdown results and publishes a complete runner lookup. Its importer writes current compatibility metadata to `public/data/live.json`. Historical S/R/RN/P numerical files remain in Git history, outside the deployed website. The older `live_json_as_of` field in extension metadata records context at calculation time; source identity is determined by input export and checksums.
 
 ## Download and inspect
 
@@ -37,6 +37,7 @@ python analysis/build_pacing.py --input /path/to/1107-input --output /path/to/11
 python analysis/build_extended.py --input /path/to/1107-input --output /path/to/1107-aggregates --personalized-output /path/to/1107-personalized --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
 python analysis/write_findings.py --output /path/to/1107-aggregates
 python analysis/build_weather.py --input /path/to/1107-input --output /path/to/1107-weather/evidence.json
+python analysis/build_public_explorer.py --input /path/to/1107-input --output /path/to/1107-explorer
 ```
 
 `build_pacing.py` writes eight foundation packs; `build_extended.py` writes the other 25 and then calls `build_personalized.generate` on the same prepared cohort/linkage tables. Do not run a partial extension import or replace the current 90–720-minute personalized result with an older 150–270-minute artifact. `write_findings.py` generates narrative results from aggregate tables and records its own script hash.
@@ -58,6 +59,7 @@ Review weather input identity, policy/script hashes, cohort reconciliation, all 
 
 ```bash
 npm ci
+python analysis/import_public_explorer.py --input /path/to/1107-explorer
 npm run verify:data
 npm run build
 ```
@@ -98,4 +100,16 @@ Each broad pack has metadata, summary and aggregate CSV tables. Metadata records
 
 The **Marathon pacing analysis** workflow responds to matching release publication, relevant PR changes and manual dispatch. It produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection`; it does not import or deploy. The **Weather evidence screen** workflow accepts an explicit tag and produces `weather-evidence`, also without import or deployment. Record exact tag, code commit and artifacts; artifacts can expire, so preserve durable audit reports.
 
-The original sustained-slowdown definition remains unchanged: at least 25% slowing for at least 5 km after 20 km versus the 5–20 km baseline, with a neutral [published-method citation](https://doi.org/10.1371/journal.pone.0251513). Source inclusion changes in the extensions do not recalculate the dated core figures.
+The original sustained-slowdown definition remains unchanged: at least 25% slowing for at least 5 km after 20 km versus the 5–20 km baseline, with a neutral [published-method citation](https://doi.org/10.1371/journal.pone.0251513). The current supporting study recomputes that definition from the same eligible raw timings as the main analyses. The original undocumented cost and adjustment models are not republished as current results.
+
+## Public name search and selected-race analysis
+
+`build_public_explorer.py` shares the timing parser, canonical-ID audit, identity checks and reviewed edition exclusions with the existing builders. It writes `study/evidence.json` and `runners/manifest.json` plus deterministic gzip JSON shards. `import_public_explorer.py` invokes the full Node verifier before replacing only these two folders and current `live.json` compatibility metadata. Node must be on PATH. The **Public runner explorer** workflow rebuilds these outputs and uploads `public-runner-explorer`; it does not import or deploy them.
+
+Names are normalized identically in Python and JavaScript (NFKD, remove Unicode marks, lowercase, retain letters/numbers, collapse spaces). Each name token contributes its first three Unicode codepoints to a SHA-256 bucket; shorter tokens use the whole token. A query loads one bucket and requires every query token to match. Results paginate without silently dropping matches. Profile buckets use SHA-256 of the candidate profile ID. Browser requests verify compressed bytes, checksum and source tag before decoding ordinary gzip, which is compression rather than encryption.
+
+A profile is a supplied non-ambiguous identity passing the same consistency checks as linked analyses, or a singleton raw record otherwise. Matching names never merge records. Users explicitly select races, including across separate candidate groups, then confirm analysis. Every raw record is retained, including those with missing names or invalid timings; unnamed records cannot be found by a name query. Excluded records retain raw checkpoint strings and a reason. Profile IDs are release-specific and must not be treated as permanent person IDs.
+
+Individual comparisons use only selected eligible finishes. Early pace covers 5–20 km, late pace 30 km–finish, and the opening is 0–5 km; section plots retain the actual nine timing intervals. Finish progression compares recorded years, without inventing within-year chronology. Neither the fastest selected finish nor a source identity is a verified lifetime best/person. Browser and publication tests verify unambiguous unit conversion, exclusion behavior, query handling and shard integrity.
+
+Threshold comparisons in the supporting study allow a ratio tolerance of 1e−12 solely for binary rounding. Exact decimal boundaries are included; values 1e−9 below a boundary remain excluded. Detection, onset and the independent runner-data recount use the same convention.

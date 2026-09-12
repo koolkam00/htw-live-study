@@ -43,8 +43,8 @@ function metricProseToMiles(text: string): string {
   return text
     .replace(new RegExp(`(?<![\\w:.])([0-9]+):([0-5][0-9])\\s*(?:/|per\\s+)\\s*${KM_UNIT}\\b`, 'gi'),
       (_match, minutes: string, seconds: string) => paceLabel(Number(minutes) * 60 + Number(seconds), 'mi'))
-    .replace(new RegExp(`(?<![\\w:.])(${NUMBER})\\s*(min(?:utes?)?|sec(?:onds?)?)\\s*(?:/|per\\s+)\\s*${KM_UNIT}\\b`, 'gi'),
-      (_match, value: string, label: string) => `${number(numeric(value) * KM_PER_MILE, 2)} ${label}/mi`)
+    .replace(new RegExp(`(?<![\\w:.])(${NUMBER_PHRASE})\\s*(min(?:utes?)?|sec(?:onds?)?)\\s*(?:/|per\\s+)\\s*${KM_UNIT}\\b`, 'gi'),
+      (_match, value: string, label: string) => `${convertPhrase(value, KM_PER_MILE, 2)} ${label}/mi`)
     .replace(new RegExp(`(?<![\\w:.])(${NUMBER_PHRASE})(\\s*-\\s*|\\s*)(${KM_UNIT})\\b`, 'gi'),
       (_match, values: string, separator: string, unit: string) => {
         const converted = convertPhrase(values, 1 / KM_PER_MILE, 2);

@@ -11,7 +11,7 @@ Use [analysis/README.md](../analysis/README.md) for the complete calculation and
 
 ## Reproduce and audit the current input
 
-Run from the repository root with Python 3.12 and a fresh output directory. Replace `CURRENT_PUBLIC_LIVE_AS_OF` with the actual timestamp of the unchanged historical core context.
+Run from the repository root with Python 3.12 and a fresh output directory. Replace `CURRENT_PUBLIC_LIVE_AS_OF` with the actual current compatibility-metadata timestamp; this timestamp is context, not the source release.
 
 ```bash
 python -m pip install -r analysis/requirements.txt
@@ -34,11 +34,12 @@ python analysis/build_pacing.py --input /path/to/1107-input --output /path/to/11
 python analysis/build_extended.py --input /path/to/1107-input --output /path/to/1107-aggregates --personalized-output /path/to/1107-personalized --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
 python analysis/write_findings.py --output /path/to/1107-aggregates
 python analysis/build_weather.py --input /path/to/1107-input --output /path/to/1107-weather/evidence.json
+python analysis/build_public_explorer.py --input /path/to/1107-input --output /path/to/1107-explorer
 ```
 
 The first two commands produce all 33 registered broad packs. `build_extended.py` also invokes the twelve-path personalized engine, retaining whole-minute targets 90–720. The weather screen is separate: rerun all three fixed candidates with the existing thresholds, retain every decision in its JSON, and let readiness determine which pages exist. A refresh must not freeze old conclusions or loosen the gate to publish a preferred result.
 
-The main workflow produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection` for an exact source tag and code commit. The separate weather workflow produces `weather-evidence`. Neither workflow imports data or deploys the site. Inspect source tag, code revision, successful checks and artifacts; do not infer success from release publication. The historical September 10 failed run is not the status of the current 1107 calculations.
+The main workflow produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection` for an exact source tag and code commit. The separate weather workflow produces `weather-evidence`; **Public runner explorer** produces `public-runner-explorer` (study plus name-search shards). None of these workflows imports data or deploys the site. Inspect source tag, code revision, successful checks and artifacts; do not infer success from release publication. The historical September 10 failed run is not the status of the current 1107 calculations.
 
 ## Validate, import and publish
 
@@ -50,13 +51,14 @@ python analysis/import_personalized.py --archive /path/to/pacing-personalized-ag
 python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260911-1107
 python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107
 npm ci
+python analysis/import_public_explorer.py --input /path/to/1107-explorer
 npm run verify:data
 npm run build
 ```
 
 Review and copy the weather JSON to `public/data/weather/evidence.json` with its exact `analysis/weather-release.json` pin; update `analysis/release.json` with the validated main outputs. The weather file is outside the two ZIP importer contracts. Verify source/script/policy hashes, raw-to-eligible and weather-cohort reconciliation, all candidate gates, dynamic routes, exact source labels and display units. For the current audited release, `calculation_provenance.py` requires the exact reviewed builder and supporting-script hashes before either import; a valid-looking 64-character hash is insufficient. Website data validation repeats these checks on PRs and main. Review the full diff before committing or merging. Verify the deployed source tags and exact commit separately after publication.
 
-Original `live.json` and S/R/RN/P packs remain unchanged historical context; this repository does not contain their complete producer generator. Preserve them until a task supplies and validates that separate pipeline. The source pin alone never certifies a refresh.
+Every active analysis must now use the same adopted release. The supporting-study and runner importer replaces only `public/data/study`, `public/data/runners` and current `live.json` compatibility metadata. It validates every shard, all 4,207,456 records, all 3,328,159 eligible timings, name-index membership and calculation/source hashes before import. Historical S/R/RN/P numerical files remain in Git history, outside deployed output. The source pin alone never certifies a refresh.
 
 ## Producer operations and missing information
 

@@ -1,2 +1,0 @@
-scope,n_positive_split,mean_positive_split,n_live_gap_positive_split,mean_live_gap_positive_split,delta_live_gap_minus_obs,gap_source,stored_gap_pace_ignored
-ALL_valid,2512860,0.11472,2512465,0.038507,-0.076212,live_v2_curve_x_course_segments,True

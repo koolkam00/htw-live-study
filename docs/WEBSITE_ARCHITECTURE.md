@@ -1,6 +1,6 @@
 # Website architecture
 
-Takeover evidence and current branch changes are distinguished in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md).
+Current implementation includes same-release supporting analyses and `/runners` name lookup on `codex/runner-search-current-data`. Validation and deployment of these changes remain separate from the prior PR #35 refresh; see [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md).
 
 ## Runtime and routes
 
@@ -14,27 +14,30 @@ The primary ten are accompanied by any weather candidates that pass the fixed sc
 | /analyses | app/analyses/page.tsx; AnalysisIndex | Primary ten-question directory |
 | /analyses/[slug] | app/analyses/[slug]/page.tsx; AnalysisExplorer / AnalysisChart | One primary question, supported controls, observed results and methods |
 | /about | app/about/page.tsx | Study purpose and interpretation |
-| /packs and /packs/[packId] | app/packs; ResearchQuestion / PackClientPage | Broader research archive and legacy pack content |
-| /slowdown | app/slowdown/page.tsx; sustained-slowdown dashboard | Sustained-slowdown measure and six figures |
+| /packs and /packs/[packId] | app/packs; ResearchQuestion / PackClientPage | Broader current-source research and compatibility aliases |
+| /slowdown | app/slowdown/page.tsx; sustained-slowdown dashboard | Current-source slowdown prevalence, onset, sensitivity, age and recorded-history figures |
 | /htw and /packs/smyth_htw | Legacy route files | Compatibility URLs retained for existing links |
 | /courses and /courses/[city] | app/courses; lib/course-data.ts | Course-specific supporting summaries |
 | /your-race | Legacy personalized entry | Client compatibility redirect preserving mapped question hashes and profile query parameters |
 | /research/personalized | Archived PersonalizedGuide | All twelve backing questions in the earlier guide layout |
+| /runners | app/runners/page.tsx; RunnerSearch | Search recorded names, confirm candidate races and compare recorded performances |
 | /methodology | app/methodology/page.tsx | Definitions, cohorts and limitations |
 
 [lib/ten-analyses.ts](../lib/ten-analyses.ts) is the primary ordering and route registry: pacing pattern, opening pace, checkpoint, section differences, courses, weather, terrain, target context, improvement and age. The [ten-analysis guide](TOP_TEN_ANALYSES.md) maps these pages to data and limitations. The 35-question catalog in `lib/question-catalog.ts` and 33 broad extension packs remain a research archive; the personalized catalog retains 12 backing calculation paths. These are overlapping views, not independent datasets. `/your-race#guide-{id}` maps the primary ten to their new analysis pages; `#guide-downhill` and `#guide-return` open the retained twelve-question guide at `/research/personalized`. The `/packs` archive links to the ten and keeps the twelve-question list collapsed.
 
-## Full-data access and four chart-data paths
+## Full-data access and current data paths
 
 Current policy exposes source code, full runner exports, database snapshots and overlays to anonymous readers in ordinary unencrypted formats. Link to public Release assets for large files; rendering aggregate charts is a performance and analytical choice, not an access boundary. There is no requirement to keep runner data outside this checkout. See [dated access verification](PROJECT_HANDOFF.md#public-access-and-operations).
 
-1. **Core:** public/data/live.json and original S/R/RN/P pack folders. lib/research-data.ts reads JSON/CSV and maps them to explanatory answers; hooks/useLiveData.ts and usePackMeta.ts support client legacy views. lib/packs.ts default statuses are fallback registry values, not proof of valid current calculations.
+1. **Supporting study:** `public/data/study/evidence.json`, built by `analysis/build_public_explorer.py`, provides current-source slowdown, severity and milestone results. `lib/research-data.ts` and `lib/study-figures.ts` validate the pinned release and render its documented measures. Old `live.json` charts and S/R/RN/P numerical files are not active inputs; `live.json` becomes small current-release compatibility metadata without figures. Compatibility aliases use current extensions or an explicit unavailable state; registry fallback statuses are not evidence of a current calculation.
 2. **Extensions:** lib/extension-data.ts discovers ext_* directories at build time, requires ready schema-valid metadata, reads summaries and CSVs, and maps question_id to lib/question-catalog.ts. Newer input_as_of wins, with calculation date as tie-breaker. Invalid ready data fails the build. This is not a request-time connection to the ingestion database.
 3. **Personalized:** `lib/personalized-data.ts` loads the summary/method. `lib/analysis-server.ts` builds the initial All courses / 4:00 answer from the matching city shard during static export. `AnalysisExplorer` and `lib/personalized.ts` select among the fixed aggregates; `lib/analysis-aggregates.ts` loads the needed JSON through the client cache. `public/data/packs/ext_personalized_guide` contains `pack_meta.json`, `summary.json`, `tables/city_XX.json` and `tables/checkpoint_XX.json`. The summary maps city names to filenames; never assume numeric shard positions stay stable. Course comparison uses the summary; checkpoint shards load when requested.
 
 4. **Weather screen:** `lib/weather-data.ts` loads `public/data/weather/evidence.json`; the weather catalog maps ready candidate IDs to static routes. The file contains all three results, edition values, fixed screening rules and provenance. `analysis/weather-release.json` is a separate source pin; the verifier requires it to match the JSON and checks shared eligibility/provenance when both analysis pins name the same release.
 
-Course pages use `lib/course-data.ts`: names come from `live.json` table `t1` and the course-profile extension, and charts come from `ext_course_pacing_profiles`. Files under `public/data/c4` exist but are not read by this route's loader. Core and extensions can have different source vintages; display and compare them explicitly.
+5. **Public runner lookup:** `analysis/build_runner_lookup.py` writes `public/data/runners/manifest.json` plus compressed name-index and profile shards. `/runners` loads the manifest and relevant shards, verifies their digests and release tag, then lets visitors select their recorded races. Candidate linkage is not independent identity verification; same-name records are never silently merged. The manifest covers all raw records, including those excluded from aggregate analysis, and reports unnamed records explicitly.
+
+Course pages use `lib/course-data.ts` and only `ext_course_pacing_profiles` for both names and plots. Sparse or excluded courses do not fall back to old `live.json` rows. The supporting study, broad questions, personalized engine, weather and search manifest must all match the common release pin before publication.
 
 ## Primary explorer and personalized semantics
 
@@ -62,7 +65,7 @@ The new weather pages also display °F differences and mph in miles mode, or °C
 
 All underlying distances and analytical definitions remain in kilometres. Use the exact conversion of 1 mile = 1.609344 km and 1 foot = 0.3048 m before rounding for display. For example, 5:00/km is approximately 8:03/mile. A source 5 km timing section displays as 3.11 miles, and the 20, 30 and 35 km checkpoint choices retain those exact underlying checkpoint keys. The site does not invent timing mats, halfway readings or individual-mile splits. Distinguish elapsed time for a recorded section from per-mile pace; converting units never changes the elapsed time.
 
-The research archive, legacy guide, supporting routes and methodology retain their original source units; the switch is hidden there, and shared chart renderers receive an explicit metric setting. The saved preference is retained for the next primary page. Technical source schemas, historical method quotations and release assets also keep original metric units. They describe the calculation contract and should not be rewritten as if the source measured mile splits. The historical display-only update left source pins and aggregate numbers unchanged; the separate 1107 data refresh recalculates those outputs. See the [September 11 display verification](evidence/2026-09-11/miles-display.md) for local checks and measured browser examples.
+The current supporting pages and runner view convert visible measurements together with their charts when the unit switch is offered. Source schemas and methods remain metric. Any retained metric-only guide must explicitly force matching metric prose and figures rather than mixing units. Technical source schemas, historical method quotations and release assets also keep original metric units. They describe the calculation contract and should not be rewritten as if the source measured mile splits. The historical display-only update left source pins and aggregate numbers unchanged; the separate 1107 data refresh recalculates those outputs. See the [September 11 display verification](evidence/2026-09-11/miles-display.md) for local checks and measured browser examples.
 
 ## Data to rendering to deployment
 

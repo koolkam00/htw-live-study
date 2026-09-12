@@ -141,38 +141,28 @@ for (const [unit, value, imperial, metric] of [
   assert.match(render(chart), /<td>120<\/td>/, 'Sample sizes must not be converted');
 }
 
-// The legacy slowdown archive keeps its original metric prose and must keep
-// matching metric figures even inside the site's default miles provider.
+assert.equal(unitText('between 2 and 20 minutes per km', 'mi'), 'between 3.22 and 32.19 minutes/mi');
+assert.equal(unitText('2–20 min/km', 'mi'), '3.22–32.19 min/mi');
+assert.equal(unitText('2 to 20 min/km', 'mi'), '3.22 to 32.19 min/mi');
+
+// Current supporting charts and their prose follow the same display preference.
 const StudyFigure = require('../components/StudyFigure.tsx').default;
 const UnitsProvider = require('../components/UnitsProvider.tsx').default;
 const { getStudyFigures } = require('../lib/study-figures.ts');
-const { formatNumber } = require('../lib/csv.ts');
 const studyFigures = getStudyFigures();
-const renderLegacy = figure => renderToStaticMarkup(React.createElement(UnitsProvider, null, React.createElement(StudyFigure, { figure })));
-const definitionFigure = studyFigures.find(figure => figure.id === 'fig1');
-assert.ok(definitionFigure, 'The regression requires the actual published slowdown definition figure');
-const definitionHtml = renderLegacy(definitionFigure);
-assert.match(definitionHtml, /<h3[^>]*>Slowing sustained for at least 5 km<\/h3>/, 'The chart title must match the original metric definition and comparison selector');
-assert.doesNotMatch(definitionHtml, /3\.11 mi/);
-const onsetFigure = studyFigures.find(figure => figure.id === 'fig5');
-assert.ok(onsetFigure, 'The regression requires the actual published slowdown distance figure');
-assert.equal(onsetFigure.charts[0].unit, 'km');
-const onsetSource = JSON.stringify(onsetFigure);
-const onsetHtml = renderLegacy(onsetFigure);
-assert.match(onsetHtml, /average onset is near 30 km/);
-assert.match(onsetHtml, /Distance \(kilometres\)/);
-assert.doesNotMatch(onsetHtml, /Distance \(miles\)/);
-const onsetChart = onsetFigure.charts[0];
-let checkedDistances = 0;
-for (const row of onsetChart.rows) for (const series of onsetChart.series) {
-  const distance = row[series.key];
-  if (typeof distance === 'number' && Number.isFinite(distance)) {
-    assert.ok(onsetHtml.includes(`<td>${formatNumber(distance, 'km')}</td>`), 'Every original onset distance must remain metric in the exact-values table');
-    checkedDistances++;
-  }
-}
-assert.ok(checkedDistances > 0, 'The distance assertion must cover published numerical values');
-assert.equal(JSON.stringify(onsetFigure), onsetSource, 'The archive renderer must preserve the original figure data');
+const definitionFigure = studyFigures.find(figure => figure.id === 'sensitivity');
+assert.ok(definitionFigure, 'The current source must publish definition sensitivity');
+const definitionSource = JSON.stringify(definitionFigure);
+const definitionHtml = renderToStaticMarkup(React.createElement(UnitsProvider, null, React.createElement(StudyFigure, { figure: definitionFigure })));
+assert.match(definitionHtml, /3\.11 mi/);
+assert.doesNotMatch(definitionHtml, /at least 5 km/);
+assert.match(definitionHtml, /data\/study\/evidence.json/);
+assert.equal(JSON.stringify(definitionFigure), definitionSource);
+const { getWallTimingAnswer } = require('../lib/research-data.ts');
+const onsetChart = getWallTimingAnswer().charts[0];
+assert.ok(onsetChart, 'Onset must be recomputed from the current source');
+assert.match(render(onsetChart), /Distance \(mi\)/);
+assert.match(render(onsetChart, 'km'), /Distance \(km\)/);
 
 const { getAnalysisStart } = require('../lib/analysis-server.ts');
 const profileSpec = getAnalysisStart().answers.find(answer => answer.id === 'profile').charts[0];

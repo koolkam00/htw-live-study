@@ -1,8 +1,10 @@
 # Data ingestion handoff
 
-Updated 2026-09-11 after direct inspection of the September 10 CORE/FULL archives. This is a copy-ready instruction for the ingestion and feature-generation agents. The owner now requires public access to the complete study data and source code; this supersedes earlier private-release and runner-data publication restrictions. This export request does not require overwriting a live database.
+**Historical request — superseded by the verified September 11 1107 export. Do not copy the request below as a current defect list.** The 1107 release restores the required feature columns, satisfies the CORE/FULL archive contract and supplies the adopted website data. For the remaining ingestion work, use [the current 1107 producer follow-ups](REFRESH_20260911_1107.md#remaining-producer-work) and [the project handoff](PROJECT_HANDOFF.md#remaining-producer-work). Website and runner-search publication status is recorded separately in [the current verification record](CURRENT_SITE_AND_RUNNER_SEARCH.md).
 
-## Copy and send this instruction
+The request below records the September 10 inspection, written on September 11, 2026. Its missing-column, blocked-refresh and September 7 deployment statements describe that historical inspection only. The public-access requirement remains current: complete study data and source code must be publicly accessible, and exports do not require overwriting the live database.
+
+## Historical instruction sent to ingestion agents
 
 > Prepare the next complete, reproducible Marathon Pacing Study export for the analysis agent. Publish full runner records, names, features, overlays, backups and supporting study documentation in **public GitHub Releases** in `koolkam00/htw-live-study`. Do not replace full records with anonymized or aggregate-only substitutes. Use ordinary unencrypted Parquet and SQLite files; gzip compression is fine. Do not password-protect archives. Anyone must be able to download and open these files without a GitHub account, invitation, token or decryption key. Releases are the preferred home for large binaries so the website remains small; there is no runner-data privacy restriction on the checkout or publication.
 >
@@ -28,7 +30,7 @@ Updated 2026-09-11 after direct inspection of the September 10 CORE/FULL archive
 >
 > Return a concise completion report with exact links and machine-readable audit results. Clearly list unresolved data gaps and their owners; do not mark unverified work complete.
 
-## Verified facts behind the request
+## September 10 facts behind the historical request
 
 - September 10 release: [private-export-20260910-1412](https://github.com/koolkam00/htw-live-study/releases/tag/private-export-20260910-1412). Both whole archives passed GitHub size/SHA-256 verification; all ten shared files are byte-identical.
 - CORE has ten regular members; FULL has thirteen. The current downloader accepts eight and nine respectively. FULL would first fail on `FEATURE-FIELD-NOTES.md`.

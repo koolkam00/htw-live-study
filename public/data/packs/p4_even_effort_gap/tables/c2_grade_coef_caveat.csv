@@ -1,4 +1,0 @@
-model,coef_grade,r2,n,n_cities,sign,note
-published_huber_full_v2,1.578655404063456,0.1385258403656,200000,27,positive,Current denser fit; Huber with mid_km+post20; grade effect altered by fatigue controls vs grade-only OLS
-aux_grade_only_ols_v2,2.965354508724201,0.007303856391854713,200000,27,positive,Prefer for intuitive +% grade → pace (coef≈2.97/unit grade; ≈2.97% pace change per +1% grade)
-prior_v1_6majors_huber,-0.585705711598449,0.18693638860330308,160672,6,negative,Superseded; SIGN FLIP vs prior aux grade-only OLS ≈+5.68. features_v2.gap_pace_* were built with this v1 curve — IGNORED in this pack.
