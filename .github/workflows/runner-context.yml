@@ -1,0 +1,59 @@
+name: Runner context and peers
+
+on:
+  pull_request:
+    paths:
+      - 'analysis/build_runner_context.py'
+      - 'analysis/runner_peers.py'
+      - 'analysis/runner_environment.py'
+      - 'analysis/test_runner_peers.py'
+      - 'analysis/test_runner_environment.py'
+      - 'analysis/build_pacing.py'
+      - 'analysis/build_weather.py'
+      - 'analysis/source_quality.py'
+      - 'analysis/release.json'
+      - 'analysis/requirements.txt'
+      - 'analysis/download_release.py'
+      - 'public/data/runners/manifest.json'
+      - 'scripts/verify-runner-context.cjs'
+      - 'lib/runner-context.ts'
+      - '.github/workflows/runner-context.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: python -m pip install -r analysis/requirements.txt
+      - run: npm ci
+      - name: Check calculations and source contracts
+        run: python -m unittest discover -s analysis -p 'test_*.py'
+      - name: Download the pinned and verified FULL export
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/runner-context-input"
+      - name: Calculate edition peers and environmental context
+        run: python analysis/build_runner_context.py --input "$RUNNER_TEMP/runner-context-input" --output "$RUNNER_TEMP/runner-context-output"
+      - name: Independently verify against published runner records
+        run: node scripts/verify-runner-context.cjs --data-root "$RUNNER_TEMP/runner-context-output"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runner-context
+          path: ${{ runner.temp }}/runner-context-output/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0

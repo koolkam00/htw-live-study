@@ -1,6 +1,6 @@
 # Operations runbook
 
-Use [analysis/README.md](../analysis/README.md) for the complete calculation and import contracts. The current full-refresh source is **`private-export-20260911-1107`**; [REFRESH_20260911_1107.md](REFRESH_20260911_1107.md) records what has passed and what is deployed.
+Use [analysis/README.md](../analysis/README.md) for the complete calculation and import contracts. The current full-refresh source is **`private-export-20260911-1107`**. The [initial refresh](REFRESH_20260911_1107.md), [supporting-study/search update](CURRENT_SITE_AND_RUNNER_SEARCH.md) and [runner-context update](RUNNER_CONTEXT_AND_PEERS.md) have separate verification records; a prior deployment does not certify a later change.
 
 ## Verify access and source state
 
@@ -41,6 +41,8 @@ The first two commands produce all 33 registered broad packs. `build_extended.py
 
 The main workflow produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection` for an exact source tag and code commit. The separate weather workflow produces `weather-evidence`; **Public runner explorer** produces `public-runner-explorer` (study plus name-search shards). None of these workflows imports data or deploys the site. Inspect source tag, code revision, successful checks and artifacts; do not infer success from release publication. The historical September 10 failed run is not the status of the current 1107 calculations.
 
+Runner context has an additional dependency on the exact imported runner manifest; follow the [dedicated sequence below](#runner-context-refresh) after importing the supporting study and lookup.
+
 ## Validate, import and publish
 
 ZIP each output's contents with the registered pack folder at archive root. The broad archive must have all 33 registry entries; the personalized archive must have only `ext_personalized_guide`. Validate both before replacing their owned public folders:
@@ -52,6 +54,8 @@ python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --
 python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107
 npm ci
 python analysis/import_public_explorer.py --input /path/to/1107-explorer
+python analysis/build_runner_context.py --input /path/to/1107-input --output /path/to/1107-runner-context
+python analysis/import_runner_context.py --input /path/to/1107-runner-context
 npm run verify:data
 npm run build
 ```
@@ -59,6 +63,26 @@ npm run build
 Review and copy the weather JSON to `public/data/weather/evidence.json` with its exact `analysis/weather-release.json` pin; update `analysis/release.json` with the validated main outputs. The weather file is outside the two ZIP importer contracts. Verify source/script/policy hashes, raw-to-eligible and weather-cohort reconciliation, all candidate gates, dynamic routes, exact source labels and display units. For the current audited release, `calculation_provenance.py` requires the exact reviewed builder and supporting-script hashes before either import; a valid-looking 64-character hash is insufficient. Website data validation repeats these checks on PRs and main. Review the full diff before committing or merging. Verify the deployed source tags and exact commit separately after publication.
 
 Every active analysis must now use the same adopted release. The supporting-study and runner importer replaces only `public/data/study`, `public/data/runners` and current `live.json` compatibility metadata. It validates every shard, all 4,207,456 records, all 3,328,159 eligible timings, name-index membership and calculation/source hashes before import. Historical S/R/RN/P numerical files remain in Git history, outside deployed output. The source pin alone never certifies a refresh.
+
+## Runner context refresh
+
+The context builder uses `analysis/release.json` and requires the verified FULL directory containing `full.tar.gz`, `MANIFEST.json`, `provenance.json` and extracted inputs. It checks the source against the existing runner lookup. Its initial implementation explicitly supports the audited 1107 release; adopting a future tag requires reviewing the source/edition policy, rebuilding the lookup and updating the release-gated contracts together.
+
+Install Python requirements and Node dependencies first. Refresh and import the runner lookup before this sequence when its source or calculation changes. Use a fresh output directory:
+
+```bash
+python analysis/build_runner_context.py --input /path/to/1107-input --output /path/to/1107-runner-context --runners public/data/runners
+python analysis/import_runner_context.py --input /path/to/1107-runner-context --check-only
+python analysis/import_runner_context.py --input /path/to/1107-runner-context
+npm run verify:data
+npm run build
+```
+
+`--runners` defaults to the repository's `public/data/runners`. The importer invokes the full Node verifier before any replacement. It stages only `manifest.json` and the listed edition shards, then replaces only `public/data/runner-context`, restoring the prior directory if the swap fails. Its optional `--output` is the **parent** public-data directory, not the runner-context folder; validation still binds to this repository's runner manifest. No other data folder or release pin is modified.
+
+For a standalone calculation audit, run `node scripts/verify-runner-context.cjs --data-root /path/to/1107-runner-context`. It verifies every context shard, all group/CDF counts against the published eligible runner records, and 16 independently recomputed pacing-quartile samples. `npm run verify:data` also includes the context client and UI checks. A same-tag lookup rebuild changes its manifest hash/timestamp and invalidates older context; rebuild rather than relabeling the context manifest.
+
+The [Runner context and peers workflow](../.github/workflows/runner-context.yml) runs on relevant pull-request paths or manual dispatch. It downloads the pinned FULL, calculates against the checked-in runner manifest, runs the independent verifier and uploads **`runner-context`** for 30 days. It does not import, change the pin, merge or deploy. Download/extract the artifact into an input directory for the importer, inspect the exact source/code revision, and preserve durable verification evidence before CI artifacts expire. Check pending/local/publication status in [RUNNER_CONTEXT_AND_PEERS.md](RUNNER_CONTEXT_AND_PEERS.md).
 
 ## Producer operations and missing information
 

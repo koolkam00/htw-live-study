@@ -2,7 +2,7 @@ import RunnerSearch from '@/components/RunnerSearch';
 
 export const metadata = {
   title: 'Find your races | Marathon Pacing Study',
-  description: 'Search recorded runner names, choose your race results, and explore your finish times and pacing through the marathon.',
+  description: 'Find your recorded races and compare pacing, age and gender peers, weather and supplied course elevation.',
 };
 
 export default function RunnersPage() {

@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { UnitLink as Link, useUnits } from './UnitsProvider';
 import { distanceLabel, paceLabel, type UnitSystem } from '@/lib/units';
+import RunnerContext from './RunnerContext';
 import { sourceLabel, sourceReleaseHref } from '@/lib/data-source';
 import {
   loadRunnerManifest, loadRunnerProfile, normalizeRunnerName, runnerDuration, runnerProgression, runnerSearchPage, searchRunnerNames, RUNNER_PAGE_SIZE,
-  type RunnerManifest, type RunnerMatch, type RunnerMetrics, type RunnerProfile, type RunnerRace,
+  type RunnerManifest, type RunnerMatch, type RunnerProfile, type RunnerRace,
 } from '@/lib/runner-search';
 
 const count = (value: number) => value.toLocaleString('en-US');
@@ -16,37 +17,12 @@ const raceLabel = (race: RunnerRace, manifest: RunnerManifest) => {
 };
 const percent = (value: number) => Math.abs(value).toFixed(1) + '%';
 const changeDescription = (value: number) => Math.abs(value) < 0.05 ? 'the same pace' : `${percent(value)} ${value > 0 ? 'slower' : 'faster'}`;
-const comparisonDescription = (value: number) => `${changeDescription(value)} ${Math.abs(value) < 0.05 ? 'as' : 'than'}`;
 const finishLabel = (race: RunnerRace) => race.raw_times?.[8] || runnerDuration(race.times[8]);
 const errorMessage = (error: unknown) => error instanceof Error ? error.message : 'The records could not load. Please try again.';
-
-function RacePacing({ race, metrics, manifest, units }: { race: RunnerRace; metrics: RunnerMetrics; manifest: RunnerManifest; units: UnitSystem }) {
-  const maxPace = Math.max(...metrics.sections.map(section => section.pace));
-  return <section className="runner-pacing" aria-labelledby="runner-pacing-title">
-    <h3 id="runner-pacing-title">Pace through {raceLabel(race, manifest)}</h3>
-    <p className="control-help">Each bar is a recorded timing section. A longer bar means a slower pace.</p>
-    <div className="runner-section-bars">
-      {metrics.sections.map(section => <div className="runner-section-row" key={section.end}>
-        <span>{distanceLabel(section.start, units)}–{distanceLabel(section.end, units)}</span>
-        <div className="runner-section-track" aria-hidden="true"><div style={{ width: `${100 * section.pace / maxPace}%` }} /></div>
-        <strong>{paceLabel(section.pace, units)}</strong>
-      </div>)}
-    </div>
-    <p className="chart-note">Early pace covers {distanceLabel(5, units)}–{distanceLabel(20, units)}; late pace covers {distanceLabel(30, units)}–finish. The source records sections of {distanceLabel(5, units)}, then a final {distanceLabel(2.195, units)}. These are not individual-mile splits or actual halfway readings.</p>
-    <details className="table-disclosure"><summary>See exact checkpoint readings</summary>
-      <p className="control-help">Elapsed and section times are shown to the nearest millisecond. Displayed pace is rounded to the nearest second per {units === 'mi' ? 'mile' : 'kilometre'}.</p>
-      <div className="runner-table-wrap"><table><caption className="sr-only">Recorded elapsed times and calculated section pace</caption><thead><tr><th scope="col">Checkpoint</th><th scope="col">Elapsed</th><th scope="col">Section time</th><th scope="col">Section pace</th></tr></thead><tbody>
-        {metrics.sections.map(section => <tr key={section.end}><th scope="row">{distanceLabel(section.end, units)}</th><td>{runnerDuration(section.cumulative)}</td><td>{runnerDuration(section.elapsed)}</td><td>{paceLabel(section.pace, units)}</td></tr>)}
-      </tbody></table></div>
-    </details>
-  </section>;
-}
 
 export function SelectedAnalysis({ races, manifest, units }: { races: RunnerRace[]; manifest: RunnerManifest; units: UnitSystem }) {
   const progression = useMemo(() => runnerProgression(races, manifest), [races, manifest]);
   const valid = progression?.valid || [];
-  const [chosenId, setChosenId] = useState<number | null>(null);
-  const chosen = valid.find(row => row.race.id === chosenId) || valid[valid.length - 1];
   if (!progression) return <section className="empty-comparison" aria-labelledby="runner-analysis-title">
     <p className="eyebrow">Your selected records</p><h2 id="runner-analysis-title">These records cannot support a pacing analysis.</h2>
     <p>They are still part of the database. The reasons shown with each race explain why its timings or edition are excluded. Choose another recorded result to explore pacing.</p>
@@ -61,13 +37,7 @@ export function SelectedAnalysis({ races, manifest, units }: { races: RunnerRace
     <div className="runner-table-wrap"><table><caption>All eligible races you selected</caption><thead><tr><th scope="col">Race</th><th scope="col">Finish</th><th scope="col">Average pace</th><th scope="col">Late vs early pace</th></tr></thead><tbody>
       {valid.map(({ race, metrics }) => <tr key={race.id}><th scope="row">{raceLabel(race, manifest)}</th><td>{runnerDuration(metrics.finish)}</td><td>{paceLabel(metrics.pace, units)}</td><td>{changeDescription(metrics.lateChange)}</td></tr>)}
     </tbody></table></div>
-    <div className="runner-focus">
-      <label htmlFor="runner-focus-race">Look closer at a race<select id="runner-focus-race" value={chosen.race.id} onChange={event => setChosenId(Number(event.target.value))}>{valid.map(({ race, metrics }) => <option key={race.id} value={race.id}>{raceLabel(race, manifest)} · {runnerDuration(metrics.finish)} · record {race.id}</option>)}</select></label>
-      <h3>Late in this race, you ran {comparisonDescription(chosen.metrics.lateChange)} your early pace.</h3>
-      <p>The opening section was {comparisonDescription(chosen.metrics.openingChange)} the early baseline. These are comparisons of your recorded paces; they do not establish why your pace changed.</p>
-    </div>
-    <RacePacing race={chosen.race} metrics={chosen.metrics} manifest={manifest} units={units} />
-    <p className="runner-next"><Link href={`/analyses/pacing-pattern?race=${encodeURIComponent(manifest.editions[chosen.race.edition].city)}&goal=${Math.round(chosen.metrics.finish / 60)}&age=all&gender=all`}>Explore pacing comparisons across the study <span aria-hidden="true">→</span></Link></p>
+    <RunnerContext races={races} manifest={manifest} units={units} />
   </section>;
 }
 
@@ -143,7 +113,7 @@ export default function RunnerSearch() {
   const orderedRaces = useMemo(() => profile && manifest ? [...profile.races].sort((a, b) => manifest.editions[b.edition].year - manifest.editions[a.edition].year || a.id - b.id) : [], [profile, manifest]);
 
   return <article className="runner-page">
-    <header className="directory-heading"><p className="eyebrow">Your races in the study</p><h1>Find your name.<br /><span>Understand your pacing.</span></h1><p>Search the recorded results, choose the races that belong to you, and explore how your pace changed along the course.</p></header>
+    <header className="directory-heading"><p className="eyebrow">Your races in the study</p><h1>Find your name.<br /><span>Understand your pacing.</span></h1><p>Search the recorded results, choose the races that belong to you, and explore your pacing, race-day conditions and results beside similar runners.</p></header>
     <form className="comparison-controls runner-search-form" role="search" onSubmit={event => {
       event.preventDefault(); if (!manifest) return;
       const next = new URL(window.location.href); next.searchParams.set('q', query.trim()); next.searchParams.set('units', units);

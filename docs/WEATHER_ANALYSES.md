@@ -1,6 +1,6 @@
 # Weather evidence and publication decisions
 
-Recalculated September 11, 2026, from `private-export-20260911-1107`. [analysis/weather-release.json](../analysis/weather-release.json) and [analysis/release.json](../analysis/release.json) now select the same audited source for weather, the ten interactive analyses and all 33 extension packs. The original core study remains a dated historical snapshot. See the [full refresh audit](REFRESH_20260911_1107.md) for source checks and edition exclusions. Deployment is recorded separately from calculation.
+Recalculated September 11, 2026, from `private-export-20260911-1107`. [analysis/weather-release.json](../analysis/weather-release.json) and [analysis/release.json](../analysis/release.json) select the same audited source for weather, the ten interactive analyses and all 33 extension packs. The [subsequent supporting study](CURRENT_SITE_AND_RUNNER_SEARCH.md) also uses this source; older core figures remain historical evidence in Git history. See the [full refresh audit](REFRESH_20260911_1107.md) for source checks and edition exclusions. Deployment is recorded separately from calculation.
 
 ## What was tested
 
@@ -36,7 +36,9 @@ Course means the supplied city, not a historically verified route. The model can
 
 ## Site behavior and reproduction
 
-The original ten remain ranked together. The two new questions appear under “Conditions, in more detail” on the homepage and directory, and are linked from the existing temperature page. Only candidates with a ready decision receive a route. Page-level source labels show the exact release tag, so successive same-day uploads remain distinguishable. About describes the shared current source and separately dates the original core study.
+The original ten remain ranked together. The two new questions appear under “Conditions, in more detail” on the homepage and directory, and are linked from the existing temperature page. Only candidates with a ready decision receive a route. Page-level source labels show the exact release tag, so successive same-day uploads remain distinguishable. About describes the shared current source.
+
+The separate [runner-context extension](RUNNER_CONTEXT_AND_PEERS.md) displays supplied weather facts for a selected edition without refitting this association model or applying its coefficient to a runner. Its weather joins reuse start-hour validation and additionally check all five displayed hours and source units. It covers 233 raw editions; the association screen remains 177 eligible editions with its own minimum field-size and statistical gates. Precipitation, cloud and pressure shown as runner context do not become model terms. The extension's publication status is recorded separately.
 
 The units control converts weather display too: °F temperature changes and mph in miles mode, °C changes and km/h in kilometres mode. Temperature changes never receive the +32 offset used for absolute Fahrenheit temperatures. The percentage-point estimate, uncertainty and sample stay unchanged. A course selector browses unadjusted edition observations and an accessible table; it does not refit or personalize the adjusted result. Course browsing is shareable through `course=` and retained through unit changes.
 

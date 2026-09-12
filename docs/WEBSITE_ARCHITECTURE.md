@@ -1,6 +1,6 @@
 # Website architecture
 
-Current implementation includes same-release supporting analyses and `/runners` name lookup on `codex/runner-search-current-data`. Validation and deployment of these changes remain separate from the prior PR #35 refresh; see [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md).
+Current implementation extends `/runners` with peer comparisons and environmental context on `codex/runner-context-and-peers`, using the same 1107 source as the existing site. The new local calculation is complete; publication remains separately verified. See [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) and [runner-context contracts/status](RUNNER_CONTEXT_AND_PEERS.md).
 
 ## Runtime and routes
 
@@ -20,7 +20,7 @@ The primary ten are accompanied by any weather candidates that pass the fixed sc
 | /courses and /courses/[city] | app/courses; lib/course-data.ts | Course-specific supporting summaries |
 | /your-race | Legacy personalized entry | Client compatibility redirect preserving mapped question hashes and profile query parameters |
 | /research/personalized | Archived PersonalizedGuide | All twelve backing questions in the earlier guide layout |
-| /runners | app/runners/page.tsx; RunnerSearch | Search recorded names, confirm candidate races and compare recorded performances |
+| /runners | app/runners/page.tsx; RunnerSearch / RunnerContext | Search names, confirm races, compare recorded performances and same-edition peers, inspect weather/current-route context |
 | /methodology | app/methodology/page.tsx | Definitions, cohorts and limitations |
 
 [lib/ten-analyses.ts](../lib/ten-analyses.ts) is the primary ordering and route registry: pacing pattern, opening pace, checkpoint, section differences, courses, weather, terrain, target context, improvement and age. The [ten-analysis guide](TOP_TEN_ANALYSES.md) maps these pages to data and limitations. The 35-question catalog in `lib/question-catalog.ts` and 33 broad extension packs remain a research archive; the personalized catalog retains 12 backing calculation paths. These are overlapping views, not independent datasets. `/your-race#guide-{id}` maps the primary ten to their new analysis pages; `#guide-downhill` and `#guide-return` open the retained twelve-question guide at `/research/personalized`. The `/packs` archive links to the ten and keeps the twelve-question list collapsed.
@@ -37,7 +37,9 @@ Current policy exposes source code, full runner exports, database snapshots and 
 
 5. **Public runner lookup:** `analysis/build_runner_lookup.py` writes `public/data/runners/manifest.json` plus compressed name-index and profile shards. `/runners` loads the manifest and relevant shards, verifies their digests and release tag, then lets visitors select their recorded races. Candidate linkage is not independent identity verification; same-name records are never silently merged. The manifest covers all raw records, including those excluded from aggregate analysis, and reports unnamed records explicitly.
 
-Course pages use `lib/course-data.ts` and only `ext_course_pacing_profiles` for both names and plots. Sparse or excluded courses do not fall back to old `live.json` rows. The supporting study, broad questions, personalized engine, weather and search manifest must all match the common release pin before publication.
+6. **Runner context:** `analysis/build_runner_context.py` writes `public/data/runner-context/manifest.json` and 240 compressed edition shards. `lib/runner-context.ts` loads the selected editions, validates source/edition identity and compressed transport, and computes exact finish placement plus achieved-time pacing comparisons. `RunnerContext` exposes pacing, similar-runner and conditions views. The context manifest is bound to the exact runner-manifest hash/timestamp, not merely its release tag. The independent publication verifier checks that binding and recounts all peer finish distributions from the runner shards. Loading has three concurrent requests and a three-edition cache; the full context dataset is not needed to open the page.
+
+Course pages use `lib/course-data.ts` and only `ext_course_pacing_profiles` for both names and plots. Sparse or excluded courses do not fall back to old `live.json` rows. The supporting study, broad questions, personalized engine, weather, search and runner context must all match the common release pin before publication.
 
 ## Primary explorer and personalized semantics
 

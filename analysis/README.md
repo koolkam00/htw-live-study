@@ -1,6 +1,6 @@
 # Marathon pacing analysis pipeline
 
-The current full-refresh source is **`private-export-20260911-1107`**. Its verified input contains 4,207,456 raw and feature rows; the reviewed timing/source-quality cohort contains 3,328,159 eligible finishes. Calculation, import and publication are distinct statuses recorded in [the refresh report](../docs/REFRESH_20260911_1107.md). Use the exact tag and current source commit when reproducing results.
+The current full-refresh source is **`private-export-20260911-1107`**. Its verified input contains 4,207,456 raw and feature rows; the reviewed timing/source-quality cohort contains 3,328,159 eligible finishes. Calculation, import and publication are distinct statuses recorded in the [initial refresh](../docs/REFRESH_20260911_1107.md), [supporting-study/search update](../docs/CURRENT_SITE_AND_RUNNER_SEARCH.md) and [runner-context update](../docs/RUNNER_CONTEXT_AND_PEERS.md). Use the exact tag and current source commit when reproducing results.
 
 The pipeline calculates eight foundation and 25 extended packs, plus the 12-path personalized engine supplying the [essential ten](../docs/TOP_TEN_ANALYSES.md). A separate [weather screen](../docs/WEATHER_ANALYSES.md) evaluates humidity, four-hour warming and wind and publishes only supported candidates. The 33 broad packs form the research archive. Group running and congestion remain limited by missing physical-proximity/start-offset measurements.
 
@@ -60,6 +60,8 @@ Review weather input identity, policy/script hashes, cohort reconciliation, all 
 ```bash
 npm ci
 python analysis/import_public_explorer.py --input /path/to/1107-explorer
+python analysis/build_runner_context.py --input /path/to/1107-input --output /path/to/1107-runner-context
+python analysis/import_runner_context.py --input /path/to/1107-runner-context
 npm run verify:data
 npm run build
 ```
@@ -113,3 +115,21 @@ A profile is a supplied non-ambiguous identity passing the same consistency chec
 Individual comparisons use only selected eligible finishes. Early pace covers 5–20 km, late pace 30 km–finish, and the opening is 0–5 km; section plots retain the actual nine timing intervals. Finish progression compares recorded years, without inventing within-year chronology. Neither the fastest selected finish nor a source identity is a verified lifetime best/person. Browser and publication tests verify unambiguous unit conversion, exclusion behavior, query handling and shard integrity.
 
 Threshold comparisons in the supporting study allow a ratio tolerance of 1e−12 solely for binary rounding. Exact decimal boundaries are included; values 1e−9 below a boundary remain excluded. Detection, onset and the independent runner-data recount use the same convention.
+
+## Same-edition peers and environmental context
+
+`build_runner_context.py` invokes the shared eligible-cohort calculation, `runner_peers.py` and `runner_environment.py`. It verifies the FULL archive/manifest and four used Parquet members, then requires the source, cohort, policy and ordered editions to agree with the exact runner manifest. The output is a context manifest plus one deterministic gzip JSON shard for each of the 240 raw editions. Its initial release gate is the audited 1107 tag. The [complete contracts and coverage](../docs/RUNNER_CONTEXT_AND_PEERS.md) document calculation and publication evidence separately.
+
+Peer groups are exact city/year/race, with All, recorded Men/Women, exact-age bands and combined demographics. Each group and achieved-time pacing cell requires 101 finishes. Finish distributions preserve times to milliseconds; finish percentiles exclude the selected record and give other ties half weight. Group medians and pace quartiles include the selected record. Pace bands are half-open 15-minute intervals centered on the nearest 15-minute finish, not pre-race ability or declared goals. Late change compares 30 km–finish pace against 5–20 km pace. Between-race section differences add to the signed finish difference without weather, terrain or fitness correction.
+
+Weather joins one valid city/year row to the matching race name and verifies five exact archive hours, units and provenance. Missing/invalid fields remain absent with reasons. Terrain requires one matching supplied course and nine consistent sections; it keeps independent gain/loss/net sums, separate whole-profile totals/distances and unknown historical validity. The 1107 context covers 233 weather editions and 238 terrain editions. It does not fit a new weather model, infer personal exposure or adjust finish times.
+
+After importing the runner lookup, use a fresh context output directory:
+
+```bash
+python analysis/build_runner_context.py --input /path/to/1107-input --output /path/to/1107-runner-context --runners public/data/runners
+python analysis/import_runner_context.py --input /path/to/1107-runner-context --check-only
+python analysis/import_runner_context.py --input /path/to/1107-runner-context
+```
+
+The importer requires Node on PATH and runs the full independent verifier before replacing only `public/data/runner-context`. `--output` optionally selects its parent directory and defaults to `public/data`; it does not redirect the verifier's reference runner dataset. Refreshing the lookup requires a context rebuild even at the same tag because the runner-manifest hash/timestamp is part of the contract. The **Runner context and peers** workflow uploads `runner-context` without importing or deploying. Full `npm run verify:data` includes every CDF recount, 16 independent pacing-quartile samples, client tests and UI checks; finish with `npm run build` and separate production verification. See [operations](../docs/OPERATIONS.md#runner-context-refresh).
