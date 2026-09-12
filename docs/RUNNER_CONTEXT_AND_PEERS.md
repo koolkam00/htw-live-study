@@ -1,6 +1,6 @@
 # Runner comparisons and environmental context
 
-Implementation record for `codex/runner-context-and-peers`, September 12, 2026 UTC. Source remains **`private-export-20260911-1107`**. This extends the [public runner search](CURRENT_SITE_AND_RUNNER_SEARCH.md); it does not replace the ten primary analyses or change their source pin. The full local calculation is complete. Import, CI, browser verification and production publication must be recorded separately; this document does not certify deployment.
+Implementation record for `codex/runner-context-and-peers`, September 12, 2026 UTC. Source remains **`private-export-20260911-1107`**. This extends the [public runner search](CURRENT_SITE_AND_RUNNER_SEARCH.md); it does not replace the ten primary analyses or change their source pin. The full calculation, controlled import, website checks and browser QA are complete. [PR #37](https://github.com/koolkam00/htw-live-study/pull/37) records CI, merge and production verification separately; this calculation record alone does not certify deployment.
 
 ## What the runner view adds
 

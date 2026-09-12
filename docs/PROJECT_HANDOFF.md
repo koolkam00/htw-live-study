@@ -1,6 +1,6 @@
 # Project handoff
 
-Updated September 12, 2026 UTC for runner context and peer comparisons on `codex/runner-context-and-peers`. All analytical inputs remain **`private-export-20260911-1107`**. The [runner-context record](RUNNER_CONTEXT_AND_PEERS.md) documents the completed local calculation and pending publication. The [prior refresh record](REFRESH_20260911_1107.md) and [supporting-study/name-search record](CURRENT_SITE_AND_RUNNER_SEARCH.md) describe preceding changes; they do not certify deployment of this extension.
+Updated September 12, 2026 UTC for runner context and peer comparisons on `codex/runner-context-and-peers`. All analytical inputs remain **`private-export-20260911-1107`**. The [runner-context record](RUNNER_CONTEXT_AND_PEERS.md) documents the calculation and verification evidence, with publication tracked in [PR #37](https://github.com/koolkam00/htw-live-study/pull/37). The [prior refresh record](REFRESH_20260911_1107.md) and [supporting-study/name-search record](CURRENT_SITE_AND_RUNNER_SEARCH.md) describe preceding changes; they do not certify deployment of this extension.
 
 ## Read in order
 
@@ -49,7 +49,7 @@ The sustained-slowdown calculation uses contiguous recorded sections totaling at
 
 Candidates use screened supplied identities where available, otherwise one record per candidate. Names never establish cross-race identity. Every performance comparison is limited to the visitor's selected recorded races and eligible timings; an observed best is not necessarily a lifetime best. Search and full-data downloads are public, with no account requirement.
 
-The new runner-context pipeline adds exact same-edition finish comparisons by recorded gender and exact-age band, achieved-time pacing quartiles, selected-race section differences, and validated weather/current-route context. It binds its 240 edition shards to the exact runner manifest; lookup refreshes therefore require a context rebuild even at the same release tag. Its local calculation covers 3,328,159 eligible finishes, 1,602 peer groups and 12,674 pace groups. Weather matches 233 raw editions and terrain 238; gaps and proxy limits remain explicit. See [methods, coverage and pending publication](RUNNER_CONTEXT_AND_PEERS.md) and the [refresh commands](OPERATIONS.md#runner-context-refresh).
+The new runner-context pipeline adds exact same-edition finish comparisons by recorded gender and exact-age band, achieved-time pacing quartiles, selected-race section differences, and validated weather/current-route context. It binds its 240 edition shards to the exact runner manifest; lookup refreshes therefore require a context rebuild even at the same release tag. Its local calculation covers 3,328,159 eligible finishes, 1,602 peer groups and 12,674 pace groups. Weather matches 233 raw editions and terrain 238; gaps and proxy limits remain explicit. See [methods, coverage and verification](RUNNER_CONTEXT_AND_PEERS.md) and the [refresh commands](OPERATIONS.md#runner-context-refresh).
 
 ## Public access and operations
 

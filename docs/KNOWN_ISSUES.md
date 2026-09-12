@@ -1,6 +1,6 @@
 # Known issues and evidence status
 
-Updated September 12, 2026 for `private-export-20260911-1107`. The new [runner-context verification record](RUNNER_CONTEXT_AND_PEERS.md) distinguishes its completed local calculation from pending publication. The [supporting-study/search record](CURRENT_SITE_AND_RUNNER_SEARCH.md) and [1107 refresh record](REFRESH_20260911_1107.md) describe preceding changes. Historical failures do not establish that the newest export remains broken.
+Updated September 12, 2026 for `private-export-20260911-1107`. The new [runner-context verification record](RUNNER_CONTEXT_AND_PEERS.md) distinguishes its calculation evidence from publication evidence in [PR #37](https://github.com/koolkam00/htw-live-study/pull/37). The [supporting-study/search record](CURRENT_SITE_AND_RUNNER_SEARCH.md) and [1107 refresh record](REFRESH_20260911_1107.md) describe preceding changes. Historical failures do not establish that the newest export remains broken.
 
 | Priority/status | Issue | Current evidence | Next action |
 | --- | --- | --- | --- |
