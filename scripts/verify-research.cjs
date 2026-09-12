@@ -17,7 +17,7 @@ require.extensions['.ts'] = (module, filename) => module._compile(
 );
 
 const { parseCsv, finite, formatNumber } = require('../lib/csv.ts');
-const { getQuestions, getStudyAnswer, getExtraAnswer, getWallTimingAnswer, getCoursePacingChart, liveRows, getLive, table } = require('../lib/research-data.ts');
+const { getQuestions, getStudyAnswer, getExtraAnswer, getWallTimingAnswer, getCoursePacingChart, getStudyEvidence, table } = require('../lib/research-data.ts');
 const { getStudyFigures } = require('../lib/study-figures.ts');
 const { EXTRA_TITLES, QUESTIONS, THEMES } = require('../lib/question-catalog.ts');
 const { PACKS } = require('../lib/packs.ts');
@@ -131,16 +131,14 @@ for (const chart of questions.find(q => q.id === 'r26_pacing_over_20y').charts) 
   }
 }
 
-// The course profile must integrate to zero over distance, including the short finish segment.
+// Every course view must serve the current individually normalized median profile.
+// A median curve need not integrate to zero; normalization is checked per runner
+// by the raw-data builder before aggregation.
 const profiles = getCoursePacingChart();
+assert.deepEqual(profiles.rows, newProfiles);
 assert.ok(profiles.rows.length, 'Complete course profiles must be available');
 for (const city of new Set(profiles.rows.map(row => row.city))) {
-  let previous = 0, weightedChange = 0;
-  for (const row of profiles.rows.filter(row => row.city === city)) {
-    weightedChange += row.value * (row.label - previous); previous = row.label;
-  }
-  assert.equal(previous, 42.195, `${city}: incomplete full-course profile`);
-  assert.ok(Math.abs(weightedChange) < 1e-8, `${city}: profile was not weighted by actual section distance`);
+  assert.deepEqual(profiles.rows.filter(row => row.city === city).map(row => row.label), MARATHON_SECTION_ENDS);
 }
 
 const improved = JSON.parse(fs.readFileSync('public/data/packs/ext_performance_profiles/summary.json', 'utf8')).statistics;
@@ -180,23 +178,20 @@ for (const id of ['r16_groups_hold_or_fall', 'r33_start_congestion']) {
   assert.ok(question.nextAnalysis?.measure && question.nextAnalysis?.compare && question.nextAnalysis?.needs, `${id}: missing research specification`);
 }
 
-const live = getLive();
-assert.ok(['ready', 'ok'].includes(live?.status), 'This check requires a published study snapshot');
-const cities = liveRows('t1');
-const total = cities.reduce((sum, row) => sum + row.n_records, 0);
-assert.equal(total, live.corpus.n_records, 'Overall results must include every city record, including unknown ages');
-const overallRate = cities.reduce((sum, row) => sum + row.n_records * row.pct_htw, 0) / total;
-const sensitivity = live.figures.fig1.panels.find(panel => panel.title === `LoS ${live.definition.los_km} km`).series.find(series => series.sex === 'all');
-const thresholdIndex = sensitivity.x.indexOf(live.definition.dos);
-assert.ok(Math.abs(overallRate / 100 - sensitivity.y[thresholdIndex]) < 1e-8, 'City totals and threshold-sensitivity results disagree');
-assert.ok(getStudyAnswer().answer.includes(formatNumber(overallRate, '%')));
-
-const severity = table('rn1_wall_severity', 'severity_band_counts.csv');
-assert.ok(severity.some(row => row.severity_band === 'none'), 'The none severity category is data, not a missing value');
-assert.ok(Math.abs(severity.reduce((sum, row) => sum + row.pct, 0) - 100) < .01);
-
-assert.equal(figures.length, Object.keys(live.figures).length, 'Every published study figure must be accessible');
-for (const figure of figures) assert.equal(figure.charts.length, live.figures[figure.id].panels.length, `${figure.id}: a published comparison is missing`);
+const study = getStudyEvidence();
+assert.ok(study, 'A current supporting study must be published');
+const total = study.n;
+const cities = study.overview.charts[0].rows;
+assert.equal(cities.reduce((sum, row) => sum + row.n_value, 0), total);
+const overallRate = cities.reduce((sum, row) => sum + row.n_value * row.value, 0) / total;
+assert.ok(Math.abs(overallRate - study.rate) < 1e-8);
+assert.ok(getStudyAnswer().answer.includes(study.rate.toFixed(1) + '%'));
+assert.equal(getStudyAnswer().dataset.exportId, JSON.parse(fs.readFileSync('analysis/release.json')).tag);
+assert.equal(figures.length, study.figures.length);
+assert.deepEqual(figures.map(f=>f.id), ['sensitivity','age','history']);
+assert.ok(Math.abs(study.severity.charts[0].rows.reduce((sum, row) => sum + row.value, 0)-100)<1e-8);
+assert.deepEqual(table('rn1_wall_severity', 'severity_band_counts.csv'), [], 'Legacy tables cannot re-enter the current site');
+for (const figure of figures) assert.equal(figure.releaseTag, study.release_tag);
 const charts = [...questions, ...extras].flatMap(question => question.charts).concat(figures.flatMap(figure => figure.charts));
 for (const chart of charts) {
   assert.ok(chart.rows.length, `${chart.title}: empty chart`);

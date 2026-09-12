@@ -1,6 +1,6 @@
 # Known issues and evidence status
 
-Updated September 11, 2026 for `private-export-20260911-1107`. Calculation, import and deployment status is tracked in [the refresh record](REFRESH_20260911_1107.md). Historical failures do not establish that the newest export remains broken.
+Updated September 11, 2026 for `private-export-20260911-1107`. Current supporting-study and runner-search calculation, import and deployment status is tracked in [the current verification record](CURRENT_SITE_AND_RUNNER_SEARCH.md); the [1107 refresh record](REFRESH_20260911_1107.md) documents the preceding main-analysis refresh. Historical failures do not establish that the newest export remains broken.
 
 | Priority/status | Issue | Current evidence | Next action |
 | --- | --- | --- | --- |
@@ -12,14 +12,15 @@ Updated September 11, 2026 for `private-export-20260911-1107`. Calculation, impo
 | P1 | Historical route validity absent | Both validity-range columns are null in all 32 course profiles | Obtain sourced route intervals; continue labeling terrain as a supplied-route proxy |
 | P1 | Candidate runner identities are not verified people | Canonical raw/feature alignment is verified; cross-race runner IDs still need ambiguity/conflict checks | Retain candidate-identity terminology and earlier-only recomputation; do not use supplied current-inclusive PB/ability as pre-race inputs |
 | P2 | Source metadata defects | Manifest reports itself as 2,286 bytes versus 4,862 actual; obsolete private-data prose contradicts the owner's public policy | Correct future producer metadata; preserve audited immutable input and recorded digests |
-| P2 | Legacy live/core outputs retain an older vintage | Extension builders do not generate `live.json` or original S/R/RN/P packs | Keep source labels explicit; obtain producer-generated replacements before refreshing these files |
+| Implemented and locally verified | Legacy visible analyses used older inputs | Current readers use the new 1107 supporting study or existing 1107 extensions; legacy raw assets are removed from active website publication | Full calculation and aliases verified; consult the current verification record and pull request for CI and production evidence |
+| Implemented and locally verified | Public name lookup | Deterministic public name/profile shards retain raw records and quality explanations; visitors confirm candidate race selection | Complete index, shard checksums, ambiguity, excluded records and browser behavior verified; consult the pull request for publication evidence |
 | Ongoing | Weather decisions can change with new evidence | All three candidates are rerun under the same prespecified gate | Publish only current ready candidates; retain every estimate and withheld decision in the audit |
 | Ongoing | Sparse demographic/historical cohorts | More records need not fill every age/gender/prior-time combination | Recompute availability and retain explicit broadening/unavailable states |
 | Unknown | Direct ingestion service and hosting operations | Snapshots are accessible; live host schedules and production settings are not directly inspected | Obtain the operational handoff before operating those systems |
 | Resolved for newer exports | September 10 packaging/history-schema blockers | September 11 archives have expected members and restored race/name columns | Keep strict archive validation; do not present historical blockers as current failures |
 | Historical | September 7 record-ID mismatch | Its CORE/FULL numeric namespaces differ | Preserve its natural-key join; canonical-ID behavior is release-gated |
 
-The producer feature `valid_splits` population (3,326,908) and the site's final analytical population (3,328,159) are different definitions. The former has 1,022,545 sustained-slowdown flags; this does not refresh legacy live/core charts. The latter includes 36,151 timing-valid finishes with other/unrecorded gender. Missing age or recorded gender alone does not exclude a valid finish from the overall cohort.
+The producer feature `valid_splits` population (3,326,908) and the site's final analytical population (3,328,159) are different definitions. The former has 1,022,545 producer sustained-slowdown flags; the current supporting study independently recalculates its own measure from the latter cohort, so those counts must not be substituted. The latter includes 36,151 timing-valid finishes with other/unrecorded gender. Missing age or recorded gender alone does not exclude a valid finish from the overall cohort.
 
 Held editions are documented in [the release-specific policy](../analysis/source_quality.py) and its output audit. Small size alone is not an exclusion rule. The verified SQLite snapshot passed a read-only integrity check; this does not establish direct access to the running ingestion database or a production restore test.
 

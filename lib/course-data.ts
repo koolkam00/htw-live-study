@@ -1,11 +1,11 @@
-import { liveRows, type ResearchAnswer } from './research-data';
+import type { ResearchAnswer } from './research-data';
 import { extensionForQuestion } from './extension-data';
 
 export function slugifyCity(name: string) { return name.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 
 export function getCourseNames() {
   const extension = extensionForQuestion('s3_course_breaks');
-  return [...new Set([...liveRows('t1').map(row => String(row.city)), ...(extension?.answer.charts[0]?.rows.map(row => String(row.city)) || [])])].sort();
+  return [...new Set(extension?.answer.charts[0]?.rows.map(row => String(row.city)) || [])].sort();
 }
 
 export function getIndividualCourseAnswer(city: string): ResearchAnswer | undefined {

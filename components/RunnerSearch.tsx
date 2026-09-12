@@ -1,0 +1,258 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { UnitLink as Link, useUnits } from './UnitsProvider';
+import { distanceLabel, paceLabel, type UnitSystem } from '@/lib/units';
+import { sourceLabel, sourceReleaseHref } from '@/lib/data-source';
+import {
+  loadRunnerManifest, loadRunnerProfile, normalizeRunnerName, runnerDuration, runnerProgression, runnerSearchPage, searchRunnerNames, RUNNER_PAGE_SIZE,
+  type RunnerManifest, type RunnerMatch, type RunnerMetrics, type RunnerProfile, type RunnerRace,
+} from '@/lib/runner-search';
+
+const count = (value: number) => value.toLocaleString('en-US');
+const raceLabel = (race: RunnerRace, manifest: RunnerManifest) => {
+  const edition = manifest.editions[race.edition];
+  return `${edition.city === 'New York' ? 'New York City' : edition.city} ${edition.year}`;
+};
+const percent = (value: number) => Math.abs(value).toFixed(1) + '%';
+const changeDescription = (value: number) => Math.abs(value) < 0.05 ? 'the same pace' : `${percent(value)} ${value > 0 ? 'slower' : 'faster'}`;
+const comparisonDescription = (value: number) => `${changeDescription(value)} ${Math.abs(value) < 0.05 ? 'as' : 'than'}`;
+const finishLabel = (race: RunnerRace) => race.raw_times?.[8] || runnerDuration(race.times[8]);
+const errorMessage = (error: unknown) => error instanceof Error ? error.message : 'The records could not load. Please try again.';
+
+function RacePacing({ race, metrics, manifest, units }: { race: RunnerRace; metrics: RunnerMetrics; manifest: RunnerManifest; units: UnitSystem }) {
+  const maxPace = Math.max(...metrics.sections.map(section => section.pace));
+  return <section className="runner-pacing" aria-labelledby="runner-pacing-title">
+    <h3 id="runner-pacing-title">Pace through {raceLabel(race, manifest)}</h3>
+    <p className="control-help">Each bar is a recorded timing section. A longer bar means a slower pace.</p>
+    <div className="runner-section-bars">
+      {metrics.sections.map(section => <div className="runner-section-row" key={section.end}>
+        <span>{distanceLabel(section.start, units)}–{distanceLabel(section.end, units)}</span>
+        <div className="runner-section-track" aria-hidden="true"><div style={{ width: `${100 * section.pace / maxPace}%` }} /></div>
+        <strong>{paceLabel(section.pace, units)}</strong>
+      </div>)}
+    </div>
+    <p className="chart-note">Early pace covers {distanceLabel(5, units)}–{distanceLabel(20, units)}; late pace covers {distanceLabel(30, units)}–finish. The source records sections of {distanceLabel(5, units)}, then a final {distanceLabel(2.195, units)}. These are not individual-mile splits or actual halfway readings.</p>
+    <details className="table-disclosure"><summary>See exact checkpoint readings</summary>
+      <p className="control-help">Elapsed and section times are shown to the nearest millisecond. Displayed pace is rounded to the nearest second per {units === 'mi' ? 'mile' : 'kilometre'}.</p>
+      <div className="runner-table-wrap"><table><caption className="sr-only">Recorded elapsed times and calculated section pace</caption><thead><tr><th scope="col">Checkpoint</th><th scope="col">Elapsed</th><th scope="col">Section time</th><th scope="col">Section pace</th></tr></thead><tbody>
+        {metrics.sections.map(section => <tr key={section.end}><th scope="row">{distanceLabel(section.end, units)}</th><td>{runnerDuration(section.cumulative)}</td><td>{runnerDuration(section.elapsed)}</td><td>{paceLabel(section.pace, units)}</td></tr>)}
+      </tbody></table></div>
+    </details>
+  </section>;
+}
+
+export function SelectedAnalysis({ races, manifest, units }: { races: RunnerRace[]; manifest: RunnerManifest; units: UnitSystem }) {
+  const progression = useMemo(() => runnerProgression(races, manifest), [races, manifest]);
+  const valid = progression?.valid || [];
+  const [chosenId, setChosenId] = useState<number | null>(null);
+  const chosen = valid.find(row => row.race.id === chosenId) || valid[valid.length - 1];
+  if (!progression) return <section className="empty-comparison" aria-labelledby="runner-analysis-title">
+    <p className="eyebrow">Your selected records</p><h2 id="runner-analysis-title">These records cannot support a pacing analysis.</h2>
+    <p>They are still part of the database. The reasons shown with each race explain why its timings or edition are excluded. Choose another recorded result to explore pacing.</p>
+  </section>;
+  const { best, earliestYear, latestYear, yearChange } = progression;
+  return <section className="runner-analysis" aria-labelledby="runner-analysis-title">
+    <header className="analysis-finding"><p className="eyebrow">The races you selected</p><h2 id="runner-analysis-title">{valid.length === 1 ? 'One race. A closer look.' : `${count(valid.length)} races. Your recorded progression.`}</h2>
+      <p>{races.length === valid.length ? 'Every selected race passes the timing and edition checks.' : `${count(races.length - valid.length)} selected ${races.length - valid.length === 1 ? 'record is' : 'records are'} excluded from these calculations; the original readings remain visible above.`} These results describe your selection and do not verify who ran each race.</p>
+    </header>
+    <div className="runner-numbers"><div><strong>{runnerDuration(best.metrics.finish)}</strong><span>Fastest selected eligible finish</span><small>{raceLabel(best.race, manifest)}</small></div><div><strong>{paceLabel(best.metrics.pace, units)}</strong><span>Average pace in that race</span><small>Full {distanceLabel(42.195, units)}</small></div><div><strong>{count(valid.length)}</strong><span>Eligible selected {valid.length === 1 ? 'finish' : 'finishes'}</span><small>{earliestYear === latestYear ? earliestYear : `${earliestYear}–${latestYear}`}</small></div></div>
+    {yearChange !== null && <p className="runner-takeaway">Your fastest selected finish in {latestYear} was {Math.abs(yearChange) < 0.0005 ? 'the same time as' : `${runnerDuration(Math.abs(yearChange))} ${yearChange > 0 ? 'faster' : 'slower'} than`} your fastest selected finish in {earliestYear}. Courses, weather and other conditions may differ.</p>}
+    <div className="runner-table-wrap"><table><caption>All eligible races you selected</caption><thead><tr><th scope="col">Race</th><th scope="col">Finish</th><th scope="col">Average pace</th><th scope="col">Late vs early pace</th></tr></thead><tbody>
+      {valid.map(({ race, metrics }) => <tr key={race.id}><th scope="row">{raceLabel(race, manifest)}</th><td>{runnerDuration(metrics.finish)}</td><td>{paceLabel(metrics.pace, units)}</td><td>{changeDescription(metrics.lateChange)}</td></tr>)}
+    </tbody></table></div>
+    <div className="runner-focus">
+      <label htmlFor="runner-focus-race">Look closer at a race<select id="runner-focus-race" value={chosen.race.id} onChange={event => setChosenId(Number(event.target.value))}>{valid.map(({ race, metrics }) => <option key={race.id} value={race.id}>{raceLabel(race, manifest)} · {runnerDuration(metrics.finish)} · record {race.id}</option>)}</select></label>
+      <h3>Late in this race, you ran {comparisonDescription(chosen.metrics.lateChange)} your early pace.</h3>
+      <p>The opening section was {comparisonDescription(chosen.metrics.openingChange)} the early baseline. These are comparisons of your recorded paces; they do not establish why your pace changed.</p>
+    </div>
+    <RacePacing race={chosen.race} metrics={chosen.metrics} manifest={manifest} units={units} />
+    <p className="runner-next"><Link href={`/analyses/pacing-pattern?race=${encodeURIComponent(manifest.editions[chosen.race.edition].city)}&goal=${Math.round(chosen.metrics.finish / 60)}&age=all&gender=all`}>Explore pacing comparisons across the study <span aria-hidden="true">→</span></Link></p>
+  </section>;
+}
+
+export default function RunnerSearch() {
+  const { units } = useUnits();
+  const [manifest, setManifest] = useState<RunnerManifest | null>(null);
+  const [manifestError, setManifestError] = useState('');
+  const [manifestRetry, setManifestRetry] = useState(0);
+  const [query, setQuery] = useState('');
+  const [searched, setSearched] = useState('');
+  const [matches, setMatches] = useState<RunnerMatch[]>([]);
+  const [page, setPage] = useState(0);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState('');
+  const [profile, setProfile] = useState<RunnerProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState<number | null>(null);
+  const [profileError, setProfileError] = useState('');
+  const [selected, setSelected] = useState<RunnerRace[]>([]);
+  const [confirmed, setConfirmed] = useState<RunnerRace[] | null>(null);
+  const searchController = useRef<AbortController | null>(null);
+  const profileController = useRef<AbortController | null>(null);
+  const profileHeading = useRef<HTMLHeadingElement>(null);
+  const analysisRef = useRef<HTMLDivElement>(null);
+
+  const runSearch = useCallback(async (value: string, source: RunnerManifest) => {
+    searchController.current?.abort(); profileController.current?.abort();
+    const controller = new AbortController(); searchController.current = controller;
+    setProfile(null); setProfileLoading(null); setProfileError(''); setMatches([]); setPage(0); setSearchError('');
+    if (!normalizeRunnerName(value)) { setSearched(''); setSearchError('Enter a recorded name or the beginning of a name.'); setSearchLoading(false); return; }
+    setSearched(value.trim()); setSearchLoading(true);
+    try {
+      const results = await searchRunnerNames(value, source, controller.signal);
+      if (!controller.signal.aborted) { setMatches(results); setSearchLoading(false); }
+    } catch (error) { if (!controller.signal.aborted) { setSearchError(errorMessage(error)); setSearchLoading(false); } }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController(); setManifestError('');
+    loadRunnerManifest(controller.signal).then(source => {
+      if (controller.signal.aborted) return;
+      setManifest(source);
+      const initial = (new URLSearchParams(window.location.search).get('q') || '').slice(0, 120);
+      setQuery(initial); if (initial) void runSearch(initial, source);
+    }).catch(error => { if (!controller.signal.aborted) setManifestError(errorMessage(error)); });
+    return () => { controller.abort(); searchController.current?.abort(); profileController.current?.abort(); };
+  }, [manifestRetry, runSearch]);
+  useEffect(() => {
+    if (!manifest) return;
+    const restore = () => {
+      const value = (new URLSearchParams(window.location.search).get('q') || '').slice(0, 120);
+      setQuery(value); if (value) void runSearch(value, manifest);
+      else { searchController.current?.abort(); profileController.current?.abort(); setSearched(''); setMatches([]); setSearchError(''); setSearchLoading(false); setProfileLoading(null); setProfileError(''); setProfile(null); }
+    };
+    window.addEventListener('popstate', restore); return () => window.removeEventListener('popstate', restore);
+  }, [manifest, runSearch]);
+
+  const openProfile = async (id: number) => {
+    if (!manifest) return;
+    profileController.current?.abort(); const controller = new AbortController(); profileController.current = controller;
+    setProfile(null); setProfileLoading(id); setProfileError('');
+    try {
+      const value = await loadRunnerProfile(id, manifest, controller.signal);
+      if (!controller.signal.aborted) { setProfile(value); setProfileLoading(null); }
+    } catch (error) { if (!controller.signal.aborted) { setProfileError(errorMessage(error)); setProfileLoading(null); } }
+  };
+  useEffect(() => { if (profile) profileHeading.current?.focus({ preventScroll: false }); }, [profile]);
+  const toggleRace = (race: RunnerRace) => {
+    setSelected(previous => previous.some(row => row.id === race.id) ? previous.filter(row => row.id !== race.id) : [...previous, race]);
+    setConfirmed(null);
+  };
+  const visibleMatches = runnerSearchPage(matches, page);
+  const pages = Math.ceil(matches.length / RUNNER_PAGE_SIZE);
+  const orderedRaces = useMemo(() => profile && manifest ? [...profile.races].sort((a, b) => manifest.editions[b.edition].year - manifest.editions[a.edition].year || a.id - b.id) : [], [profile, manifest]);
+
+  return <article className="runner-page">
+    <header className="directory-heading"><p className="eyebrow">Your races in the study</p><h1>Find your name.<br /><span>Understand your pacing.</span></h1><p>Search the recorded results, choose the races that belong to you, and explore how your pace changed along the course.</p></header>
+    <form className="comparison-controls runner-search-form" role="search" onSubmit={event => {
+      event.preventDefault(); if (!manifest) return;
+      const next = new URL(window.location.href); next.searchParams.set('q', query.trim()); next.searchParams.set('units', units);
+      window.history.pushState(null, '', next.pathname + next.search);
+      void runSearch(query, manifest);
+    }}><label htmlFor="runner-name">Recorded name</label><div className="runner-search-fields"><input id="runner-name" name="q" type="search" autoComplete="name" maxLength={120} value={query} onChange={event => setQuery(event.target.value)} placeholder="First name, last name, or both" aria-describedby="runner-name-help" /><button className="button-primary" type="submit" disabled={!manifest || searchLoading}>{searchLoading ? 'Searching…' : 'Find races'}</button></div><p id="runner-name-help" className="control-help">Name order and accents do not matter. You can use the beginning of a name with at least three letters; shorter parts must match a whole recorded name part.</p></form>
+    {!manifest && !manifestError && <p className="loading-message" role="status">Loading search information…</p>}
+    {manifestError && <div className="feedback-error" role="alert"><p>{manifestError}</p><button type="button" onClick={() => setManifestRetry(value => value + 1)}>Try again</button></div>}
+    {searchError && <div className="feedback-error" role="alert"><p>{searchError}</p>{searched && <button type="button" onClick={() => manifest && void runSearch(searched, manifest)}>Try again</button>}</div>}
+    {searchLoading && <p className="loading-message" role="status">Finding matching names…</p>}
+    {manifest && searched && !searchLoading && !searchError && <section className="runner-results" aria-labelledby="runner-results-title">
+      <h2 id="runner-results-title" role="status">{matches.length ? `${count(matches.length)} matching ${matches.length === 1 ? 'record group' : 'record groups'}` : 'No matching recorded name'}</h2>
+      <p className="control-help">{matches.length ? `Results for “${searched}”. People can share a name, and one person can appear in separate groups. Open a match and check the races before combining them.` : 'Try a different spelling, a surname, or fewer name parts. A missing result means this snapshot has no matching name; it does not mean the person has never run a marathon.'}</p>
+      {matches.length > 0 && <ul className="runner-matches">{visibleMatches.map(row => <li key={row[1]}><button className="runner-match" type="button" aria-expanded={profile?.id === row[1]} aria-controls="runner-profile" onClick={() => void openProfile(row[1])}><span><strong>{row[0]}</strong><small>{count(row[2])} {row[2] === 1 ? 'race' : 'races'} · {row[3] === row[4] ? row[3] : `${row[3]}–${row[4]}`} · {row[2] > 1 ? 'Including ' : ''}{row[5]}</small></span><span className="runner-match-action">{profileLoading === row[1] ? 'Loading…' : 'See races'} <span aria-hidden="true">→</span></span></button></li>)}</ul>}
+      {pages > 1 && <nav className="runner-pagination" aria-label="Search result pages"><button type="button" disabled={page === 0} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {count(page + 1)} of {count(pages)} · {count(page * RUNNER_PAGE_SIZE + 1)}–{count(Math.min(matches.length, (page + 1) * RUNNER_PAGE_SIZE))} of {count(matches.length)}</span><button type="button" disabled={page + 1 >= pages} onClick={() => setPage(value => value + 1)}>Next</button></nav>}
+    </section>}
+    {profileError && <div className="feedback-error" role="alert">{profileError} Select the match again to retry.</div>}
+    <div id="runner-profile">{manifest && profile && <section className="runner-profile" aria-labelledby="runner-profile-title"><h2 id="runner-profile-title" tabIndex={-1} ref={profileHeading}>{profile.names.filter(Boolean).join(' / ') || 'Recorded race group'}</h2><p className="control-help">Choose only the races you recognize. The database suggests this grouping; it is not proof that these records belong to one person. You can add races from other search matches to the same selection.</p>
+      <ul className="runner-races">{orderedRaces.map(race => <li className="runner-race" key={race.id}><label><input type="checkbox" checked={selected.some(row => row.id === race.id)} onChange={() => toggleRace(race)} /><span><strong>{raceLabel(race, manifest)}</strong><span className="runner-race-name">{race.name || 'Name not recorded'}</span><small>{manifest.editions[race.edition].race} · {race.age === null ? 'Age not recorded' : `Recorded age ${race.age}${race.age < 18 || race.age > 89 ? ' (outside the usable age range)' : ''}`} · {race.sex ? `Recorded gender ${race.sex}` : 'Gender not recorded'}</small><span className="runner-recorded-finish">Recorded finish: {finishLabel(race)}</span><span className={race.eligible ? 'runner-eligible' : 'runner-ineligible'}>{race.eligible ? 'Eligible for pacing analysis' : `Excluded from pacing analysis: ${race.reason || 'timing or edition quality checks'}`}</span></span></label>
+        {!race.eligible && <details className="runner-raw"><summary>See original recorded checkpoints</summary><div className="runner-table-wrap"><table><caption className="sr-only">Original source readings for record {race.id}</caption><thead><tr><th scope="col">Checkpoint</th><th scope="col">Recorded elapsed time</th></tr></thead><tbody>{manifest.points_km.map((end, i) => <tr key={end}><th scope="row">{distanceLabel(end, units)}</th><td>{race.raw_times?.[i] || runnerDuration(race.times[i])}</td></tr>)}</tbody></table></div><p className="control-help">Record {race.id}. Missing or inconsistent readings are not filled in.</p></details>}
+      </li>)}</ul>
+    </section>}</div>
+    {manifest && selected.length > 0 && <section className="runner-selection" aria-labelledby="runner-selection-title"><h2 id="runner-selection-title">{count(selected.length)} {selected.length === 1 ? 'race' : 'races'} selected</h2><p className="control-help">Review the names and races below. Selecting “Analyze selected races” confirms that you want to compare these records together.</p><ul>{selected.map(race => <li key={race.id}><span>{race.name || 'Name not recorded'} · {raceLabel(race, manifest)} · {finishLabel(race)}{!race.eligible && <small>Excluded from calculations</small>}</span><button type="button" onClick={() => toggleRace(race)} aria-label={`Remove ${race.name}, ${raceLabel(race, manifest)}, record ${race.id}`}>Remove</button></li>)}</ul><div className="runner-selection-actions"><button className="button-primary" type="button" onClick={() => { setConfirmed([...selected]); requestAnimationFrame(() => analysisRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })); }}>Analyze selected races <span aria-hidden="true">→</span></button><button className="button-secondary" type="button" onClick={() => { setSelected([]); setConfirmed(null); }}>Clear selection</button></div></section>}
+    <div ref={analysisRef}>{confirmed && manifest && <SelectedAnalysis races={confirmed} manifest={manifest} units={units} />}</div>
+    {manifest && <footer className="runner-source"><p>{count(manifest.named_records)} race records have searchable names, out of {count(manifest.raw_records)} records in this snapshot. These are finishes and source records, not a count of unique people.</p><p>Source: <a href={sourceReleaseHref(manifest.release_tag)}>{sourceLabel(manifest.input_as_of, manifest.release_tag)}</a>. <a href={sourceReleaseHref(manifest.release_tag)}>Download the complete export</a>.</p><details><summary>How search and analysis work</summary><p>Search matches the recorded name parts after normalizing accents, punctuation and letter case. Suggested groups use the database’s candidate links with consistency checks. Shared names, changed names and incomplete source fields can leave false or separate matches, so you choose the records explicitly.</p><p>All named results can appear, including records with missing timings or excluded editions. Pacing calculations use only selected results that pass the same timing and source-quality checks as the study. Finish-time comparisons are descriptive: they do not adjust for weather, terrain or fitness, and they are not predictions.</p><p>Races are ordered by recorded year. Races in the same year are not assumed to be in chronological order. A fastest selected time is not necessarily a lifetime personal best.</p></details></footer>}
+    <style jsx global>{`
+      .runner-page { max-width:960px; margin-inline:auto; }
+      .runner-search-form { margin-top:0; }
+      .runner-search-form > label { display:block; font-size:.8125rem; font-weight:600; margin-bottom:.5rem; }
+      .runner-search-fields { display:flex; gap:.8rem; }
+      .runner-search-fields input { flex:1; min-width:0; font-size:1rem; }
+      .runner-search-fields button { flex-shrink:0; }
+      .runner-page button:disabled { cursor:default; opacity:.55; }
+      .runner-results,.runner-profile { margin-top:2.5rem; }
+      .runner-results h2,.runner-profile h2,.runner-selection h2 { font-size:1.5rem; font-weight:550; }
+      .runner-matches,.runner-races { list-style:none; padding:0; margin:1.25rem 0 0; }
+      .runner-matches li+li,.runner-races li+li { margin-top:0; }
+      .runner-match { display:flex; justify-content:space-between; align-items:center; gap:1rem; width:100%; border:0; border-top:1px solid var(--rule); border-radius:0; background:transparent; text-align:left; padding:1.2rem .4rem; }
+      .runner-matches li:last-child { border-bottom:1px solid var(--rule); }
+      .runner-match:hover,.runner-match[aria-expanded=true] { background:var(--wash); }
+      .runner-match strong { display:block; font-size:1rem; font-weight:550; overflow-wrap:anywhere; }
+      .runner-match small { display:block; font-size:.75rem; color:var(--slate); margin-top:.25rem; }
+      .runner-match-action { font-size:.8125rem; color:var(--course); flex-shrink:0; }
+      .runner-pagination { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:1rem; }
+      .runner-pagination span { font-size:.75rem; color:var(--slate); text-align:center; }
+      .runner-pagination button { min-height:44px; font-size:.8125rem; }
+      .runner-profile { padding-top:2rem; border-top:1px solid var(--rule); scroll-margin-top:1.5rem; }
+      .runner-race { padding:1.1rem 0; border-top:1px solid var(--rule); }
+      .runner-race > label { display:flex; gap:1rem; cursor:pointer; }
+      .runner-race input { width:20px; height:20px; min-height:20px; margin-top:.25rem; flex-shrink:0; accent-color:var(--course); }
+      .runner-race strong,.runner-race-name,.runner-race small,.runner-recorded-finish,.runner-eligible,.runner-ineligible { display:block; }
+      .runner-race strong { font-size:1rem; font-weight:550; }
+      .runner-race-name { font-size:.875rem; margin-top:.15rem; }
+      .runner-race small { font-size:.75rem; color:var(--slate); margin-top:.15rem; }
+      .runner-recorded-finish { font-size:.875rem; margin-top:.45rem; font-variant-numeric:tabular-nums; }
+      .runner-eligible,.runner-ineligible { font-size:.75rem; margin-top:.25rem; color:var(--slate); }
+      .runner-ineligible { color:#935033; }
+      .runner-raw { margin:.5rem 0 0 2.25rem; }
+      .runner-raw summary { font-size:.75rem; }
+      .runner-selection { background:var(--wash); border-radius:12px; padding:1.5rem; margin-top:2rem; }
+      .runner-selection ul { list-style:none; padding:0; margin:1rem 0; }
+      .runner-selection li { display:flex; justify-content:space-between; align-items:center; gap:.7rem; font-size:.8125rem; padding:.45rem 0; }
+      .runner-selection li small { display:block; color:var(--slate); }
+      .runner-selection li button { border:0; background:transparent; color:var(--course); font-size:.75rem; min-height:44px; }
+      .runner-selection-actions { display:flex; flex-wrap:wrap; gap:.7rem; }
+      .runner-numbers { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.5rem; padding:1rem 0 2rem; }
+      .runner-numbers strong { font-size:clamp(1.5rem,3vw,2.3rem); font-weight:500; letter-spacing:-.04em; font-variant-numeric:tabular-nums; }
+      .runner-numbers span,.runner-numbers small { display:block; font-size:.75rem; color:var(--slate); }
+      .runner-numbers small { margin-top:.25rem; }
+      .runner-takeaway { font-size:1rem; margin-bottom:1.5rem; max-width:45rem; }
+      .runner-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .runner-table-wrap table { width:100%; border-collapse:collapse; font-size:.8125rem; }
+      .runner-table-wrap caption { text-align:left; color:var(--slate); font-size:.75rem; padding:.5rem 0; }
+      .runner-table-wrap th,.runner-table-wrap td { text-align:left; padding:.7rem .8rem .7rem 0; border-bottom:1px solid var(--rule); font-variant-numeric:tabular-nums; }
+      .runner-table-wrap th { font-weight:500; }
+      .runner-table-wrap thead { color:var(--slate); }
+      .runner-table-wrap td { white-space:nowrap; }
+      .runner-focus { padding:2rem 0 1.5rem; }
+      .runner-focus > label { display:grid; gap:.4rem; font-size:.8125rem; max-width:35rem; color:var(--slate); }
+      .runner-focus select { font-size:.9375rem; }
+      .runner-focus h3 { margin-top:1.5rem; font-size:1.4rem; font-weight:500; }
+      .runner-focus p { font-size:.875rem; color:var(--slate); margin-top:.65rem; }
+      .runner-pacing h3 { font-size:1.125rem; font-weight:550; }
+      .runner-section-bars { margin-top:1.25rem; }
+      .runner-section-row { display:grid; grid-template-columns:10rem minmax(0,1fr) 5.5rem; gap:1rem; align-items:center; padding:.55rem 0; }
+      .runner-section-row > span { font-size:.75rem; color:var(--slate); }
+      .runner-section-row > strong { font-size:.8125rem; font-weight:500; text-align:right; font-variant-numeric:tabular-nums; }
+      .runner-section-track { height:8px; background:var(--wash); border-radius:3px; overflow:hidden; }
+      .runner-section-track > div { height:100%; background:var(--course); border-radius:3px; }
+      .runner-next { padding:1.5rem 0; font-size:.875rem; }
+      .runner-source { border-top:1px solid var(--rule); padding:1.5rem 0 2rem; margin-top:2.5rem; color:var(--slate); font-size:.75rem; }
+      .runner-source summary { font-size:.8125rem; }
+      .runner-source details p { max-width:45rem; }
+      @media(max-width:600px) {
+        .runner-search-fields { display:block; }
+        .runner-search-fields input,.runner-search-fields button { width:100%; }
+        .runner-search-fields button { margin-top:.7rem; }
+        .runner-match { gap:.5rem; padding:1.1rem 0; }
+        .runner-match-action { font-size:.75rem; }
+        .runner-pagination { gap:.5rem; }
+        .runner-selection { padding:1rem; }
+        .runner-selection-actions > button { width:100%; }
+        .runner-numbers { grid-template-columns:1fr 1fr; gap:1.25rem; }
+        .runner-numbers > div:last-child { grid-column:1/-1; }
+        .runner-section-row { grid-template-columns:7.7rem minmax(0,1fr) 4.4rem; gap:.5rem; }
+        .runner-section-row > span { font-size:.625rem; }
+        .runner-section-row > strong { font-size:.75rem; }
+        .runner-focus h3 { font-size:1.25rem; }
+      }
+    `}</style>
+  </article>;
+}

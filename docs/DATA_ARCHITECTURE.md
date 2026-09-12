@@ -10,8 +10,10 @@ Current full-refresh source: **`private-export-20260911-1107`**, created `2026-0
 | Consistent snapshot | Immutable SQLite backup in GitHub Releases | Auditable copy of a specific live-database state, not the active database |
 | CORE export | Eight named files in the release archive | Raw results, overlays, registry, summary, manifest and README |
 | FULL export | The same eight files plus `features.parquet` | Synchronized raw and derived records, including candidate runner linkage |
-| Main analysis input | [release.json](../analysis/release.json) | Source pin for 33 broad packs and the personalized engine |
+| Main analysis input | [release.json](../analysis/release.json) | Common source pin for broad packs, personalized engine, supporting study and runner lookup |
 | Weather input | [weather-release.json](../analysis/weather-release.json) | Separate explicit pin for the three-candidate weather screen |
+| Supporting study | `public/data/study/evidence.json` | Current-source sustained-slowdown, severity and milestone calculations |
+| Runner lookup | `public/data/runners/manifest.json` and compressed shards | Public recorded names and race records, with candidate linkage and quality reasons |
 | Website data | [public/data](../public/data) | Static JSON/CSV consumed during build or fetched by charts; no live SQLite queries |
 
 Backups (`htw-db-*`), exports (`private-export-*`) and pack bundle IDs (`private-*`) are different identifiers. Their legacy names do not determine access. The current policy makes source code, full records, overlays and snapshots publicly downloadable as ordinary unencrypted files; gzip is compression. Prefer Release assets for large files. [ACCESS.md](../analysis/ACCESS.md) gives exact downloads and checksums. Operational credentials are not research data.
@@ -68,8 +70,16 @@ Scheduled-start archive weather is a proxy for personal exposure. It does not es
 
 Course profiles and segments contain supplied geometry, distance, elevation gain/loss/net, coordinates and provenance. All 32 profiles still have null historical validity years. A current supplied route is not a verified historical route, and net elevation can hide mixed climbs and descents. Course and terrain findings remain descriptive proxies.
 
+## Supporting study and name-search contract
+
+`build_public_explorer.py` reads the frozen FULL export and invokes the shared timing parser, source-quality policy and screened history join. Its study output records the common eligible cohort, release tag, input/archive digests, calculation time and script hashes. Sustained episodes require contiguous measured sections at least 25% slower than the 5–20 km baseline, totaling at least 5 km after 20 km. Sensitivity changes the threshold/duration against the same denominator. Severity is average positive slowing over 20–42.195 km weighted by distance; it is a separate measure. Recorded-best history is retrospective and can reflect selection and uneven follow-up.
+
+`build_runner_lookup.py` retains all raw records in profile shards. Source candidate identities pass the same conflict checks; unmatched/ambiguous records become singleton candidates rather than name-based merges. Names are normalized for search with Unicode NFKD, combining-mark removal, lowercase and alphanumeric tokenization. Search and profile shards use deterministic hash partitions and gzip compression. The manifest includes raw/eligible/named/unnamed counts, edition references, timing distances and each shard's SHA-256 and byte size. Shard hashes verify delivery; they are not encryption or identity proof.
+
+Name search can find a record whose incomplete timings prevent analysis. Original timing strings are retained for excluded records, and the UI must explain the reason rather than fabricate a complete race. A public race record and an analytical cohort member are different states. Release pins, supporting study and runner manifest must agree before publication.
+
 ## Historical inspections
 
 September 7 supplied 3,451,055 raw rows, 3,382,000 feature rows and incompatible raw/feature ID namespaces; its original extension cohort had 2,739,842 eligible finishes. September 10 supplied 3,580,279 aligned raw/feature records, but its extra archive members and missing consumer fields blocked that vintage's adoption at the initial takeover. Those are dated compatibility findings, not current 1107 blockers. See the [historical archive audit](evidence/2026-09-11/archive-members-audit.json), [ID audit](evidence/2026-09-11/id-contract-audit.json) and [timing audit](evidence/2026-09-11/timing-unit-contract-audit.json).
 
-Original `live.json` and S/R/RN/P calculations remain their separately labeled historical vintage because their producer-side generator is not present here. Refreshing the extensions and weather does not regenerate those files.
+The old `live.json` charts and S/R/RN/P calculations are retained in Git history. The deployed `live.json` becomes current-release compatibility metadata only, with no old charts. They are no longer website data sources in the current implementation. Current supporting calculations are recomputed by `build_public_explorer.py`; matching route aliases use existing 1107 extensions, and unsupported forecast/course-adjustment outputs remain unavailable. This changes the active calculation path without claiming the old undocumented formulas were reproduced.

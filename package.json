@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "verify:data": "node scripts/verify-research.cjs && node scripts/verify-personalized.cjs && node scripts/verify-ten-analyses.cjs && node scripts/verify-units.cjs && node scripts/verify-weather.cjs"
+    "verify:data": "node scripts/verify-research.cjs && node scripts/verify-personalized.cjs && node scripts/verify-ten-analyses.cjs && node scripts/verify-units.cjs && node scripts/verify-weather.cjs && node scripts/verify-public-explorer.cjs && node scripts/verify-runner-search.cjs"
   },
   "dependencies": {
     "next": "14.2.5",

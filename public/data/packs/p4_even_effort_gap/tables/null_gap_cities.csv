@@ -1,7 +1,0 @@
-city,n_features,n_valid_splits,n_live_gap_covered,course_segments_elev,category,reason
-Athens,107602,0,0,True,elev_but_zero_valid_splits,course_segments elev present; live GAP computable but valid_splits==False for all rows — excluded from analysis filter
-Honolulu,99416,0,0,True,elev_but_zero_valid_splits,course_segments elev present; live GAP computable but valid_splits==False for all rows — excluded from analysis filter
-Mexico City,64968,0,0,True,elev_but_zero_valid_splits,course_segments elev present; live GAP computable but valid_splits==False for all rows — excluded from analysis filter
-Cologne,30057,0,0,True,elev_but_zero_valid_splits,course_segments elev present; live GAP computable but valid_splits==False for all rows — excluded from analysis filter
-Frankfurt,12513,0,0,True,elev_but_zero_valid_splits,course_segments elev present; live GAP computable but valid_splits==False for all rows — excluded from analysis filter
-Melbourne,502,395,0,False,null_elev,no GPX / course_segments — elev gaps stay null; never invent

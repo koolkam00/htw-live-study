@@ -1,6 +1,6 @@
 # Project handoff
 
-Updated September 11, 2026 for the complete refresh to **`private-export-20260911-1107`**, starting from main `ac215cd`. Input verification, full calculation and validated import are complete. Production publication is verified separately. See [the refresh record](REFRESH_20260911_1107.md) for their latest status. A downloadable release is not evidence that the website uses it.
+Updated September 12, 2026 UTC for the current-source supporting study and runner-search implementation on `codex/runner-search-current-data`, following the 1107 refresh. All analytical inputs remain **`private-export-20260911-1107`**. The [prior refresh record](REFRESH_20260911_1107.md) documents PR #35; it does not certify deployment of this subsequent change. See the [current-site and runner-search verification record](CURRENT_SITE_AND_RUNNER_SEARCH.md) for this subsequent change; validation and deployment must be verified separately before claiming it is live.
 
 ## Read in order
 
@@ -31,7 +31,7 @@ This refresh rebuilds the **33 registered extension packs**, the **12-path perso
 
 Weather publication follows the existing evidence rule. A previously published candidate can become withheld and vice versa; all three results remain in the downloadable audit. See [weather methods and decisions](WEATHER_ANALYSES.md).
 
-Legacy `public/data/live.json` and original S/R/RN/P packs remain their dated historical snapshots. This repository's extension builders do not regenerate them. `--live-as-of` records their timestamp as context, not a refresh. A separate producer delivery is needed before replacing those outputs.
+The subsequent implementation removes old `live.json` charts and original S/R/RN/P data as website inputs. `live.json` becomes a small current-release compatibility metadata file, with no historical figures. `build_public_explorer.py` recalculates sustained-slowdown prevalence, onset, threshold sensitivity, age, earlier-performance, recorded-best, severity and milestone summaries into `public/data/study/evidence.json`. Existing S/R aliases use their current extension; old planner/checkpoint entries open current equivalents. Forecast and validated course-adjustment outputs remain explicitly unavailable where the current inputs cannot support them. Historical outputs remain recoverable in Git history and are never relabeled as fresh. The earlier extension metadata’s `live_as_of` field is historical calculation context only. The new supporting calculation has **1,023,450 detected finishes among 3,328,159 eligible finishes (30.7512%)**; the producer’s 1,022,545 count belongs to its different feature-valid cohort.
 
 ## Product and statistical contracts
 
@@ -41,7 +41,13 @@ The initial profile is explicitly All courses / 4:00, all ages, all recorded gen
 
 Miles and minutes per mile are the default display, with a Miles / Kilometres switch and feet for elevation in miles mode. `units=mi|km` takes precedence over the saved preference. Weather converts temperature differences to °F without adding 32 and wind to mph; calculations remain metric. Recorded 5 km sections become 3.11 miles without inventing individual-mile or halfway splits. Visible source labels include the exact release tag to distinguish same-day exports.
 
-The sustained-slowdown definition remains at least 25% slowing for at least 5 km after 20 km relative to the 5–20 km baseline, with the neutral [published-method citation](https://doi.org/10.1371/journal.pone.0251513). Canonical record IDs are not verified cross-race identities: retain ambiguity, gender/birth-year and duplicate-edition checks, and exclude current/same-year results from prior benchmarks.
+The sustained-slowdown calculation uses contiguous recorded sections totaling at least 5 km after 20 km; onset is a section boundary, not an exact moment. The definition remains at least 25% slowing for at least 5 km after 20 km relative to the 5–20 km baseline, with the neutral [published-method citation](https://doi.org/10.1371/journal.pone.0251513). Canonical record IDs are not verified cross-race identities: retain ambiguity, gender/birth-year and duplicate-edition checks, and exclude current/same-year results from prior benchmarks.
+
+## Public runner lookup
+
+`/runners` searches the current release's recorded names and lets visitors confirm which candidate races belong to them. `build_runner_lookup.py` writes compressed, checksummed search/profile shards and a source manifest. The index includes usable named raw records even when their splits or edition are excluded from aggregate analysis. Missing names are counted explicitly; no name is invented. Missing timings and quality reasons remain visible.
+
+Candidates use screened supplied identities where available, otherwise one record per candidate. Names never establish cross-race identity. Every performance comparison is limited to the visitor's selected recorded races and eligible timings; an observed best is not necessarily a lifetime best. Search and full-data downloads are public, with no account requirement.
 
 ## Public access and operations
 

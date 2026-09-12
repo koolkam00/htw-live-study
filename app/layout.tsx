@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="footer-brand"><Link href="/">Marathon Pacing Study</Link><p>Every split tells part of the story.</p></div>
           <nav aria-label="More research">
             <Link href="/analyses">Explore analyses</Link>
+            <Link href="/runners">Find a runner</Link>
             <Link href="/about">About the study</Link>
             <Link href="/methodology">Methods &amp; sources</Link>
             <Link href="/packs">Research archive</Link>
