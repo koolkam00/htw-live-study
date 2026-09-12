@@ -8,8 +8,6 @@ export default function ResearchQuestion({ question, standalone = false, heading
   const { units } = useUnits();
   const text = (value: string) => unitText(value, units);
   const Title = standalone ? 'h1' : headingLevel === 3 ? 'h3' : 'h2';
-  const published = question.published && !isNaN(Date.parse(question.published))
-    ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.published)) : null;
   return <article className="question" id={`q-${question.id}`} aria-labelledby={`title-${question.id}`}>
     {question.aliases.map(alias => <span key={alias} id={`q-${alias}`} />)}
     <header>
@@ -18,7 +16,7 @@ export default function ResearchQuestion({ question, standalone = false, heading
     </header>
     <p className={question.available ? 'answer' : 'answer-state'}>{text(question.answer)}</p>
     {question.detail && <p className="answer-detail">{text(question.detail)}</p>}
-    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} {question.dataset.unit || 'eligible finishes'} · Exported {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(question.dataset.asOf))}{question.dataset.scope && question.dataset.scope !== 'descriptive' ? ` · ${question.dataset.scope}` : ''}</p>}
+    {question.dataset && <p className="study-meta">{new Intl.NumberFormat('en-US').format(question.dataset.n)} {question.dataset.unit || 'eligible finishes'}{question.dataset.scope && question.dataset.scope !== 'descriptive' ? ` · ${question.dataset.scope}` : ''}</p>}
     {question.method[0] && <p className="method-summary"><strong>How we measured it.</strong> {text(question.method[0])}</p>}
     <details className="methodology">
       <summary>Full methodology &amp; sources</summary>
@@ -30,8 +28,7 @@ export default function ResearchQuestion({ question, standalone = false, heading
           <p><strong>Compare:</strong> {text(question.nextAnalysis.compare)}</p>
           <p><strong>Data needed:</strong> {text(question.nextAnalysis.needs)}</p>
         </section>}
-        {published && <p className="study-meta">Results published {published}.</p>}
-        {question.dataset && <p className="study-meta">Source export: {question.dataset.exportId}. Chart samples may be smaller than the eligible analysis cohort.</p>}
+        {question.dataset && <p className="study-meta"><Link href="/about#data-coverage">Marathons, years and recorded data</Link>. Chart samples may be smaller than the eligible analysis cohort.</p>}
         <div className="source-links">
           {question.sources.map((source, i) => <a href={source.href} key={`${source.href}-${i}`}>{source.label}</a>)}
           <Link href="/methodology">Study methodology</Link>

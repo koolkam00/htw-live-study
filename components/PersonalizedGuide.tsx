@@ -177,7 +177,7 @@ export default function PersonalizedGuide({ summary }: { summary: PersonalSummar
       <details className="question-index guide-index"><summary>Explore all 12 personalized questions</summary><ol className="contents-list">{answers.map((answer, i) => <li key={answer.id}><a href={`#guide-${answer.id}`}><span className="contents-number">{i + 1}</span><span>{answer.title}</span></a></li>)}</ol></details>
       <div className="question-list">{answers.map((answer, i) => <Answer key={answer.id} answer={answer} number={i + 1} summary={summary} profile={profile} />)}</div>
     </>}
-    <p className="guide-source study-meta">Data through {new Date(summary.input_as_of).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}. <a href={`${basePath}/data/packs/${GUIDE_PACK}/pack_meta.json`}>Coverage and calculation details</a>. Historical route validity and runners’ declared goals are unavailable.</p>
+    <p className="guide-source study-meta">Marathon results with recorded splits, weather and supplied course profiles. <a href={`${basePath}/data/packs/${GUIDE_PACK}/pack_meta.json`}>Coverage and calculation details</a>. Historical route validity and runners’ declared goals are unavailable.</p>
     <p><Link href="/packs">Explore the broader research archive</Link></p>
   </article>;
 }

@@ -19,10 +19,6 @@ function DashboardInner() {
   const { filters } = useFilters();
   const { data, status, loading, error } = useLiveData(60000);
   const isReady = status === 'ready';
-  const asOf =
-    isReady && data?.as_of && typeof data.as_of === 'string' && data.as_of.length > 0
-      ? new Date(data.as_of).toLocaleString()
-      : 'Live results not yet published';
   const corpus = (data?.corpus ?? { races: null, runners: null, records: null }) as any;
   const displayRaces = (corpus?.races ?? corpus?.n_races) ?? '—';
   const displayRunners = (corpus?.runners ?? corpus?.n_runners) ?? '—';
@@ -39,7 +35,7 @@ function DashboardInner() {
               </div>
               <div className="site-subtitle">Sustained slowdown across recorded marathon finishes</div>
             </div>
-            <div className="badge">As of: {asOf}</div>
+            <div className="badge">{isReady ? 'Recorded marathon results' : 'Results not yet available'}</div>
           </div>
           <div style={{ marginTop: '0.75rem' }} className="stats" role="status">
             <div className="stat">
