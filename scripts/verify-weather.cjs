@@ -25,6 +25,7 @@ const digest = file => crypto.createHash('sha256').update(fs.readFileSync(path.j
 const readJson = file => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 const mainRelease = readJson('analysis/release.json').tag;
 const weatherRelease = readJson('analysis/weather-release.json').tag;
+assert.equal(weatherRelease, mainRelease, 'Every published weather analysis must use the same release as the main study');
 const guideMeta = readJson('public/data/packs/ext_personalized_guide/pack_meta.json');
 const guideSummary = readJson('public/data/packs/ext_personalized_guide/summary.json');
 function checkCohort(cohort) {
@@ -59,6 +60,11 @@ function checkSourceQuality(report, cohort, release, scriptHash) {
 // Publication requires a reproducible calculation and an explicit source vintage.
 assert.equal(evidence.schema_version, 1);
 assert.equal(evidence.input.release_tag, weatherRelease, 'Weather evidence and its explicit source pin must match');
+const readFileSync = fs.readFileSync;
+try {
+  fs.readFileSync = () => JSON.stringify({ ...evidence, input: { ...evidence.input, release_tag: 'private-export-20260907-1318' } });
+  assert.throws(() => getWeatherEvidence(), /must match the current study release/, 'The page reader must reject stale weather payloads');
+} finally { fs.readFileSync = readFileSync; }
 for (const tag of [weatherRelease, mainRelease]) assert.match(tag, /^private-export-\d{8}-\d{4}$/);
 assert.equal(evidence.calculation.script_sha256, digest('analysis/build_weather.py'), 'Weather evidence must be regenerated after changing its calculation');
 assert.equal(evidence.calculation.pacing_script_sha256, digest('analysis/build_pacing.py'), 'The exact eligibility parser must match the recorded provenance');
@@ -82,7 +88,7 @@ for (const id of Object.keys(readJson('analysis/pack_registry.json'))) {
 const cohort = evidence.cohort;
 checkCohort(cohort);
 checkSourceQuality(evidence.source_quality, cohort, weatherRelease, evidence.calculation.source_quality_script_sha256);
-if (weatherRelease === mainRelease) {
+{
   assert.equal(cohort.raw, guideMeta.cohort.raw, 'The same release must describe the same raw population');
   assert.equal(cohort.eligible, guideMeta.cohort.eligible, 'Shared timing and source-quality rules must agree');
   assert.equal(evidence.input.asset_sha256, guideMeta.input_asset_sha256);
