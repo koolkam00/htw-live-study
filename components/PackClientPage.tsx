@@ -121,11 +121,6 @@ export default function PackClientPage({
       : isEnrichment(info.id)
       ? 'Enrichment'
       : 'Waiting';
-  const asOf =
-    meta?.as_of && typeof meta.as_of === 'string' && meta.as_of.length > 0
-      ? new Date(meta.as_of).toLocaleString()
-      : null;
-
   const enrichmentNeeds = isEnrichment(info.id) && !isReady;
   const isComingSoon = meta?.status === 'coming-soon' || isParked(info.id);
   const waiting = !isReady && !isComingSoon && !enrichmentNeeds;
@@ -136,7 +131,7 @@ export default function PackClientPage({
         <div className="figure-header">
           <div>
             <div className="figure-title">{info.title}</div>
-            <div className="site-subtitle">{asOf ? `As of: ${asOf}` : 'Awaiting publication'}</div>
+            <div className="site-subtitle">{isReady ? 'Recorded marathon results' : 'Awaiting publication'}</div>
           </div>
           <span className="badge">{badge}</span>
         </div>

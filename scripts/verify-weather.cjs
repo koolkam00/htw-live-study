@@ -196,7 +196,7 @@ for (const candidate of evidence.candidates) {
 }
 assert.equal(sourceReleaseTag('private-20300102-0304'), 'private-export-20300102-0304');
 assert.equal(sourceReleaseTag('private-export-20300102-0304'), 'private-export-20300102-0304');
-assert.notEqual(sourceLabel('2030-01-02T03:04:00Z', 'private-export-20300102-0304'), sourceLabel('2030-01-02T11:07:00Z', 'private-export-20300102-1107'), 'Same-day exports need distinct visible labels');
+assert.doesNotMatch(sourceLabel(evidence.input.as_of, weatherRelease), /private-export|September|20260911/, 'Visible labels describe the data without internal identifiers or upload dates');
 
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
@@ -211,7 +211,7 @@ try {
       const definition = WEATHER_QUESTIONS.find(item => item.id === candidate.id);
       const html = renderToStaticMarkup(React.createElement(WeatherAnalysis, { definition, candidate, evidence, questions }));
       assert.ok(html.includes(sourceReleaseHref(weatherRelease)));
-      assert.ok(html.includes(sourceLabel(evidence.input.as_of, weatherRelease)), 'The visible source includes the exact tag, not just its date');
+      assert.ok(html.includes(sourceLabel(evidence.input.as_of, weatherRelease)), 'The visible source describes the data');
       assert.ok(html.includes(`${candidate.support.editions} race editions`) && html.includes(`${candidate.support.courses} courses`) && html.includes(`${candidate.support.finishes.toLocaleString('en-US')} complete finishes`));
       assert.ok(html.includes('Each edition has equal weight'));
       assert.match(html, /98\.3% uncertainty interval/);
@@ -236,8 +236,9 @@ try {
 }
 const AboutPage = require('../app/about/page.tsx').default;
 const about = renderToStaticMarkup(React.createElement(AboutPage));
-assert.ok(about.includes(sourceLabel(guideSummary.input_as_of, guideSummary.export_id)));
-assert.ok(about.includes(sourceLabel(evidence.input.as_of, weatherRelease)));
+assert.ok(about.includes('Marathons and years'));
+assert.ok(about.includes('Weather data') && about.includes('Elevation data'));
+assert.doesNotMatch(about.replace(/<[^>]*>/g, ''), /private-export|September 11/);
 assert.ok(about.includes(`${ready.length} of the ${evidence.candidates.length} questions met the publication rule`));
 assert.ok(about.includes(`${cohort.weather_analysis_finishes.toLocaleString('en-US')} eligible finishes`));
 const WeatherIndex = require('../components/WeatherIndex.tsx').default;
