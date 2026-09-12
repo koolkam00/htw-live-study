@@ -109,7 +109,8 @@ def build_study(db, provenance):
 
 def run(source, output):
     manifest=json.loads((source/'MANIFEST.json').read_text());origin=json.loads((source/'provenance.json').read_text())
-    assert origin['release_tag']=='private-export-20260911-1107', 'Review the new source and edition policy before adoption'
+    from source_quality import REVIEWED_POLICIES
+    assert origin['release_tag'] in REVIEWED_POLICIES, 'Review the new source and edition policy before adoption'
     db=duckdb.connect();db.execute("SET memory_limit='3GB'");db.execute('SET threads=2')
     scratch=output.parent/'public-explorer-temp';scratch.mkdir(parents=True,exist_ok=True)
     db.execute('SET temp_directory=?',[str(scratch)])

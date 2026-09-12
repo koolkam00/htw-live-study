@@ -52,7 +52,9 @@ def run(source, output, runner_root):
     pin = json.loads((repository/'analysis/release.json').read_text())
     origin = json.loads((source/'provenance.json').read_text())
     runners = json.loads((runner_root/'manifest.json').read_text())
-    assert origin['release_tag'] == runners['release_tag'] == pin['tag'] == 'private-export-20260911-1107'
+    from source_quality import REVIEWED_POLICIES
+    assert origin['release_tag'] == runners['release_tag'] == pin['tag']
+    assert pin['tag'] in REVIEWED_POLICIES, 'Review the source and edition policy before adoption'
     assert origin['asset_sha256'] == runners['input_asset_sha256'] and origin['manifest_sha256'] == runners['input_manifest_sha256']
     files = verified_inputs(source, origin)
     db = duckdb.connect()

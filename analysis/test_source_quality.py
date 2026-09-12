@@ -8,16 +8,16 @@ from pathlib import Path
 import duckdb
 
 from build_pacing import FIELDS, Publisher, prepare
-from source_quality import RELEASE, RULES, source_quality_report, validate_source_quality
+from source_quality import RELEASE, RULES, LATEST_RELEASE, LATEST_RULES, policy_metadata, source_quality_report, validate_source_quality
 
 
-def fixture(source, tag):
+def fixture(source, tag, rules=RULES):
     db = duckdb.connect()
     columns = ','.join(f'"{field}" VARCHAR' for field in FIELDS)
     db.execute(f'CREATE TABLE fixture (id BIGINT,race VARCHAR,year INTEGER,city VARCHAR,runner VARCHAR,sex VARCHAR,age DOUBLE,age_group VARCHAR,age_or_group VARCHAR,{columns})')
     splits = ['0:25:00','0:50:00','1:15:00','1:40:00','2:05:00','2:30:00','2:55:00','3:20:00','3:30:58.5']
     rows = [[i, city + ' Marathon', year, city, 'Fixture '+str(i), 'F', 35, '35-39', '35'] + splits
-            for i, (city, year, _, _) in enumerate(RULES, start=1)]
+            for i, (city, year, _, _) in enumerate(rules, start=1)]
     unknown = [100, 'Other Marathon', 2020, 'Other', 'Unknown demographics', None, None, None, None] + splits
     rows.append(unknown)
     duplicate = rows[5].copy(); duplicate[0] = 101; rows.append(duplicate)
@@ -29,6 +29,21 @@ def fixture(source, tag):
 
 
 class SourceQualityTests(unittest.TestCase):
+    def test_new_release_preserves_holds_without_applying_them_retroactively(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder); db = fixture(source, LATEST_RELEASE, LATEST_RULES)
+            counts = prepare(db, source, keep_record_id=True)
+            self.assertEqual(counts['source_quality_excluded'], 11)
+            self.assertEqual(counts['eligible'], 1)
+            report = source_quality_report(db, source)
+            nyc = next(row for row in report['editions'] if row['city'] == 'New York')
+            self.assertEqual(nyc['category'], 'unreconciled_hold')
+            self.assertIn('38,047', nyc['reason'])
+            self.assertIn(('Valencia', 2018), [(row['city'], row['year']) for row in report['editions']])
+        historical = policy_metadata(RELEASE)
+        self.assertEqual(len(historical['editions']), 10)
+        self.assertIn('200 records', next(row['reason'] for row in historical['editions'] if row['city'] == 'New York'))
+
     def test_known_grid_holds_and_selected_fields_are_excluded_without_double_counting(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder); db = fixture(source, RELEASE)

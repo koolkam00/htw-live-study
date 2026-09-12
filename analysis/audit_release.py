@@ -9,6 +9,7 @@ from pathlib import Path
 
 import duckdb
 from build_pacing import FIELDS, records
+from download_release import EXPECTED
 
 
 def digest(path):
@@ -27,6 +28,8 @@ def audit(source, core, previous, output):
     assert digest(source/'MANIFEST.json') == provenance['manifest_sha256']
     report = {'release_tag':provenance['release_tag'], 'input_provenance':provenance,
               'audit_script_sha256':digest(__file__), 'member_sha256':{}, 'manifest_size_notes':[]}
+    # A manifest need not list its own size/hash: compare it independently too.
+    report['member_sha256']['MANIFEST.json'] = digest(source/'MANIFEST.json')
     for file, entry in manifest['files'].items():
         path = source/file
         assert path.is_file(), file
@@ -79,8 +82,8 @@ def audit(source, core, previous, output):
     report['weather'] = records(db, '''SELECT count(*) AS rows,count(DISTINCT (city,year)) AS unique_editions,
       count(*) FILTER(WHERE year(try_cast(race_date AS DATE))=year) AS dates_agree FROM w''')[0]
     if core:
-        shared = [p.name for p in core.iterdir() if p.name in manifest['files'] and p.name != 'features.parquet']
-        assert len(shared) == 8
+        shared = sorted(EXPECTED)
+        assert all((core/name).is_file() and name in report['member_sha256'] for name in shared)
         report['core_full_shared_hashes_match'] = all(digest(core/name) == report['member_sha256'][name] for name in shared)
         assert report['core_full_shared_hashes_match']
     if previous:

@@ -16,7 +16,7 @@ class HistoryValidation(unittest.TestCase):
     def test_canonical_contract_requires_matching_ids_and_labels(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder)
-            (source / 'provenance.json').write_text(json.dumps({'release_tag':'private-export-20260911-1107'}))
+            (source / 'provenance.json').write_text(json.dumps({'release_tag':'private-export-20260912-0934'}))
             def fixture(ids=(20, 10), wrong_name=False):
                 db = duckdb.connect()
                 db.execute("CREATE TABLE raw(id BIGINT, city VARCHAR, year INTEGER, race VARCHAR, runner VARCHAR)")

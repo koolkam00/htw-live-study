@@ -1,0 +1,18 @@
+{
+  "release_tag": "private-export-20260912-0934",
+  "public_downloads_verified": true,
+  "archives": "CORE 8 / FULL 9 expected members; all eight shared files byte-identical",
+  "producer_metadata_issues": [
+    "Release body, README and manifest retain obsolete privacy instructions; owner public-access policy applies.",
+    "ID-CONTRACT.md and FEATURE-FIELD-NOTES.md still identify the prior snapshot.",
+    "Feature notes call current-inclusive PB/ability, whole-history counts and career bests prior-safe; website recomputes strictly earlier-year benchmarks.",
+    "Edition CSV lacks explicit completeness/hold fields; blank notes do not clear previously documented holds."
+  ],
+  "manifest_self_size": "No incorrect self-size entry in this manifest; member sizes match.",
+  "nyc_2008": "38,047 raw records, prior partial-ingestion hold retained pending completion/count reconciliation.",
+  "previous_delta": {
+    "added": 254923,
+    "deleted": 0,
+    "changed": 0
+  }
+}

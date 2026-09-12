@@ -50,7 +50,7 @@ jobs:
           import json, os, subprocess
           root = os.environ['RUNNER_TEMP']
           tag = json.load(open(root + '/pacing-input/provenance.json'))['release_tag']
-          if tag == 'private-export-20260911-1107':
+          if tag in ('private-export-20260911-1107', 'private-export-20260912-0934'):
               subprocess.run(['python', 'analysis/audit_release.py', '--input', root + '/pacing-input', '--output', root + '/pacing-inspection/release-contract.json'], check=True)
           else:
               print('Canonical-release audit is not declared for this legacy or unreviewed tag:', tag)

@@ -1,0 +1,257 @@
+city,year,n_ingested,n_sources_rows,has_5km_splits,corpus,timing_vendor,listed_hint_from_notes,missing_20km,incomplete,non_increasing,missing_age,sex_missing,notes
+Amsterdam,2012,10145,1,yes-per-paper,smyth-2021-original,,,47,159,0,10145,1,
+Amsterdam,2013,11308,1,yes-per-paper,smyth-2021-original,,,21,434,0,11308,0,
+Amsterdam,2014,12215,1,yes-per-paper,smyth-2021-original,,,30,252,0,12215,0,
+Amsterdam,2015,12358,1,yes-per-paper,smyth-2021-original,,,71,156,19,12358,0,
+Amsterdam,2016,12190,1,yes-per-paper,smyth-2021-original,,,11,76,0,12190,9,
+Amsterdam,2017,11435,1,yes-per-paper,smyth-2021-original,,,48,484,0,11435,0,
+Amsterdam,2018,12123,1,yes-per-paper,smyth-2021-original,,,14,138,0,12123,0,
+Amsterdam,2019,13487,1,yes-per-paper,smyth-2021-original,,,28,230,0,13487,0,
+Amsterdam,2020,794,1,yes,,sporthive,,90,93,0,794,0,virtual edition; men+women 42.2km only
+Amsterdam,2021,6608,1,yes,,sporthive,,9,116,0,6608,0,"TCS Marathon only. splitName 5 KM. 21,1 KM is half not 20km."
+Amsterdam,2022,12656,1,yes,,sporthive,,28,194,0,12656,0,"TCS Marathon only. splitName 5 KM. 21,1 KM is half not 20km."
+Amsterdam,2023,16030,1,yes,,sporthive,,39,16016,0,16030,7,"TCS Marathon only. splitName 5 KM. 21,1 KM is half not 20km."
+Amsterdam,2024,16815,1,yes,,sporthive,,0,0,59,16815,11,"TCS Marathon only. splitName 5 KM. 21,1 KM is half not 20km. No 2016-2019 Sporthive."
+Amsterdam,2025,23325,2,yes,,sporthive | mylaps,,23,100,0,23325,42,"Speedhive TCS Marathon event 7383449171605338624 race 7383449171605339136. HOLD listed=jsonl 23328 GET 23325 unique-key. Do not stamp last_ingested. 329 Cat HTML unused. | M_Tus_Cat_NL.html category top-10s (~155), NOT full mass. 21K1 half not 20km. Printed 20K only."
+Athens,2013,8500,1,yes-per-paper,smyth-2021-original,,,8500,8500,0,8500,0,
+Athens,2014,10480,1,yes-per-paper,smyth-2021-original,,,10480,10480,0,10480,0,
+Athens,2015,11885,1,yes-per-paper,smyth-2021-original,,,11885,11885,0,11885,0,
+Athens,2016,13707,1,yes-per-paper,smyth-2021-original,,,13707,13707,0,13707,0,
+Athens,2017,14743,1,yes-per-paper,smyth-2021-original,,,14743,14743,0,14743,0,
+Athens,2018,15291,2,yes-per-paper | yes,smyth-2021-original,myrace,,15291,15291,0,15291,0,Scout-locked 2018 race 1785; FLAG no 20km (21.1 ignored); was CF-unconfirmed
+Athens,2019,16439,1,yes-per-paper,smyth-2021-original,,,16439,16439,0,16439,0,
+Athens,2021,4024,1,yes,not-htw,myrace,,4024,4024,0,4024,0,Scout-locked 2021; FLAG no 20km (21.1 ignored)
+Athens,2022,12533,1,yes,not-htw,myrace,,12533,12533,0,12533,0,Scout-locked 2022; FLAG no 20km (21.1 ignored)
+Auckland,2016,1909,1,yes,post-2019-additive,timingsports,,304,366,6,1909,0,Scout backup after GC 2019. Hub M05K live. Lead: AKL2016 after GC2019 stamp.
+Auckland,2017,1836,1,yes-per-paper,smyth-2021-original,timingsports,,275,316,1,1836,0,paper spelled Aukland
+Auckland,2018,1917,1,yes-per-paper,smyth-2021-original,timingsports,,268,971,34,1917,0,paper spelled Aukland
+Auckland,2019,1905,1,yes,post-2019-additive,timingsports,,304,333,11,254,0,Scout backup after AKL2016. Hub M05K live. Lead: AKL2019 after AKL2016.
+Austin,2017,2643,1,yes-per-paper,smyth-2021-original,,,6,73,0,5,0,
+Austin,2018,2523,1,yes-per-paper,smyth-2021-original,,,9,82,0,3,0,
+Austin,2019,2643,1,yes-per-paper,smyth-2021-original,,,2,29,1,0,0,
+Barcelona,2019,13445,1,yes-per-paper,smyth-2021-original,,,58,746,4571,13445,0,
+Barcelona,2025,21705,1,yes,post-2019-additive,timingsense,21706,37,972,1,21705,54,Zurich Marató Barcelona 2025. timingsense 67b462ec-1c98-4e51-a472-e4f4ac1f25e0. Marato Individual; skip Cadires/Media. listed=21706.
+Barcelona,2026,26719,1,yes,post-2019-additive,timingsense,26720,1735,2750,2,26719,212,Zurich Marató Barcelona 2026. timingsense competition 69959e57-d4f4-43b6-8a5c-4672ac1f2995. Event Marato Individual only; skipped Cadires; skipped Media (HALF). Sex from Meta Individual gender female/male. listed=26720 Meta Individual amount. 5km-yes. race_date=2026-03-15 from rankings HTML.
+Berlin,2005,30373,0,,,,,0,0,84,30373,0,
+Berlin,2006,30178,0,,,,,0,0,116,30178,0,
+Berlin,2007,32484,0,,,,,0,0,128,32484,0,
+Berlin,2008,35729,0,,,,,0,0,176,35729,0,
+Berlin,2009,35000,0,,,,,0,0,272,35000,0,
+Berlin,2010,33996,1,yes-per-paper,smyth-2021-original,,,0,0,161,33996,0,
+Berlin,2011,32907,1,yes-per-paper,smyth-2021-original,,,0,0,5687,32907,0,
+Berlin,2012,34265,1,yes-per-paper,smyth-2021-original,,,0,0,161,34265,0,
+Berlin,2013,36470,1,yes-per-paper,smyth-2021-original,,,0,0,162,36470,0,
+Berlin,2014,28932,1,yes-per-paper,smyth-2021-original,,,0,0,103,28932,0,
+Berlin,2015,36755,1,yes-per-paper,smyth-2021-original,,,0,0,132,36755,1,
+Berlin,2016,35985,1,yes-per-paper,smyth-2021-original,,,0,0,136,35985,2,
+Berlin,2017,39216,1,yes-per-paper,smyth-2021-original,,,0,0,249,39216,0,
+Berlin,2018,40638,1,yes-per-paper,smyth-2021-original,,,0,0,250,40638,0,
+Berlin,2019,43973,1,yes-per-paper,smyth-2021-original,,,0,0,250,43973,0,
+Berlin,2021,23027,0,,,,,17,27,1,23027,0,
+Berlin,2022,34701,0,,,,,13,23,0,34701,7,
+Berlin,2023,42873,1,yes,majors-current,mikatiming,,24,682,0,4751,37,splits: html-detail
+Berlin,2024,53560,1,yes,majors-current,mikatiming,,76,128,2,6752,3279,splits: html-detail
+Berlin,2025,48081,1,yes,majors-current,mikatiming,,41,184,2,7473,2046,BMW BERLIN-MARATHON. Official timekeeper mika:timing GmbH. 51st edition in 2025. | splits: html-detail; organizer requires all split times for an official result
+Boston,2012,1200,1,yes-per-paper,smyth-2021-original,,,1200,1200,0,1200,0,
+Boston,2016,1200,1,yes-per-paper,smyth-2021-original,,,1200,1200,0,1200,0,
+Boston,2017,1600,1,yes-per-paper,smyth-2021-original,,,1600,1600,0,1600,0,
+Boston,2018,25652,1,yes-per-paper,smyth-2021-original,,,13,454,4,25652,0,
+Boston,2019,26555,1,yes-per-paper,smyth-2021-original,,,4,1536,1,26555,0,
+Boston,2022,24827,0,,,,,4,54,0,24827,0,
+Boston,2023,26580,1,yes,smyth-2021-original,mikatiming,,8,149,0,26580,23,HOLE-LOCK 2026-09-06 mass athlete-detail 5km idp proven. Majors Ingester start OPTIMIZE.
+Boston,2024,25550,1,yes,majors-current,mikatiming,,9,57,0,25550,48,splits: html-detail
+Boston,2025,28404,1,yes,majors-current,mikatiming,,7,57,0,28404,71,splits: html-detail
+Boston,2026,28788,1,yes,majors-current,mikatiming,,13,79,0,28788,103,results.baa.org/{year}/ and boston.r.mikatiming.com/{year}/ are the same mika:timing app. Older years also on boston.r.mikatiming.de/{year}/ and boston-iframe.r.mikatiming.de/{year}/. | splits: html-detail (individual athlete page); list page is finish-oriented
+Chicago,2015,22085,1,yes-per-paper,smyth-2021-original,,,3,28,0,22085,0,
+Chicago,2016,6512,1,yes-per-paper,smyth-2021-original,,,0,6,0,6512,0,
+Chicago,2017,44188,1,yes-per-paper,smyth-2021-original,,,41,128,10,44188,0,
+Chicago,2018,51967,1,yes-per-paper,smyth-2021-original,,,36,247,1,51967,200,
+Chicago,2019,51807,1,yes-per-paper,smyth-2021-original,,,36,247,1,51807,200,
+Chicago,2024,51821,1,yes,majors-current,mikatiming,,35,246,1,51821,3166,splits: html-detail
+Chicago,2025,53739,1,yes,majors-current,mikatiming,,17,97,0,53739,204,Bank of America Chicago Marathon. 2025 is a year-specific portal; 1989–2024 live on results.chicagomarathon.com/2024/ and chicago-history.r.mikatiming.com/2024/ with a Year dropdown. | splits: html-detail (and official site states 5K splits on results); list is finish-oriented
+Cologne,2016,5084,1,yes-per-paper,smyth-2021-original,,,5084,5084,0,35,0,
+Cologne,2017,4502,1,yes-per-paper,smyth-2021-original,,,4502,4502,0,26,0,
+Cologne,2018,4974,2,yes-per-paper | yes,smyth-2021-original | eu-mika-raceresult,raceresult,,4974,4974,1,4974,173,contest 1 marathon; has20=0 (HM not mapped); listed=jsonl=GET=4974
+Cologne,2019,4759,2,yes-per-paper | yes,smyth-2021-original | eu-mika-raceresult,raceresult,,4759,4759,0,4759,379,contest 1 marathon; has20=0 (HM not mapped); listed=jsonl=GET=4759
+Cologne,2022,2853,1,yes,eu-mika-raceresult,raceresult,,2853,2853,0,2853,1,contest 1 marathon; has20=0 (HM not mapped); listed=jsonl=GET=2853
+Cologne,2023,3790,1,yes,eu-mika-raceresult,raceresult,,3790,3790,0,3790,0,contest 1 marathon; has20=0 (HM/21.097 not mapped to split_20km); listed=jsonl=GET
+Cologne,2024,5694,1,yes,eu-mika-raceresult,raceresult,,5694,5694,0,5694,0,contest 1 marathon; has20=0 (HM/21.097 not mapped to split_20km); listed=jsonl=GET
+Cologne,2025,7987,1,yes,post-2019-additive,raceresult,,7987,7987,0,7987,0,Lead stamp-reconcile 2026-09-10; API n≈7987
+Copenhagen,2014,9622,1,yes-per-paper,smyth-2021-original,,,26,92,11,9622,0,
+Copenhagen,2015,9219,1,yes-per-paper,smyth-2021-original,,,10,118,1,9219,0,
+Copenhagen,2016,8370,1,yes-per-paper,smyth-2021-original,,,17,191,1,8370,0,
+Copenhagen,2017,8154,1,yes-per-paper,smyth-2021-original,,,48,193,0,8154,0,
+Copenhagen,2018,7413,1,yes-per-paper,smyth-2021-original,,,6,73,0,7413,0,
+Copenhagen,2019,10806,1,yes-per-paper,smyth-2021-original,,,16,93,0,10806,10,
+Copenhagen,2022,8497,1,yes,post-2019-additive,ultimate,,7,31,5,8497,3,
+Copenhagen,2023,10164,1,yes,post-2019-additive,ultimate,,6,41,0,10164,6,
+Copenhagen,2024,14585,1,yes,post-2019-additive,ultimate,,15,178,0,14585,16,
+Copenhagen,2025,18554,1,yes,post-2019-additive,ultimate,,54,141,1,18554,4,
+Copenhagen,2026,21652,1,yes,post-2019-additive,,,7,132,0,21652,19,Copenhagen Marathon 2026 UltimateLIVE scout-locked eventid=7143; distance=1 Marathon.
+Dubai,2016,2030,1,yes-per-paper,smyth-2021-original,mikatiming,,3,169,19,269,0,
+Dubai,2019,1824,1,yes,smyth-2021-original,mikatiming,,5,119,24,250,0,Verified 2026-08-30 ET. Mass Marathon event=M (not Elite). List ~12k All Main Events. 5/10/15/20/25/30/35/40/finish on html-detail Person Details. Sample AG30 Mohamed Shifaz bib 104. Export List incl. Splits. curl/AWS often 403; browser/WebFetch works. Pattern dubai.mikatiming.de/{year}/
+Dubai,2020,1856,1,yes,post-2019-additive,mikatiming,,0,1,31,206,1,listed=jsonl=GET=1856 n_5km=1855. Spot Adugna Bikila Olika (ETH) 5km=884 finish=7575 M.
+Dubai,2023,4139,1,yes,post-2019-additive,mikatiming,,9,385,22,527,0,Mass Event=M. Hub dubai.r.mikatiming.de/2023/. Person Details 5km confirmed. Ingest starting 2026-09-06 ET.
+Dubai,2024,1483,1,yes,post-2019-additive,mikatiming,,7,236,5,195,0,Mass Event=M. Hub dubai.r.mikatiming.de/2024/. Person Details 5km Lead-confirmed (lock-post2019-dubai-2024-25-mass-idp). Ingest starting 2026-09-07 ET. Never dubai.mikatiming.de/2021|/2022|/2026.
+Dubai,2025,1809,1,yes,post-2019-additive,mikatiming,,3,273,9,263,0,Mass Event=M. Hub dubai.r.mikatiming.de/2025/. Person Details 5km Lead-confirmed (lock-post2019-dubai-2024-25-mass-idp). Ingest starting 2026-09-07 ET. Never dubai.mikatiming.de/2021|/2022|/2026.
+Eindhoven,2009,1407,1,yes-per-paper,smyth-2021-original,,,1407,1407,0,1407,0,
+Eindhoven,2010,1462,1,yes-per-paper,smyth-2021-original,,,1462,1462,0,1462,0,
+Eindhoven,2011,1276,1,yes-per-paper,smyth-2021-original,,,1,6,4,1276,0,
+Eindhoven,2012,1277,1,yes-per-paper,smyth-2021-original,,,0,6,10,1277,0,
+Eindhoven,2013,1416,1,yes-per-paper,smyth-2021-original,,,66,132,13,1416,0,
+Eindhoven,2014,1315,1,yes-per-paper,smyth-2021-original,,,25,90,89,1315,0,
+Eindhoven,2015,2022,1,yes-per-paper,smyth-2021-original,,,20,183,0,2022,0,
+Eindhoven,2016,2149,1,yes-per-paper,smyth-2021-original,,,5,26,0,2149,0,
+Eindhoven,2018,2079,1,yes-per-paper,smyth-2021-original,,,9,66,0,2079,0,
+Eindhoven,2019,2423,1,yes-per-paper,smyth-2021-original,,,4,37,0,2423,0,
+Eindhoven,2021,1525,1,yes,,sporthive,,12,148,0,1525,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=6850745558983373568 race=6850745563278341888. last_ingested blank until listed=jsonl=GET."
+Eindhoven,2022,2496,1,yes,,sporthive,,9,37,0,2496,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=6980431079001150208 race=6980431079001151232. last_ingested blank until listed=jsonl=GET."
+Eindhoven,2023,2888,1,yes,,sporthive,,3,22,0,2888,3,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=7115376606087550464 race=7115376610382518272. last_ingested blank until listed=jsonl=GET."
+Eindhoven,2024,4762,1,yes,,sporthive,,7,34,0,4762,5,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=7249382119669006336 race=7249382123963974144. last_ingested blank until listed=jsonl=GET."
+Frankfurt,2019,12513,1,yes-per-paper,smyth-2021-original,,,15,1889,0,3024,0,
+Frankfurt,2022,6762,1,yes,post-2019,mikatiming,,10,33,0,900,0,Lead stamp listed=jsonl=GET=6762 event=L_HCH3BKLB32C (not 3B8 year-bleed)
+Gold Coast,2016,6214,1,yes-per-paper,smyth-2021-original,,,790,877,0,6214,0,
+Gold Coast,2017,5911,1,yes-per-paper,smyth-2021-original,,,711,778,18,5911,0,
+Gold Coast,2018,6709,1,yes-per-paper,smyth-2021-original,,,856,993,0,6709,0,
+Gold Coast,2019,6613,1,yes,post-2019-additive,timingsports,,866,992,0,6613,0,Scout-locked 2026-09-10: M05K + /view 5KM. Proof bib 03000 5KM 00:31:39.
+Gold Coast,2022,4916,1,yes,post-2019-additive,timingsports,,884,950,6,4916,0,
+Gold Coast,2023,6715,1,yes,post-2019-additive,timingsports,,783,901,2,6715,0,
+Gold Coast,2024,9905,1,yes,post-2019-additive,timingsports,,1537,4205,10,9905,6,
+Hamburg,2013,11443,1,yes-per-paper,smyth-2021-original,,,22,85,0,11443,0,
+Hamburg,2014,12868,1,yes-per-paper,smyth-2021-original,,,32,61,0,12868,0,
+Hamburg,2015,14766,1,yes-per-paper,smyth-2021-original,,,44,101,0,14766,0,
+Hamburg,2016,12073,1,yes-per-paper,smyth-2021-original,,,11,53,0,12073,0,
+Hamburg,2017,11932,1,yes-per-paper,smyth-2021-original,,,18,47,0,11932,0,
+Hamburg,2018,10014,1,yes-per-paper,smyth-2021-original,,,14,57,0,10014,0,
+Hamburg,2019,10097,1,yes-per-paper,smyth-2021-original,,,44,87,0,10097,0,
+Hamburg,2022,5500,1,yes,post-2019,mikatiming,,9,39,0,5500,0,Lead POST from jsonl 5500; listed≈jsonl≈GET=5500; event=HML; sex M4276+W1224
+Hamburg,2023,8634,1,yes,post-2019,mikatiming,,5,288,0,8634,0,EU Mika POST listed=jsonl=8635 GET=8634 (unique); event=HML; sex M6594+W2041; n_with_full_splits=8346; Lead stamp after writer skip auto-PATCH
+Hamburg,2024,11264,1,yes,post-2019-additive,mikatiming,,38,780,0,11264,0,
+Hamburg,2025,10904,1,yes,post-2019-additive,mikatiming,,46,307,0,10904,0,
+Helsinki,2015,3540,1,yes-per-paper,smyth-2021-original,,,53,184,0,3540,0,
+Helsinki,2016,2718,1,yes-per-paper,smyth-2021-original,,,0,2,1,2718,2,
+Helsinki,2017,2230,1,yes-per-paper,smyth-2021-original,,,28,448,3,2230,0,
+Helsinki,2024,1421,1,yes,post-2019-additive,UltimateLIVE / Ultimate Sport Service,,1421,1421,0,1421,1,"Helsinki Marathon 2024 UltimateLIVE eventid=6369 distance=1. Literal 5 km. FLAG no 20km (21.1/21,1/21.0975 is half — never invent). Never eventid 5587. No Chrome."
+Helsinki,2025,2279,1,yes,post-2019-additive,UltimateLIVE / Ultimate Sport Service,,2279,2279,0,2279,4,"Helsinki Marathon 2025 UltimateLIVE eventid=6969 distance=1. Literal 5 km. FLAG no 20km (21.1/21,1/21.0975 is half — never invent). Never eventid 5587. No Chrome."
+Helsinki,2026,2633,1,yes,post-2019-additive,UltimateLIVE / Ultimate Sport Service,,2633,2633,0,2633,1,"Helsinki Marathon 2026 UltimateLIVE eventid=7623 distance=1. Literal 5 km. FLAG no 20km (21.1/21,1/21.0975 is half — never invent). Never eventid 5587. No Chrome."
+Honolulu,2016,20118,1,yes-per-paper,smyth-2021-original,,,20118,20118,37,20118,20118,
+Honolulu,2021,6409,1,yes,post-2019-additive,sportstats / PSE,,6409,6409,104,6409,9,Sportstats rid=114569. 5K confirmed in splitConfig. Mass via getsortedresults.
+Honolulu,2022,14759,1,yes,post-2019-additive,sportstats / PSE,,14759,14759,833,14759,0,Sportstats rid=140524. 5K confirmed in splitConfig. Mass via getsortedresults.
+Honolulu,2023,15649,1,yes,post-2019-additive,sportstats / PSE,,15649,15649,462,15649,11,Sportstats rid=130133. 5K confirmed in splitConfig. Mass via getsortedresults.
+Honolulu,2024,18984,1,yes,post-2019-additive,sportstats / PSE,,18984,18984,445,18984,34,Sportstats rid=142773. 5K confirmed in splitConfig. Mass via getsortedresults.
+Honolulu,2025,23497,1,yes,post-2019-additive,sportstats / PSE,,23497,23497,739,23497,39,Sportstats rid=145511. 5K confirmed in splitConfig. Mass via getsortedresults.
+London,2015,1200,1,yes-per-paper,smyth-2021-original,,,1200,1200,0,1200,0,
+London,2016,909,1,yes-per-paper,smyth-2021-original,,,909,909,0,909,0,
+London,2017,1520,1,yes-per-paper,smyth-2021-original,,,1520,1520,0,1520,0,
+London,2018,33995,1,yes-per-paper,smyth-2021-original,,,33995,33995,0,33995,2,
+London,2019,42612,1,yes-per-paper,smyth-2021-original,,,142,826,0,42612,0,
+London,2021,22226,1,yes,majors-current,mikatiming,,31,284,1,22226,0,
+London,2022,31145,1,yes,majors-current,mikatiming,,56,239,1,31145,0,Start when Berlin SCC 2011 finishes unless CHI2023 HTTP 200
+London,2023,34064,1,yes,majors-current,mikatiming,,52,660,0,34064,3056,Lead SPEED: start as third writer when CPH stamps. TCS browser-UA.
+London,2024,46567,1,yes,majors-current,mikatiming,,57,379,1,46567,40,splits: html-detail
+London,2025,55047,1,yes,majors-current,mikatiming,,140,1136,0,55047,3949,splits: html-detail
+London,2026,59519,1,yes,majors-current,mikatiming,,322,2668,1,59519,4071,"TCS London Marathon. Event dropdown: Mass, Elite, Wheelchair, Para Ambulatory, Virtual. | splits: html-detail (individual runner page); official 5km mats, not mile markers"
+Madrid,2013,10164,1,yes-per-paper,smyth-2021-original,,,45,2591,0,10164,0,
+Madrid,2014,11054,1,yes-per-paper,smyth-2021-original,,,70,5176,4,11054,0,
+Madrid,2015,11728,1,yes-per-paper,smyth-2021-original,,,28,210,0,11728,0,
+Madrid,2016,10083,1,yes-per-paper,smyth-2021-original,,,13,325,0,10083,0,
+Madrid,2017,10036,1,yes-per-paper,smyth-2021-original,,,16,254,0,10036,0,
+Madrid,2018,8808,1,yes-per-paper,smyth-2021-original,,,232,495,0,8808,0,
+Madrid,2019,7864,1,yes-per-paper,smyth-2021-original,,,13,186,0,7864,0,
+Madrid,2021,3833,1,yes,post-2019-additive,resultadoscarreras,,608,828,0,3833,0,LOCK 2026-09-03 5km-yes Maraton only. car=96 eve=1. Km 21.097 half unmapped. last_ingested wait listed=jsonl=GET.
+Madrid,2022,6290,1,yes,post-2019-additive,sporthive,,519,2136,0,6290,0,LOCK 2026-09-03 5km-yes Maraton only. event 6922472217413435904 races/481847. Km 21.097 half unmapped. last_ingested wait listed=jsonl=GET.
+Madrid,2023,7405,1,yes,post-2019-additive,sporthive,,90,489,0,7405,0,LOCK 2026-09-03 5km-yes Maraton only. event 7053750963571596288 races/485530. Km 21.097 half unmapped. last_ingested wait listed=jsonl=GET.
+Madrid,2024,9129,1,yes,post-2019-additive,sporthive,,40,632,0,9129,1,LOCK 2026-09-03 5km-yes Maraton only. event 7180618688493574912 races/489022. Km 21.097 half unmapped. last_ingested wait listed=jsonl=GET.
+Madrid,2025,11464,1,yes,post-2019-additive,sporthive,,842,1546,0,11464,0,LOCK 2026-09-03 5km-yes Maraton only. event 7318184016761806336 races/493224. Km 21.097 half unmapped. last_ingested wait listed=jsonl=GET.
+Madrid,2026,12208,1,yes,post-2019-additive,sporthive,,189,1382,0,12208,0,Scout-locked 2026 Maratón race UUID 2f95cc6e; NOT Media; Half≠20km; n≈12897
+Melbourne,2015,502,1,yes-per-paper,smyth-2021-original,,,4,85,1,502,25,
+Mexico City,2024,20571,1,yes,post-2019-additive,marcate,,20571,20571,7,20571,0,"OFFICIAL 2024 (not extra-oficiales). FLAG no 20km. RESULTADOS OFICIALES XLI MARATÓN DE LA CIUDAD DE MÉXICO TELCEL 2024. Intermedios has 21K (half), not 20K; split_20km always null. Event SPTMCAR1708028995. Did not copy 2025 unofficial flag. Skip 2026."
+Mexico City,2025,22574,1,yes,post-2019-additive,marcate,,22574,22574,5,22574,0,"FLAG extra-oficiales. FLAG no 20km. RESULTADOS EXTRA OFICIALES XLII MARATÓN DE LA CIUDAD DE MÉXICO TELCEL 2025. Intermedios has 21K (half), not 20K; split_20km always null. Event SPTMCAR1738126024. Did not invent unofficial record field."
+Mexico City,2026,21823,1,yes,post-2019-additive,marcate,,21823,21823,2,21823,0,"FLAG extra-oficiales. FLAG no 20km. RESULTADOS EXTRA OFICIALES - XLIII MARATÓN DE LA CIUDAD DE MÉXICO TELCEL 2026. Intermedios has 21K (half), not 20K; split_20km always null. Event SPTMCAR1770827883. Did not invent unofficial record field."
+New York,2006,37767,1,yes-per-paper,smyth-2021-original,,,102,1301,316,1,1,
+New York,2007,38462,1,yes-per-paper,smyth-2021-original,,,61,12724,7624,1,1,
+New York,2008,38047,1,yes-per-paper,smyth-2021-original,,,28,642,6,0,0,
+New York,2009,43086,1,yes-per-paper,smyth-2021-original,,,96,707,9,2,2,
+New York,2010,44646,1,yes-per-paper,smyth-2021-original,,,225,776,3,2,2,
+New York,2011,46741,1,yes-per-paper,smyth-2021-original,,,132,783,2,1,1,
+New York,2013,50035,1,yes-per-paper,smyth-2021-original,,,119,1444,0,2,2,
+New York,2014,47588,1,yes-per-paper,smyth-2021-original,,,353,4779,0,2,2,
+New York,2015,49430,1,yes-per-paper,smyth-2021-original,,,131,695,0,0,0,
+New York,2016,51234,1,yes-per-paper,smyth-2021-original,,,125,661,0,1,1,
+New York,2017,50607,1,yes-per-paper,smyth-2021-original,,,744,1241,0,1,1,
+New York,2018,52656,1,yes-per-paper,smyth-2021-original,,,261,705,0,3,3,
+New York,2019,53483,1,yes-per-paper,smyth-2021-original,,,168,714,2,3,3,
+New York,2021,24938,1,yes,majors-current,chronotrack,,14,308,0,2,17,TCS NYC Marathon 2021. Event M2021. 5km via resultDetails. Race date 2021-11-07.
+New York,2022,47710,1,yes,majors-current,chronotrack,,65,713,0,11,57,TCS NYC Marathon 2022. Event M2022. 5km via resultDetails. Race date 2022-11-06.
+New York,2023,51225,1,yes,majors-current,chronotrack,,217,750,0,12,104,splits: html-detail
+New York,2024,55493,1,yes,majors-current,chronotrack,,69,404,0,15,133,splits: html-detail
+New York,2025,59103,1,yes,majors-current,chronotrack,,174,722,0,19,157,"TCS New York City Marathon. Results hosted by NYRR; timing hardware ChronoTrack. Event code M{YYYY}. TAG Heuer named official timekeeper from mid-2025 (branding, not the results host). | splits: html-detail (every 5K + half + extra mile checkpoints); list/finishers is finish-oriented"
+Oslo,2016,2404,1,yes,post-2019-additive,ultimate,,0,20,5,2404,0,
+Oslo,2017,2237,1,yes-per-paper,smyth-2021-original,,,0,173,20,2237,0,
+Oslo,2018,2235,1,yes-per-paper,smyth-2021-original,,,3,28,8,2235,0,
+Oslo,2022,1815,1,yes,post-2019-additive,ultimate,,4,20,10,1815,0,Oslo Marathon 2022 UltimateLIVE scout-locked eventid; distance=1 Marathon.
+Oslo,2023,2547,1,yes,post-2019-additive,ultimate,,5,57,11,2547,4,Oslo Marathon 2023 UltimateLIVE scout-locked eventid; distance=1 Marathon.
+Oslo,2024,4018,1,yes,post-2019-additive,ultimate,,1,60,3,4018,3,Oslo Marathon 2024 UltimateLIVE scout-locked eventid; distance=1 Marathon.
+Oslo,2025,4185,1,yes,post-2019-additive,ultimate,,6,67,14,4185,1,Oslo Marathon 2025 UltimateLIVE scout-locked eventid; distance=1 Marathon.
+Paris,2014,38672,1,yes-per-paper,smyth-2021-original,active,,15,70,38659,0,0,
+Paris,2015,40261,1,yes-per-paper,smyth-2021-original,active,,249,460,40200,0,0,
+Paris,2016,41795,1,yes-per-paper,smyth-2021-original,active,,282,391,41742,0,0,
+Paris,2017,41734,1,yes-per-paper,smyth-2021-original,active,,5,62,41729,0,0,
+Paris,2018,42522,1,yes-per-paper,smyth-2021-original,active,,305,441,42466,0,0,
+Paris,2019,47495,1,yes-per-paper,smyth-2021-original,active,,181,546,25,0,0,
+Paris,2024,53899,1,yes,post-2019-additive,active,,234,783,0,0,0,Schneider Electric Marathon de Paris 2024. Active event id 92772. 5km-yes. Route 177244 Running|42.195. KM21 ignored. split_finish from chipTimeResult. Do not PATCH source 196 (2019).
+Prague,2016,5774,1,yes-per-paper,smyth-2021-original,,,15,40,0,5774,1,
+Prague,2017,6509,1,yes-per-paper,smyth-2021-original,,,16,54,0,6509,0,
+Prague,2018,6950,1,yes-per-paper,smyth-2021-original,,,3,14,0,6950,0,
+Prague,2019,7298,1,,,runczech,,17,50,2,7298,0,MAX DATA Lead; filter_race=22167 mass (not 22168 2Run); listed~7299; 5km-yes; 20km present; proof result_id=461173
+Prague,2022,4612,1,yes,post-2019-additive,runczech,,4612,4612,0,4612,0,Prague 2022 mass 42.195 from weekend index; FLAG no 20km (half≠20). filter_race discovered at runtime.
+Prague,2023,5466,1,yes,post-2019-additive,runczech,,5466,5466,0,5466,0,Prague 2023 mass filter_race=24851; NOT 24852 2Run. FLAG no 20km (half≠20).
+Prague,2024,6018,1,yes,post-2019-additive,runczech,,6018,6018,0,6018,0,Prague 2024 mass filter_race=24943; NOT 24944 2Run. FLAG no 20km.
+Prague,2026,9076,1,yes,post-2019-additive,runczech,,9076,9076,0,9073,0,Prague 2026 mass filter_race=59723 Vodafone; NOT 2Run. FLAG no 20km.
+Rotterdam,2012,7542,1,yes-per-paper,smyth-2021-original,,,69,7542,28,7542,0,
+Rotterdam,2013,8341,1,yes-per-paper,smyth-2021-original,,,5,60,0,8341,0,
+Rotterdam,2014,10677,1,yes-per-paper,smyth-2021-original,,,18,62,0,10677,0,
+Rotterdam,2015,11882,1,yes-per-paper,smyth-2021-original,,,31,122,0,11882,0,
+Rotterdam,2016,12813,1,yes-per-paper,smyth-2021-original,,,12,72,0,12813,0,
+Rotterdam,2017,13137,1,yes-per-paper,smyth-2021-original,,,82,431,4,13137,0,
+Rotterdam,2018,13995,1,yes-per-paper,smyth-2021-original,,,39,201,0,13995,0,
+Rotterdam,2019,14557,1,yes-per-paper,smyth-2021-original,,,82,280,0,14557,0,
+Rotterdam,2021,10865,1,yes,,sporthive,,57,232,0,10865,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=6855879561074155264 race=6855879561074155776. last_ingested blank until listed=jsonl=GET."
+Rotterdam,2022,11722,1,yes,,sporthive,,21,105,0,11722,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=6914931831426482176 race=6914931835721449984. last_ingested blank until listed=jsonl=GET."
+Rotterdam,2023,16845,1,yes,,sporthive,,46,299,0,16845,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=7049372004225601280 race=7049372004225602304. last_ingested blank until listed=jsonl=GET."
+Rotterdam,2024,17085,1,yes,,sporthive,,18,74,0,17085,0,"Scout-locked Speedhive. NN Marathon / Marathon Eindhoven only, not NK. event=7183110323454187008 race=7183110327749155328. last_ingested blank until listed=jsonl=GET."
+Singapore,2025,8933,1,yes,post-2019-additive,UltimateLIVE / Ultimate Sport Service,,5,50,1,8933,0,"Singapore Marathon 2025 UltimateLIVE eventid=7320 distance=4 Marathon. Ignored distance 1=5km, 2=10km, 3=Half, 5=Ekiden. race_date null: no calendar date printed on event/athlete/certificate; last ping 04-02-2026 is upload ping."
+Stockholm,2011,9931,2,yes-per-paper | yes,smyth-2021-original,marathongruppen | mikatiming,,1,7,1,9931,0,event=STHM id_key=idp
+Stockholm,2021,6955,1,yes,mass,mikatiming,,2,2,0,6955,0,STHM 2021 mass curl_cffi chrome124; listed_M=5068 listed_W=1887
+Stockholm,2024,17041,1,yes,mass,mikatiming,,9,79,1,17041,0,STHM 2024 mass curl_cffi chrome124; listed_M=12457 listed_W=4584
+Sydney,2017,4061,1,yes-per-paper,smyth-2021-original,,,522,599,1,4061,0,
+Sydney,2018,4371,1,yes-per-paper,smyth-2021-original,,,580,759,0,4371,0,
+Sydney,2019,5217,1,yes,post-2019-additive,timingsports,,790,882,1,5217,0,Scout-locked 2026-09-10: M05K + /view literal 5KM. Proof bib 03000 5KM 00:26:49.
+Tokyo,2026,353,1,yes,majors-current,seiko,,0,0,0,0,0,Seiko is official timer (19 consecutive years as of 2026). Race date 2026-03-01. | splits: pdf (top 500); html-detail exists (detail.php) but landing/search is finish-oriented | last_ingested sources: https://www.marathon.tokyo/media/press-release/pdf/1_Tokyo%20Marathon%202026%20MEN%20TOP500%20Results.pdf | https://www.marathon.tokyo/media/press-release/pdf/2_Tokyo%20Marathon%202026%20WOMEN%20TOP5
+Valencia,2014,11348,1,yes-per-paper,smyth-2021-original,,,11348,11348,16,11348,4,
+Valencia,2015,14102,1,yes-per-paper,smyth-2021-original,,,14102,14102,28,14102,0,
+Valencia,2016,15858,1,yes-per-paper,smyth-2021-original,,,15858,15858,4,15858,4,
+Valencia,2017,12485,1,yes-per-paper,smyth-2021-original,,15858,12485,12485,89,12485,0,Lead override 2026-09-10 POST goods listed=15858 jsonl=12485 GET=12485 missing_ficha=3373 (HTTP 500 ficha). FLAG no 20km. HOLD equal-key; Lead stamped anyway. Bosca Mayans bib 16170 spot OK.
+Valencia,2018,19236,1,yes-per-paper,smyth-2021-original,,,19236,19236,12,19236,5,
+Valencia,2019,21234,2,yes,smyth-2021-original,valenciaciudaddelrunning,21234,21234,21234,2,21234,0,Scout-locked year-isolated buscar; POST en/2019/maraton-buscar.php?y=2019; ficha POST hid+hyear=2019; FLAG no 20km; expected listed=21234; never maraton.php?y= trap | Scout-locked year-isolated buscar; POST en/2019/maraton-buscar.php?y=2019; ficha POST hid+hyear=2019; FLAG no 20km; expected listed=21234; never maraton.php?y= trap. Results starting VAL2019.
+Valencia,2021,12674,1,yes,not-htw,valenciaciudaddelrunning,,64,260,0,12674,0,Scout-locked year-in-path; POST ficha; never maraton.php?y=
+Valencia,2022,21628,1,yes,not-htw,valenciaciudaddelrunning,,43,312,2,21628,4178,Scout-locked year-in-path; POST ficha; never maraton.php?y=
+Valencia,2023,25910,1,yes,not-htw,valenciaciudaddelrunning,,57,1324,1,25910,5347,Scout-locked year-in-path; POST ficha; never maraton.php?y=
+Valencia,2024,28193,1,yes,not-htw,valenciaciudaddelrunning,,36,668,1,28193,6192,Scout-locked year-in-path; POST ficha; never maraton.php?y=
+Vienna,2022,2574,1,yes,post-2019-additive,mikatiming,,3,28,0,314,0,ingested from vienna_2022.jsonl; jsonl=2574 GET=2574; last_ingested left null (no listed count)
+Warsaw,2015,7361,2,yes-per-paper | true,smyth-2021-original,domtel-sport,,163,478,0,7361,0,
+Warsaw,2016,6591,2,yes-per-paper | true,smyth-2021-original,domtel-sport,,11,79,0,6591,0,
+Warsaw,2017,5522,2,yes-per-paper | true,smyth-2021-original,domtel-sport,,11,54,1,5522,0,
+Warsaw,2018,4445,2,yes-per-paper | yes,smyth-2021-original,domtel-sport,,5,154,0,4445,0,2018 only. Checkpoint tabs 5/10/15/20/25/30/35/40/meta. Did not open OWM2015-17.
+Washington,2008,18236,2,yes-per-paper | yes,smyth-2021-original,Xacte,,61,837,8,0,0,Xacte mid=119 eventId=203 subeventId=387 33th Marine Corps Marathon
+Washington,2009,21401,2,yes-per-paper | yes,smyth-2021-original,Xacte,,524,1783,16,0,0,Xacte mid=119 eventId=202 subeventId=386 34th Marine Corps Marathon
+Washington,2010,21945,2,yes-per-paper | yes,smyth-2021-original,Xacte,,154,1108,10,0,0,Xacte mid=119 eventId=201 subeventId=385 35th Marine Corps Marathon
+Washington,2011,21024,2,yes-per-paper | yes,smyth-2021-original,Xacte,,249,1310,0,0,0,Xacte mid=119 eventId=198 subeventId=374 36th Marine Corps Marathon
+Washington,2012,23515,2,yes-per-paper | yes,smyth-2021-original,Xacte,,185,1734,1,0,0,Xacte mid=119 eventId=197 subeventId=373 37th Marine Corps Marathon
+Washington,2013,23384,2,yes-per-paper | yes,smyth-2021-original,Xacte,,88,3619,23,0,0,Xacte mid=119 eventId=134 subeventId=323 38th Marine Corps Marathon
+Washington,2014,19688,2,yes-per-paper | yes,smyth-2021-original,Xacte,,70,661,23,0,0,Xacte mid=119 eventId=663 subeventId=1790 39th Marine Corps Marathon
+Washington,2015,23182,2,yes-per-paper | yes,smyth-2021-original,Xacte,,64,1309,51,1,0,Xacte mid=119 eventId=1104 subeventId=2624 40th Marine Corps Marathon
+Washington,2016,19678,2,yes-per-paper | yes,smyth-2021-original,Xacte,,38,795,1,0,0,Xacte mid=119 eventId=1332 subeventId=3125 41st Marine Corps Marathon
+Washington,2017,20038,2,yes-per-paper | yes,smyth-2021-original,Xacte,,107,3620,272,0,0,Xacte mid=119 eventId=1896 subeventId=4592 42nd Marine Corps Marathon
+Washington,2018,20611,2,yes-per-paper | yes,smyth-2021-original,Xacte,,105,1611,3,0,0,Xacte mid=119 eventId=2162 subeventId=5302 43rd Marine Corps Marathon
+Washington,2023,13819,1,yes,smyth-2021-original,Xacte,,13819,13819,2,0,0,Xacte mid=119 eventId=2529 subeventId=6300 48th Marine Corps Marathon
