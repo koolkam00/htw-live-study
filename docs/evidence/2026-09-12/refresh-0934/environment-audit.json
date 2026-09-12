@@ -1,0 +1,54 @@
+{
+  "raw_editions": 256,
+  "weather_editions": 249,
+  "terrain_editions": 254,
+  "missing_weather": [
+    {
+      "city": "Amsterdam",
+      "year": 2020,
+      "reason": "No weather row was supplied for this race edition."
+    },
+    {
+      "city": "Boston",
+      "year": 2016,
+      "reason": "No weather row was supplied for this race edition."
+    },
+    {
+      "city": "Chicago",
+      "year": 2016,
+      "reason": "No weather row was supplied for this race edition."
+    },
+    {
+      "city": "Frankfurt",
+      "year": 2022,
+      "reason": "No weather row was supplied for this race edition."
+    },
+    {
+      "city": "Helsinki",
+      "year": 2025,
+      "reason": "Weather row failed validation: observed hour differs from scheduled start by more than 30 minutes."
+    },
+    {
+      "city": "London",
+      "year": 2015,
+      "reason": "No weather row was supplied for this race edition."
+    },
+    {
+      "city": "Vienna",
+      "year": 2022,
+      "reason": "No weather row was supplied for this race edition."
+    }
+  ],
+  "missing_terrain": [
+    {
+      "city": "Melbourne",
+      "year": 2015,
+      "reason": "No course elevation profile was supplied for this city."
+    },
+    {
+      "city": "Vienna",
+      "year": 2022,
+      "reason": "No course elevation profile was supplied for this city."
+    }
+  ]
+}

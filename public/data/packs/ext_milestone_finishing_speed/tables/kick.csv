@@ -1,21 +1,21 @@
 target,label,value,n_value
-Under 3 hours,2–5 minutes ahead,-0.9067300107247545,32140
-Under 3 hours,Up to 2 minutes ahead,-1.5720352090891065,29230
-Under 3 hours,Up to 2 minutes behind,-0.754502883369601,20791
-Under 3 hours,2–5 minutes behind,-0.47641973800506277,29121
-Under 3:30,2–5 minutes ahead,-1.9091361029286213,63010
-Under 3:30,Up to 2 minutes ahead,-2.3755287992190066,49773
-Under 3:30,Up to 2 minutes behind,-2.0975301789518506,45538
-Under 3:30,2–5 minutes behind,-1.619700083079867,64322
-Under 4 hours,2–5 minutes ahead,-3.1996184264028615,95261
-Under 4 hours,Up to 2 minutes ahead,-3.946875331741384,66514
-Under 4 hours,Up to 2 minutes behind,-3.9343973278788025,56868
-Under 4 hours,2–5 minutes behind,-2.807863367643504,74573
-Under 4:30,2–5 minutes ahead,-4.861920425051991,68523
-Under 4:30,Up to 2 minutes ahead,-5.197683247691187,46053
-Under 4:30,Up to 2 minutes behind,-5.303493713840634,43164
-Under 4:30,2–5 minutes behind,-4.967932646619189,61352
-Under 5 hours,2–5 minutes ahead,-6.729118093308106,47342
-Under 5 hours,Up to 2 minutes ahead,-7.215560599257708,30349
-Under 5 hours,Up to 2 minutes behind,-7.2162854659869495,28285
-Under 5 hours,2–5 minutes behind,-6.512262961756821,38495
+Under 3 hours,2–5 minutes ahead,-0.8705773857118904,33653
+Under 3 hours,Up to 2 minutes ahead,-1.5324850064661333,30603
+Under 3 hours,Up to 2 minutes behind,-0.7067344197184577,21738
+Under 3 hours,2–5 minutes behind,-0.4544328936600839,30603
+Under 3:30,2–5 minutes ahead,-1.8738880631157084,67046
+Under 3:30,Up to 2 minutes ahead,-2.3755287992189844,52961
+Under 3:30,Up to 2 minutes behind,-2.0869110574192495,48414
+Under 3:30,2–5 minutes behind,-1.621625118025538,68320
+Under 4 hours,2–5 minutes ahead,-3.1824201592205004,102138
+Under 4 hours,Up to 2 minutes ahead,-3.9373641705111484,71110
+Under 4 hours,Up to 2 minutes behind,-3.9464973013005222,60747
+Under 4 hours,2–5 minutes behind,-2.8598326059773083,79842
+Under 4:30,2–5 minutes ahead,-4.9302339511757935,72960
+Under 4:30,Up to 2 minutes ahead,-5.265726959768447,48861
+Under 4:30,Up to 2 minutes behind,-5.36010336255649,45791
+Under 4:30,2–5 minutes behind,-5.048220351244975,64974
+Under 5 hours,2–5 minutes ahead,-6.8336222670364215,49931
+Under 5 hours,Up to 2 minutes ahead,-7.3221145909619425,31982
+Under 5 hours,Up to 2 minutes behind,-7.331260330256639,29736
+Under 5 hours,2–5 minutes behind,-6.628762271484012,40400
