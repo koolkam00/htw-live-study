@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from build_pacing import POINTS, records
+from source_quality import source_quality_report, METHOD as SOURCE_QUALITY_METHOD
 
 PACK = 'ext_personalized_guide'
 MIN_N = 100
@@ -260,6 +261,12 @@ def generate(db, source, output, provenance, manifest, counts, diagnostics, live
         'The comparison is observational. Historical route changes and declared goals are absent. Supplied elevation and start-hour weather remain proxies. Current and same-year performances are excluded from prior benchmarks. Individual identity checks follow the linked-history pipeline.',
         'Preparing, choosing a course and reviewing a past result reorder the same twelve questions. Preference changes do not change the underlying evidence. Checkpoint comparisons use current elapsed progress instead of a previous-marathon filter.'
       ]}
+    quality = source_quality_report(db, source)
+    metadata['source_quality'] = quality
+    metadata['source_quality_script_sha256'] = quality['script_sha256']
+    metadata['pacing_script_sha256'] = hashlib.sha256(Path(__file__).with_name('build_pacing.py').read_bytes()).hexdigest()
+    if quality['reviewed_edition_policy']:
+        metadata['methodology_prose'].append(SOURCE_QUALITY_METHOD)
     (folder/'pack_meta.json').write_text(json.dumps(metadata,indent=2,allow_nan=False)+'\n')
     (folder/'summary.json').write_text(json.dumps(clean(summary),separators=(',',':'),allow_nan=False)+'\n')
     print(json.dumps({'personalized_complete':12,'files':len(list(folder.rglob('*.json'))),'bytes':sum(p.stat().st_size for p in folder.rglob('*.json')),'coverage':dict(coverage)}),flush=True)

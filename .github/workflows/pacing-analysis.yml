@@ -44,6 +44,17 @@ jobs:
         run: python analysis/download_release.py --bundle FULL --output "$RUNNER_TEMP/pacing-input" --tag "$PACING_RELEASE_TAG"
       - name: Inspect available fields and coverage
         run: python analysis/inspect_export.py --input "$RUNNER_TEMP/pacing-input" --output "$RUNNER_TEMP/pacing-inspection"
+      - name: Audit synchronized raw and feature records
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          root = os.environ['RUNNER_TEMP']
+          tag = json.load(open(root + '/pacing-input/provenance.json'))['release_tag']
+          if tag == 'private-export-20260911-1107':
+              subprocess.run(['python', 'analysis/audit_release.py', '--input', root + '/pacing-input', '--output', root + '/pacing-inspection/release-contract.json'], check=True)
+          else:
+              print('Canonical-release audit is not declared for this legacy or unreviewed tag:', tag)
+          PY
       - name: Read current public snapshot date
         run: |
           curl --fail --silent --show-error https://htw-live-study.vercel.app/data/live.json > "$RUNNER_TEMP/pacing-live.json"

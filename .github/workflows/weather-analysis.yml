@@ -10,7 +10,10 @@ on:
   pull_request:
     paths:
       - 'analysis/build_weather.py'
+      - 'analysis/build_pacing.py'
+      - 'analysis/source_quality.py'
       - 'analysis/test_weather.py'
+      - 'analysis/test_source_quality.py'
       - 'analysis/weather-release.json'
       - 'analysis/requirements.txt'
       - '.github/workflows/weather-analysis.yml'
@@ -31,7 +34,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r analysis/requirements.txt
       - name: Check weather measurements and screening rules
-        run: python -m unittest discover -s analysis -p 'test_weather.py'
+        run: python -m unittest discover -s analysis -p 'test_*.py'
       - name: Select the explicit weather source
         env:
           REQUESTED_WEATHER_TAG: ${{ inputs.release_tag }}

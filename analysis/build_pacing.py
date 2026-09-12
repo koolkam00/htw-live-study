@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
+from source_quality import METHOD as SOURCE_QUALITY_METHOD, install_policy, source_quality_report
 
 POINTS = [5, 10, 15, 20, 25, 30, 35, 40, 42.195]
 FIELDS = [f"split_{k}km" for k in [5, 10, 15, 20, 25, 30, 35, 40]] + ["split_42_2km"]
@@ -40,6 +41,7 @@ def filter_for(key, label, preferred):
 
 
 def prepare(db, source, keep_record_id=False):
+    install_policy(db, source)
     # Parse elapsed durations, never wall-clock timestamps. Invalid strings become NULL.
     db.execute(r"""CREATE MACRO seconds(s) AS (
       CASE WHEN regexp_full_match(trim(s), '[0-9]{1,3}:[0-5][0-9]:[0-5][0-9](\.[0-9]+)?')
@@ -70,6 +72,7 @@ def prepare(db, source, keep_record_id=False):
     complete = ' AND '.join(f't{i} IS NOT NULL' for i in range(9))
     increasing = 't0>0 AND ' + ' AND '.join(f't{i}>t{i-1}' for i in range(1, 9))
     plausible = 't8 BETWEEN 5400 AND 43200 AND ' + ' AND '.join(f'p{i} BETWEEN 120 AND 1200' for i in range(9))
+    db.execute(f'CREATE TEMP TABLE timing_eligible AS SELECT * FROM paced WHERE {complete} AND {increasing} AND {plausible}')
     db.execute(f"""CREATE TEMP TABLE eligible AS SELECT *,
       100*((t7-t3)/t3-1) AS change20,
       (t8-t5)/60 AS remaining30,
@@ -82,17 +85,20 @@ def prepare(db, source, keep_record_id=False):
       CASE WHEN age>=18 AND age<90 AND age=floor(age)
         THEN CASE WHEN age<30 THEN '18–29' ELSE cast(floor(age/10)*10 AS INTEGER)::VARCHAR || '–' || cast(floor(age/10)*10+9 AS INTEGER)::VARCHAR END
         ELSE NULL END AS age_band
-      FROM paced WHERE {complete} AND {increasing} AND {plausible}""")
+      FROM timing_eligible p WHERE NOT EXISTS (
+        SELECT 1 FROM source_quality_editions q WHERE q.city=p.city AND q.year=p.year)""")
     counts = records(db, f"""SELECT count(*) AS deduplicated,
       count(*) FILTER(WHERE {complete}) AS complete,
       count(*) FILTER(WHERE {complete} AND {increasing}) AS increasing,
-      count(*) FILTER(WHERE {complete} AND {increasing} AND {plausible}) AS eligible FROM paced""")[0]
+      count(*) FILTER(WHERE {complete} AND {increasing} AND {plausible}) AS timing_eligible FROM paced""")[0]
+    counts['eligible'] = db.execute('SELECT count(*) FROM eligible').fetchone()[0]
+    counts['source_quality_excluded'] = counts['timing_eligible'] - counts['eligible']
     counts['raw'] = db.execute('SELECT count(*) FROM read_parquet(?)', [str(source / 'race_records.parquet')]).fetchone()[0]
     counts['duplicates_removed'] = counts['raw'] - counts['deduplicated']
     counts['missing_or_unparsed'] = counts['deduplicated'] - counts['complete']
     counts['non_increasing'] = counts['complete'] - counts['increasing']
-    counts['outside_quality_bounds'] = counts['increasing'] - counts['eligible']
-    assert sum(counts[k] for k in ['duplicates_removed', 'missing_or_unparsed', 'non_increasing', 'outside_quality_bounds', 'eligible']) == counts['raw']
+    counts['outside_quality_bounds'] = counts['increasing'] - counts['timing_eligible']
+    assert sum(counts[k] for k in ['duplicates_removed', 'missing_or_unparsed', 'non_increasing', 'outside_quality_bounds', 'source_quality_excluded', 'eligible']) == counts['raw']
     assert counts['eligible'] > 0
     sections = []
     for i, point in enumerate(POINTS):
@@ -105,13 +111,14 @@ def prepare(db, source, keep_record_id=False):
 
 
 class Publisher:
-    def __init__(self, output, provenance, manifest, counts, live_as_of, common_method=None, script=None):
+    def __init__(self, output, provenance, manifest, counts, live_as_of, common_method=None, script=None, source_quality=None):
         self.output, self.provenance, self.manifest = output, provenance, manifest
         self.counts, self.live_as_of = counts, live_as_of
         self.as_of = datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
         self.packs = []
         self.common_method = COMMON_METHOD if common_method is None else common_method
         self.script = Path(script or __file__)
+        self.source_quality = source_quality
 
     def publish(self, slug, question_id, title, answer, detail, methods, charts, tables, n, statistics=None):
         pack = 'ext_' + slug
@@ -144,6 +151,11 @@ class Publisher:
             'cohort': self.counts, 'methodology_prose': methods + self.common_method,
             'observational': True, 'minimum_public_cell': MIN_CELL,
         }
+        if self.source_quality is not None:
+            meta['source_quality'] = self.source_quality
+            meta['source_quality_script_sha256'] = self.source_quality['script_sha256']
+            if self.source_quality['reviewed_edition_policy']:
+                meta['methodology_prose'] += [SOURCE_QUALITY_METHOD]
         summary = {'answer_prose': answer, 'detail_prose': detail, 'charts': charts, 'statistics': statistics or {}}
         for filename, data in [('pack_meta.json', meta), ('summary.json', summary)]:
             (target / filename).write_text(json.dumps(data, indent=2, allow_nan=False) + '\n')
@@ -159,7 +171,7 @@ def run(source, output, live_as_of):
     counts = prepare(db, source)
     assert counts['raw'] == manifest['n_records'], 'Manifest count does not match the archive'
     n = counts['eligible']
-    pub = Publisher(output, provenance, manifest, counts, live_as_of)
+    pub = Publisher(output, provenance, manifest, counts, live_as_of, source_quality=source_quality_report(db, source))
     number = lambda v: f'{v:,.0f}'
     coverage = records(db, 'SELECT city,year,race,count(*) AS n FROM eligible GROUP BY ALL ORDER BY city,year,race')
     profile = records(db, f'''SELECT distance AS label,median(relative) AS value,count(*) AS n_value

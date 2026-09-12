@@ -1,67 +1,78 @@
 # Operations runbook
 
-Use [analysis/README.md](../analysis/README.md) for the full existing contract. This document separates reusable procedures from the dated takeover results in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md).
+Use [analysis/README.md](../analysis/README.md) for the complete calculation and import contracts. The current full-refresh source is **`private-export-20260911-1107`**; [REFRESH_20260911_1107.md](REFRESH_20260911_1107.md) records what has passed and what is deployed.
 
-## Access and initial verification
+## Verify access and source state
 
-1. Open the koolkam00/htw-live-study repository and read AGENTS.md plus PROJECT_HANDOFF.md. The current policy requires public source and complete datasets; verify actual access separately.
-2. Check the current main commit, analysis/release.json, GitHub Releases, latest relevant Actions run and public live.json as_of. Record each separately.
-3. Test repository, release metadata and direct asset downloads without cookies, tokens or an account. Use anonymous HTTPS for public binary downloads. Record redirects/status and confirm the returned bytes, not just a visible release page. Legacy names containing `private` do not imply authentication is required.
-4. Publish full runner records and snapshots as ordinary unencrypted Parquet/SQLite files with schemas and checksums. Prefer Release assets for large binaries; working inputs may be inside or outside the checkout. Keep operational credentials out of files and logs because they are not dataset contents.
+1. Read AGENTS.md and PROJECT_HANDOFF.md; record the branch, commit, both analysis pins, relevant Releases/Actions and public `live.json.as_of` separately.
+2. Fetch public repository metadata and full-record assets without a token, cookies or an account. Confirm actual bytes and checksums, not only a visible release page. The legacy word `private` in a tag is not an access control.
+3. Download immutable CORE and FULL from one exact tag; verify archive/member checksums, schema, units, record/feature alignment, raw counts, overlay dates and source completeness. A successful exporter is not analytical validation.
+4. Keep operational credentials out of datasets and logs. Full research records are public and may be stored in or outside the checkout. Prefer durable Release assets for large files.
 
-## Reproduce the pinned export locally
+## Reproduce and audit the current input
 
-Run from the repository root with Python 3.12 and the dependencies in analysis/requirements.txt. Public downloads must not require GitHub authentication. The example uses a local working directory; another location is optional, not a privacy requirement. Read the actual public live.json timestamp first.
+Run from the repository root with Python 3.12 and a fresh output directory. Replace `CURRENT_PUBLIC_LIVE_AS_OF` with the actual timestamp of the unchanged historical core context.
 
 ```bash
 python -m pip install -r analysis/requirements.txt
-python analysis/download_release.py --bundle FULL --output ./data-work/pacing-input
-python analysis/inspect_export.py --input ./data-work/pacing-input --output ./data-work/pacing-inspection
-python analysis/audit_expanded.py --input ./data-work/pacing-input --output ./data-work/pacing-inspection
+python analysis/download_release.py --bundle FULL --tag private-export-20260911-1107 --output /path/to/1107-input
+python analysis/download_release.py --bundle CORE --tag private-export-20260911-1107 --output /path/to/1107-core
+python analysis/inspect_export.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_expanded.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_release.py --input /path/to/1107-input --core /path/to/1107-core --output /path/to/1107-inspection/release-contract.json
 python -m unittest discover -s analysis -p 'test_*.py'
-python analysis/build_pacing.py --input ./data-work/pacing-input --output ./data-work/pacing-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/build_extended.py --input ./data-work/pacing-input --output ./data-work/pacing-aggregates --personalized-output ./data-work/pacing-personalized --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
-python analysis/write_findings.py --output ./data-work/pacing-aggregates
 ```
 
-Download verifies GitHub asset size/SHA-256, rejects unsafe/duplicate/unexpected members and writes provenance.json. CORE requires exactly eight named files; FULL adds features.parquet. OUTSIDE-AGENT-PASTE-BRIEF.md is an optional separate release asset. Extra sidecars inside either archive require an explicitly reviewed consumer change. The September 10 archives have verified extra members and therefore fail this current downloader; the commands above reproduce the September 7 pin, not the newer export.
+Add `--previous /path/to/0336-input` to the release audit to reproduce the raw-record delta. CORE has eight allowed members; FULL adds `features.parquet`. Producer audit notes belong in separate assets. The downloader validates size/SHA-256, rejects unsafe, duplicate or unexpected members and writes provenance. Do not bypass these checks because a prior release had a different archive layout.
 
-## Adopt a newer export
+Review the release-specific exclusions in `analysis/source_quality.py` before calculation. The policy follows explicit producer/audit evidence for invalid, incomplete, held or selected fields. Apply it after timing eligibility, include its edition counts and hashes in each output, and exclude those editions from earlier benchmarks as well as outcomes. Do not widen exclusions based on small sample size alone or remove usable records merely because age/gender is missing.
 
-- Confirm all intended assets exist before publishing a release. Validate the schema, ID contract, per-table row counts, units, timestamps, checksums and exclusions.
-- Pass `--tag private-export-YYYYMMDD-HHMM` to the downloader or the workflow release_tag input after compatibility checks. Do not merely edit the pin and assume validity.
-- Run the full inspection and calculation against that vintage. Compare raw/features/eligible/linked counts and source coverage with the previous release.
-- The analysis workflow (historically named “Private marathon pacing analysis”) handles published private-export-* releases, relevant PR changes (including forks, subject to GitHub workflow approval) and manual invocation. htw-db-* releases are skipped.
-- Check successful completion and correct source commit/tag for all three relevant artifacts: pacing-aggregate-packs, pacing-personalized-aggregates and pacing-export-inspection.
-- The latest relevant September 10 refresh is still failed run 34490423926, with no retry found during the September 11 inspection. Its archive-selection failure did not calculate outputs. The current listing has one FULL archive, but a separate audit verified extra archive members and missing feature columns expected by the consumer. Resolve both compatibility problems before rerunning; do not attribute the historical failure to them. See [known issues](KNOWN_ISSUES.md).
-
-## Import verified aggregates
-
-The following example intentionally names the old verified bundle. Substitute a new bundle only after validating it.
+## Calculate all owned outputs
 
 ```bash
-python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260907-1318
-python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260907-1318
+python analysis/build_pacing.py --input /path/to/1107-input --output /path/to/1107-aggregates --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/build_extended.py --input /path/to/1107-input --output /path/to/1107-aggregates --personalized-output /path/to/1107-personalized --live-as-of CURRENT_PUBLIC_LIVE_AS_OF
+python analysis/write_findings.py --output /path/to/1107-aggregates
+python analysis/build_weather.py --input /path/to/1107-input --output /path/to/1107-weather/evidence.json
+```
+
+The first two commands produce all 33 registered broad packs. `build_extended.py` also invokes the twelve-path personalized engine, retaining whole-minute targets 90–720. The weather screen is separate: rerun all three fixed candidates with the existing thresholds, retain every decision in its JSON, and let readiness determine which pages exist. A refresh must not freeze old conclusions or loosen the gate to publish a preferred result.
+
+The main workflow produces `pacing-aggregate-packs`, `pacing-personalized-aggregates` and `pacing-export-inspection` for an exact source tag and code commit. The separate weather workflow produces `weather-evidence`. Neither workflow imports data or deploys the site. Inspect source tag, code revision, successful checks and artifacts; do not infer success from release publication. The historical September 10 failed run is not the status of the current 1107 calculations.
+
+## Validate, import and publish
+
+ZIP each output's contents with the registered pack folder at archive root. The broad archive must have all 33 registry entries; the personalized archive must have only `ext_personalized_guide`. Validate both before replacing their owned public folders:
+
+```bash
+python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260911-1107 --check-only
+python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107 --check-only
+python analysis/import_packs.py --archive /path/to/pacing-aggregate-packs.zip --expected-export private-20260911-1107
+python analysis/import_personalized.py --archive /path/to/pacing-personalized-aggregates.zip --expected-export private-20260911-1107
 npm ci
 npm run verify:data
 npm run build
 ```
 
-The first importer requires the complete 33-pack registry and owns its ext_* directories; the second owns only ext_personalized_guide. They are separate artifact contracts. Review the exact public file diff and provenance. Submit intended aggregate changes and a reviewed analysis/release.json pin update through a PR. Retain historical core-pack ownership. The historical private-data publication gate is superseded by the public-access policy. Keep repository review and numerical validation to establish analytical correctness; they do not limit access to the full source records.
+Review and copy the weather JSON to `public/data/weather/evidence.json` with its exact `analysis/weather-release.json` pin; update `analysis/release.json` with the validated main outputs. The weather file is outside the two ZIP importer contracts. Verify source/script/policy hashes, raw-to-eligible and weather-cohort reconciliation, all candidate gates, dynamic routes, exact source labels and display units. For the current audited release, `calculation_provenance.py` requires the exact reviewed builder and supporting-script hashes before either import; a valid-looking 64-character hash is insufficient. Website data validation repeats these checks on PRs and main. Review the full diff before committing or merging. Verify the deployed source tags and exact commit separately after publication.
 
-## Producer operations outside this repository
+Original `live.json` and S/R/RN/P packs remain unchanged historical context; this repository does not contain their complete producer generator. Preserve them until a task supplies and validates that separate pipeline. The source pin alone never certifies a refresh.
 
-The producer documents ongoing ingestion into platform.sqlite; the live process was not inspected here. Consistent SQLite backup and integrity checks are documented in earlier release notes; do not copy a changing SQLite file blindly or replace live ingestion with a downloaded backup. Publish full-record backups and exports with anonymous Release download links. Ordinary Parquet/SQLite files and optional gzip compression require no decryption key. Public availability of a snapshot does not require exposing the live service or its credentials. Producer scripts, schedules, retries, recovery procedures and credentials are not available in this checkout. Obtain the [ingestion handoff](INGESTION_HANDOFF.md) before operating that environment.
+## Producer operations and missing information
+
+The live producer database, scheduled ingestion, retries and recovery scripts are external to this checkout. A consistent SQLite snapshot is made through SQLite's backup mechanism or an equivalent supported snapshot; do not blindly copy a changing database or replace ingestion with a downloaded backup. Publish checksummed full-record snapshots with anonymous opening instructions. Public snapshot access does not require exposing the live service or its credentials.
+
+Producer follow-up priorities are complete/reconcile held editions, parse Paris 2014–2018 elapsed formats with source fixtures, document exact-age and missing-field coverage, resolve ambiguous edition dates/start hours and provide historical route validity. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) and [INGESTION_HANDOFF.md](INGESTION_HANDOFF.md). Never infer missing values to make a cohort larger.
 
 ## Report statuses separately
 
-| Status | Evidence required |
+| Status | Required evidence |
 | --- | --- |
-| Backup saved | Immutable full-record backup asset, timestamp, integrity/checksum |
-| Export ready | Complete verified synchronized CORE/FULL and manifest |
-| Anonymous access verified | Repository and full-record assets fetched without account, token or cookies; record dated URLs and byte/checksum checks |
-| Analysis passed | Successful run and aggregate artifacts for exact tag/commit |
+| Backup saved | Immutable snapshot, timestamp, integrity and checksum |
+| Export ready | Synchronized complete CORE/FULL, manifest and schema/ID audit |
+| Access verified | Anonymous download of actual full-record bytes, with dated URLs/checksums |
+| Analysis passed | Successful calculation and artifacts for exact tag/commit, with exclusions and methods |
 | Repository updated | Validated import committed and reviewed |
-| Site updated | Authorized deployment verified with matching public metadata |
+| Site updated | Authorized deployment verified against exact source labels and commit |
 
-Inspection artifacts retain seven days; aggregates retain thirty days in current workflows. Preserve necessary audit evidence, full source files and opening instructions durably with the release. Do not rely on an expiring artifact as the sole long-term specification.
+Inspection artifacts retain seven days and main aggregate artifacts thirty days under the existing workflow contract. Preserve durable source files and essential audit reports with Releases; expiring CI artifacts are not a long-term specification.

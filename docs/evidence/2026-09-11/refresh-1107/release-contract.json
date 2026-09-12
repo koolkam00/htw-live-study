@@ -1,0 +1,160 @@
+{
+  "release_tag": "private-export-20260911-1107",
+  "input_provenance": {
+    "repository": "koolkam00/htw-live-study",
+    "release_tag": "private-export-20260911-1107",
+    "release_published_at": "2026-09-11T15:24:02Z",
+    "asset": "htw-private-export-FULL-20260911-1107.tar.gz",
+    "asset_sha256": "ffe901857c2603ac4305d9376a194eed171052d9835223c8ba5b19b59067a656",
+    "bundle": "FULL",
+    "manifest_sha256": "4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2"
+  },
+  "audit_script_sha256": "cdc3527392cc400347ea41af2170b7c5683ae253a6777e8dfa2b81e2e7fb1a90",
+  "member_sha256": {
+    "race_records.parquet": "9ea19cbd61633b57402a3ef83e2ad0e756ef83bf04c149bd1e9694a38a985acb",
+    "race_conditions.parquet": "f0a7cc1ce9504573483458676fa578998a296dd6f91ba0777edc1f7a0bb55baf",
+    "course_profiles.parquet": "c4778f2ea3a82ec95cdd677fb607c1d13e30f3c012642484f10b3befb9b9d6f1",
+    "course_segments.parquet": "2d3fece603481f7c92f3020e51ea12aec94884d6e5ff411ff37ffe6632f7b266",
+    "sources.parquet": "480f28ab96336e5180d484f93dcb126fd2b212ecfdc69c0833f5e2e0a908ed36",
+    "races_summary.json": "c572a6049da7ff0390a2d5653eebe5867bc4056fbd05e13c394c02ed03240090",
+    "README.md": "d2ffb40ad4bdfdc39e00ed9ab89506c16aa96f3761f0b17dc90d97b7e21a4773",
+    "MANIFEST.json": "4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2",
+    "features.parquet": "fcbe6c80bef292cb1419f0d1c34d3644f6be7c00da0a025232797a026ac9a531"
+  },
+  "manifest_size_notes": [
+    {
+      "file": "MANIFEST.json",
+      "reported": 2286,
+      "actual": 4862
+    }
+  ],
+  "r_ids": {
+    "rows": 4207456,
+    "non_null": 4207456,
+    "unique_ids": 4207456
+  },
+  "f_ids": {
+    "rows": 4207456,
+    "non_null": 4207456,
+    "unique_ids": 4207456
+  },
+  "alignment": {
+    "joined": 4207456,
+    "unmatched": 0,
+    "edition_mismatch": 0,
+    "name_mismatch": 0,
+    "age_mismatch": 0
+  },
+  "sex_normalization": [
+    {
+      "raw_sex": "X",
+      "feature_sex": "NULL",
+      "rows": 552
+    }
+  ],
+  "timings": [
+    {
+      "comparable": 4125511,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 9.094947017729282e-13,
+      "raw": "split_5km",
+      "feature": "cum_05"
+    },
+    {
+      "comparable": 4097412,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 1.8189894035458565e-12,
+      "raw": "split_10km",
+      "feature": "cum_10"
+    },
+    {
+      "comparable": 3996825,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 5.4569682106375694e-12,
+      "raw": "split_15km",
+      "feature": "cum_15"
+    },
+    {
+      "comparable": 3642761,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 7.275957614183426e-12,
+      "raw": "split_20km",
+      "feature": "cum_20"
+    },
+    {
+      "comparable": 3635364,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 1.0913936421275139e-11,
+      "raw": "split_25km",
+      "feature": "cum_25"
+    },
+    {
+      "comparable": 3627139,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_30km",
+      "feature": "cum_30"
+    },
+    {
+      "comparable": 3617415,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_35km",
+      "feature": "cum_35"
+    },
+    {
+      "comparable": 3608642,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_40km",
+      "feature": "cum_40"
+    },
+    {
+      "comparable": 4176791,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 7.275957614183426e-12,
+      "raw": "split_42_2km",
+      "feature": "finish_time"
+    }
+  ],
+  "coverage": {
+    "raw_records": 4207456,
+    "cities": 34,
+    "race_years": 240,
+    "max_ingested_at": "2026-09-11T15:04:44Z",
+    "null_age": 2758408
+  },
+  "features": {
+    "valid_splits": 3326908,
+    "sustained_slowdown_among_valid": 1022545,
+    "null_name": 9,
+    "supplied_dates": 0
+  },
+  "course_validity": {
+    "profiles": 32,
+    "valid_from": 0,
+    "valid_to": 0
+  },
+  "weather": {
+    "rows": 235,
+    "unique_editions": 235,
+    "dates_agree": 235
+  },
+  "core_full_shared_hashes_match": true,
+  "previous_delta": {
+    "added": 228796,
+    "deleted": 0,
+    "changed": 0,
+    "unchanged": 3978660
+  },
+  "previous_release": "private-export-20260911-0336"
+}

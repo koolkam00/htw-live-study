@@ -1,0 +1,25 @@
+{
+  "method": "Independent full city-indicator OLS and weighted whole-city bootstrap; no builder fitting helpers",
+  "bootstrap_draws": 6000,
+  "seed": 20260911,
+  "estimate_tolerance": 1e-08,
+  "estimates": [
+    0.6367743647591155,
+    2.0725307049435844,
+    0.23740429617379388
+  ],
+  "intervals": [
+    [
+      -0.5173319609795503,
+      1.5301418736485266,
+      -0.3608770202986586
+    ],
+    [
+      1.5891518723517342,
+      2.745932650496319,
+      0.7793072972996484
+    ]
+  ],
+  "editions": 177,
+  "courses": 27
+}

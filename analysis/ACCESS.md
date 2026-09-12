@@ -1,103 +1,57 @@
 # Public export access
 
-Updated September 11, 2026. The owner requires public access to the complete Marathon Pacing Study data, source and documentation, superseding the earlier private-release policy. Full records, including supplied runner names and identifiers, belong in publicly downloadable releases. Archives are compressed, not encrypted. Releases keep large binaries separate from the website build for size and reproducibility, not privacy. This records export access, not a direct connection to the live ingestion database.
+Updated September 11, 2026 for **`private-export-20260911-1107`**. Full source records, recorded names, supplied features, overlays and consistent database backups are public research material. Archives are compressed, not encrypted. Public snapshot access does not imply a connection to the running ingestion database.
 
-## Open the data
+## Download the audited source
 
-Browse [all releases](https://github.com/koolkam00/htw-live-study/releases) or download the complete [September 10 CORE](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260910-1412/htw-private-export-CORE-20260910-1412.tar.gz) and [September 10 FULL](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260910-1412/htw-private-export-FULL-20260910-1412.tar.gz) archives. FULL includes CORE tables plus every supplied feature row and column. The legacy `private` text in names is retained for link and pipeline compatibility.
+- [1107 release and all assets](https://github.com/koolkam00/htw-live-study/releases/tag/private-export-20260911-1107)
+- [CORE archive](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260911-1107/htw-private-export-CORE-20260911-1107.tar.gz)
+- [FULL archive](https://github.com/koolkam00/htw-live-study/releases/download/private-export-20260911-1107/htw-private-export-FULL-20260911-1107.tar.gz)
 
-No account, token, password or decryption key should be needed. Standard gzip/tar tools open the archives; DuckDB or PyArrow opens the Parquet tables. The current strict pipeline downloader still rejects the September 10 archive/schema contract, as detailed below; this does not prevent opening its files directly. For a reproducible calculation, use the pinned September 7 release with the [local commands](README.md#access-and-refresh).
+No account, password or decryption key is required. Standard gzip/tar tools open the archives; DuckDB or PyArrow reads Parquet. FULL includes CORE plus `features.parquet`. The legacy `private` text in tags and filenames is retained for compatibility, not as an access restriction.
 
-**Verified September 11, 2026:** GitHub reports the repository as public. Without credentials or cookies, all nine releases were listed, the first 16 bytes of every one of their 21 assets were read, and the source release pin was retrieved. This verifies anonymous access to every published asset; the earlier complete-archive checksum audits remain separate evidence.  A subsequent anonymous smoke test downloaded and SHA-256-verified the complete pinned September 7 CORE archive, extracted all eight files and opened all five Parquet tables, including 3,451,055 raw records. See [machine-readable access results](../docs/evidence/2026-09-11/public-access-audit.json).
+Both archives were downloaded and checked against their release sizes and SHA-256 digests. Their eight shared files match byte-for-byte, and FULL contains exactly the expected nine members. The compressed SQLite backup was opened read-only, its database hash matches the manifest, and `PRAGMA integrity_check` returned `ok`. See [the refresh evidence](../docs/REFRESH_20260911_1107.md) for calculation/import/deployment status and the full audit trail.
 
-## September 10: directly audited export, not yet calculated
+| Verification | Value |
+| --- | --- |
+| FULL archive SHA-256 | `ffe901857c2603ac4305d9376a194eed171052d9835223c8ba5b19b59067a656` |
+| Manifest SHA-256 | `4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2` |
+| SQLite database SHA-256 | `795595ad61e61cae58b3e3d7722cbfa7c74fa1c36da863006fb7645e6a6c7e0d` |
+| Raw records and features | 4,207,456 each |
+| Raw coverage | 34 cities; 240 city/year editions |
+| Latest included ingestion | `2026-09-11T15:04:44Z` |
+| Manifest creation | `2026-09-11T15:10:45Z` |
+| Change from 0336 | 228,796 added; 0 deleted; 0 changed raw records |
+| Weather rows | 235 unique city/year editions |
+| Course profiles | 32; all historical validity bounds null |
 
-Source: `private-export-20260910-1412`. Both CORE and FULL were downloaded outside the checkout and verified against release asset size and SHA-256. Shared CORE files have identical member hashes inside FULL.
+The manifest still carries obsolete private-data prose and reports its own size as 2,286 bytes although its verified size is 4,862. These are recorded metadata defects, not encryption or a reason to alter the immutable input. Operational credentials remain excluded from research material.
 
-| File | Rows | Current observation |
-| --- | ---: | --- |
-| `race_records.parquet` | 3,580,279 | 20 columns; unique, non-null canonical IDs |
-| `features.parquet` | 3,580,279 | 138 columns; unique, non-null matching record-ID set |
-| `race_conditions.parquet` | 207 | All supplied race dates populated |
-| `course_profiles.parquet` | 32 | Both historical validity fields entirely null |
-| `course_segments.parquet` | 288 | Supplied course sections |
-| `sources.parquet` | 378 | 148 populated `last_ingested` values |
+## Record and identity contract
 
-The two ID sets match exactly; their row order does not. City, year and age agree on the ID join. Sex agrees except for 552 raw `X` values normalized to null in features. After converting feature minutes to seconds, all comparable cumulative checkpoint/finish timings agree within 1 ms. All 2,807,231 feature-valid rows have nine matching checkpoints. This verifies record alignment for this release, not cross-race identity accuracy.
+Raw `id` and feature `record_id` are unique, non-null and have identical sets in 1107. Edition labels, recorded names and age agree exactly; comparable cumulative checkpoint and finish timings agree within 1 ms after converting feature minutes to seconds. Raw `X` gender is normalized to null in 552 feature rows. Row order is not a join key.
 
-The feature schema no longer contains `race`, `runner_name` or `split_mode_in`. Every feature `race_date` is still null. Supplied runner IDs cover 2,994,501 rows and 2,366,070 distinct IDs, of which 396,353 repeat; 18,561 rows are marked ambiguous. Do not infer exact chronology or verified human identities from these fields.
+The current history builder enables canonical IDs only for the explicitly reviewed 1107 release, rechecking ID sets/labels before joining and matching all nine section durations plus finish time. Supplied cross-race identities must still pass ambiguity, gender/birth-year and duplicate-edition checks. Nine names are null; they are not invented. A verified record join does not independently prove that a supplied cross-race identity belongs to one person.
 
-The ID fix is verified, but refresh compatibility is unresolved:
+Raw elapsed strings remain authoritative for site timing calculations. Feature `valid_splits` identifies 3,326,908 rows; this is not the website's raw-timing/source-quality cohort of 3,328,159. The complete export retains invalid, missing and excluded rows for audit. Missing ages remain missing (2,758,408 raw null ages); every feature race date is still null. Unique weather-overlay dates supply edition context, not personal start or exact within-year race chronology.
 
-- CORE contains two additional members rejected by the current downloader: `ID-CONTRACT.md` and `SHA256SUMS.txt`.
-- FULL also contains `FEATURE-FIELD-NOTES.md` and `COUNT-DIFF.md`; its first rejected member is `FEATURE-FIELD-NOTES.md`.
-- `build_extended.py` still expects feature `race` and `runner_name` for its September 7 natural-key join. Request a new compatible export restoring those columns and moving audit sidecars outside the tarballs, as specified in the [producer handoff](../docs/INGESTION_HANDOFF.md). An intentional schema change instead requires a validated version-specific consumer adapter.
-- The latest relevant Actions refresh remained failed run 34490423926, with no retry found at inspection. Its earlier archive-selection failure is separate from these current extraction/schema incompatibilities.
+## Reproduce and inspect
 
-The release pin and all checked-in extension results remain September 7. All 401 public aggregate files matched production before this branch's later presentation changes. September 10 has not supplied a new validated aggregate refresh.
+```bash
+python -m pip install -r analysis/requirements.txt
+python analysis/download_release.py --bundle FULL --tag private-export-20260911-1107 --output /path/to/1107-input
+python analysis/download_release.py --bundle CORE --tag private-export-20260911-1107 --output /path/to/1107-core
+python analysis/inspect_export.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_expanded.py --input /path/to/1107-input --output /path/to/1107-inspection
+python analysis/audit_release.py --input /path/to/1107-input --core /path/to/1107-core --output /path/to/1107-inspection/release-contract.json
+```
 
-Evidence: [archive member hashes](../docs/evidence/2026-09-11/archive-members-audit.json), [ID/coverage audit](../docs/evidence/2026-09-11/id-contract-audit.json), [timing/units audit](../docs/evidence/2026-09-11/timing-unit-contract-audit.json), [sex normalization](../docs/evidence/2026-09-11/sex-normalization-audit.json).
+Add `--previous /path/to/0336-input` to the last command to reproduce the raw-record delta. Follow [the analysis README](README.md) and [operations](../docs/OPERATIONS.md) for complete calculations and validated imports. Downloading a release does not change either pin, the website or the ingestion database.
 
-## September 7: historical input for checked-in calculations
+## Historical compatibility evidence
 
-Source: `private-20260907-1318`, created September 7, 2026. All observations below describe that vintage.
+The September 11 0336 export repaired the September 10 archive and name/edition-column blockers. Its standalone weather results preceded the complete 1107 refresh. The earlier successful [0336 workflow run](https://github.com/koolkam00/htw-live-study/actions/runs/34560607862) used older personalized target-range code and must not be substituted for a current calculation.
 
-Both CORE and FULL were downloaded and SHA-256 verified inside the repository's
-then-private analysis environment. Every Parquet table and column was scanned. The
-GitHub connector's lack of direct release-binary download support does not limit
-queries in that environment. At that inspection, individual rows and names were not public; the later owner instruction authorizes the complete release contents to be public.
+The September 10 export had matching CORE/FULL IDs but extra in-archive sidecars and missing `race`/`runner_name` history columns. Its [failed run](https://github.com/koolkam00/htw-live-study/actions/runs/34490423926) failed during archive selection, before those extraction/schema issues. These are historical findings, not current 1107 blockers. Preserve the [archive](../docs/evidence/2026-09-11/archive-members-audit.json), [ID](../docs/evidence/2026-09-11/id-contract-audit.json) and [timing](../docs/evidence/2026-09-11/timing-unit-contract-audit.json) audit files with their vintage labels.
 
-| File | Rows | Columns |
-| --- | ---: | ---: |
-| `race_records.parquet` | 3,451,055 | 20 |
-| `features.parquet` | 3,382,000 | 142 |
-| `race_conditions.parquet` | 185 | 25 |
-| `course_profiles.parquet` | 32 | 21 |
-| `course_segments.parquet` | 288 | 20 |
-| `sources.parquet` | 376 | 14 |
-
-`MANIFEST.json`, `README.md`, and the release brief were also read.
-`races_summary.json` is present in both verified archives.
-
-FULL supplies `runner_id`, `match_key`, `is_ambiguous`, `is_repeater`, race order,
-PB fields, ability, normalized segments, cumulative checkpoints, rankings,
-pace changes, and follow-up outcome features. Runner IDs are populated for
-2,826,696 rows, representing 2,242,270 distinct supplied IDs; 372,916 IDs appear
-on more than one row. These are supplied identifiers, not independently verified
-unique people.
-
-The remaining limits concern data and definitions:
-
-- FULL has 69,055 fewer feature rows than raw CORE records; do not assume identical
-  cohorts or join by row order. Its record IDs are a different namespace: only
-  five apparent numeric-ID joins had agreeing runner names. Never use numeric
-  record IDs to join the exports.
-- `features.race_date` is empty throughout. Existing weather-overlay dates may
-  provide chronology where the city/year join is unique and dates are verified.
-- Supplied PB/ability fields include current-race information for many rows and
-  are not used as pre-race covariates. The new analysis recomputes benchmarks from
-  strictly earlier calendar years, and date-based intervals from complete,
-  unique supplied calendar coverage.
-- Actual halfway timestamps, gun/chip offsets, waves and corrals are not columns
-  in these exports. Derived half-pace fields do not establish measured half splits.
-- Course validity years are absent. Historical route matching remains unverified.
-- This is export access, not a direct connection to the scraper's live database.
-  Newly scraped rows become available when included in another release.
-
-No further repository invitation was needed for this export inspection. Unfinished analyses should distinguish
-uncomputed results and validation work from genuinely missing measurements.
-
-### Executed September 7 linkage audit
-
-The full-split natural join produced 2,366,742 candidate rows. Two ambiguous
-cross-export candidates were excluded, leaving **2,366,740** eligible linked
-finishes. **373,955** have a recent strictly-earlier-year benchmark; **383,860**
-consecutive cross-year pairs pass the endpoint-year requirements. These are
-performances/pairs, not unique people, and supplied identities are not independently
-verified. **2,143,118** linked finishes have a supplied race date.
-
-Weather notes identify Open-Meteo archive values nearest the scheduled local start.
-All 185 supplied weather dates parse and agree with their record year. Most GPX
-profiles describe 2024–2026 routes and lack historical validity ranges. Every raw
-time used in the new calculations is reparsed from CORE; FULL segment units were
-confirmed as minutes and section sums reconcile to supplied finish times.
+September 7 CORE had 3,451,055 raw rows versus 3,382,000 feature rows, and its numeric record IDs belong to incompatible namespaces. Reproduce that vintage with the legacy one-to-one edition/name/full-timing join; never apply the 1107 contract retroactively. Its historical linked cohort was 2,366,740 finishes, with 373,955 recent benchmarks and 383,860 cross-year pairs. [Earlier public-access evidence](../docs/evidence/2026-09-11/public-access-audit.json) also retains its original date and counts.

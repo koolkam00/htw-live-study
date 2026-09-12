@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import duckdb
+from source_quality import source_quality_report, METHOD as SOURCE_QUALITY_METHOD
 import numpy as np
 
 from build_pacing import COMMON_METHOD, prepare, records
@@ -264,13 +265,15 @@ def run(source, output):
     if counts["raw"] != manifest["n_records"]:
         raise ValueError("Manifest raw count mismatch")
     candidates = screen_candidates(editions)
+    quality = source_quality_report(db, source)
     result = {"schema_version": VERSION, "id": "weather_screen", "as_of": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
         "input": {**provenance, "as_of": manifest["created_at"], "race_conditions_sha256": sha256(source / "race_conditions.parquet")},
         "calculation": {"script_sha256": sha256(__file__), "pacing_script_sha256": sha256(Path(__file__).with_name("build_pacing.py")),
-                        "duckdb_version": duckdb.__version__, "numpy_version": np.__version__},
+                        "duckdb_version": duckdb.__version__, "numpy_version": np.__version__, "source_quality_script_sha256": quality['script_sha256']},
+        "source_quality": quality,
         "cohort": counts, "exclusions": exclusions, "prespecified_gate": GATE,
         "outcome": {"label": "Median pace change: 20–40 km versus 0–20 km", "unit": "%", "positive_means": "slower second 20 km"},
-        "methodology": METHODS, "candidates": candidates, "editions": editions}
+        "methodology": METHODS + ([SOURCE_QUALITY_METHOD] if quality['reviewed_edition_policy'] else []), "candidates": candidates, "editions": editions}
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
     print(json.dumps({"output": str(output), "cohort": counts, "exclusions": exclusions,

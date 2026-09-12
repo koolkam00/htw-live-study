@@ -10,6 +10,7 @@ export function weatherValue(value: number, id: WeatherId, units: UnitSystem) {
 export const weatherUnit = (id: WeatherId, units: UnitSystem) => id === 'wind' ? units === 'mi' ? 'mph' : 'km/h' : units === 'mi' ? '°F' : '°C';
 export const weatherLabel = (value: number, id: WeatherId, units: UnitSystem) => `${id === 'warming' && value > 0 ? '+' : ''}${weatherNumber(weatherValue(value, id, units))}${id === 'wind' ? ' ' : ''}${weatherUnit(id, units)}`;
 export function weatherFinding(candidate: WeatherCandidate) {
+  if (candidate.status !== 'ready' || candidate.takeaway_type === null) return 'This comparison does not yet support a clear takeaway.';
   const name = { humidity: 'moisture', warming: 'temperature-rise', wind: 'wind' }[candidate.id];
   if (candidate.takeaway_type === 'precise_null') return `Typical ${name} differences showed little change in late-race slowing.`;
   const condition = { humidity: 'Higher dew points', warming: 'Larger temperature rises', wind: 'Stronger start-hour winds' }[candidate.id];

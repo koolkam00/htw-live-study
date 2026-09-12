@@ -1,5 +1,5 @@
 {
-  "answer_prose": "After matching race edition and opening 20 km time, average second-20-km pace change is 10.3% for women and 14.8% for men.",
+  "answer_prose": "After matching race edition and opening 20 km time, average second-20-km pace change is 10.6% for women and 15.1% for men.",
   "detail_prose": "Matching the opening performance makes the comparison more specific, but does not establish why the difference exists.",
   "charts": [
     {
@@ -30,10 +30,10 @@
     }
   ],
   "statistics": {
-    "women": 10.267307462740012,
-    "men": 14.762083038407182,
-    "n_women": 785474,
-    "n_men": 1440439,
-    "strata": 6762
+    "women": 10.619499035314258,
+    "men": 15.148917848877074,
+    "n_women": 1009051,
+    "n_men": 1760622,
+    "strata": 8070
   }
 }

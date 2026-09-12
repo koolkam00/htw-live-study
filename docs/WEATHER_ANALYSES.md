@@ -1,6 +1,6 @@
 # Weather evidence and publication decisions
 
-Calculated September 11, 2026, from `private-export-20260911-0336`. The new weather pages have their own source pin in [analysis/weather-release.json](../analysis/weather-release.json). The existing ten and 33 broad packs retain the September 7 source. This document records implementation and validation; deployment is a separate status.
+Recalculated September 11, 2026, from `private-export-20260911-1107`. [analysis/weather-release.json](../analysis/weather-release.json) and [analysis/release.json](../analysis/release.json) now select the same audited source for weather, the ten interactive analyses and all 33 extension packs. The original core study remains a dated historical snapshot. See the [full refresh audit](REFRESH_20260911_1107.md) for source checks and edition exclusions. Deployment is recorded separately from calculation.
 
 ## What was tested
 
@@ -10,19 +10,21 @@ The complete [machine-readable evidence](../public/data/weather/evidence.json) c
 
 | Candidate | Typical exposure contrast | Adjusted difference in slowing, percentage points | 98.33% interval | Decision |
 | --- | --- | ---: | --- | --- |
-| Humidity / dew point | 4.7°C to 10.8°C dew point | +0.68 | −0.48 to +1.66 | Withheld: inconclusive; neither a clear association nor a precise small difference |
-| First-four-hours warming | +2.725°C to +6.4°C temperature rise | +1.94 | +1.43 to +2.52 | Publish at `/analyses/warming-and-pacing` |
-| Start wind speed | 2.1925 to 4.105 m/s, approximately 4.9 to 9.2 mph | +0.21 | −0.41 to +0.72 | Publish at `/analyses/wind-and-pacing`, limited to this pacing measure and typical wind contrast |
+| Humidity / dew point | 4.7°C to 10.8°C dew point | +0.64 | −0.52 to +1.59 | Withheld: inconclusive; neither a clear association nor a precise small difference |
+| First-four-hours warming | +2.7°C to +6.4°C temperature rise | +2.07 | +1.53 to +2.75 | Publish at `/analyses/warming-and-pacing` |
+| Start wind speed | 2.19 to 4.09 m/s, approximately 4.9 to 9.1 mph | +0.24 | −0.36 to +0.78 | Publish at `/analyses/wind-and-pacing`, limited to this pacing measure and typical wind contrast |
 
 These contrasts use each exposure's observed interquartile range. They are not contrasts between universal safe/dangerous thresholds. Humidity being withheld does not establish that humidity has no effect. Wind's result does not establish that headwinds, gusts or wind-related finish-time losses are unimportant.
 
 ## Population, measurement and model
 
-The September 11 FULL archive was verified against GitHub's size and SHA-256, and contains the expected nine files. Its 3,978,660 raw rows and feature rows have unique non-null canonical IDs with matching sets. Feature race labels are present; nine runner names are null. This repairs the September 10 archive/schema blockers. The successful September 11 release analysis run [34560607862](https://github.com/koolkam00/htw-live-study/actions/runs/34560607862) used older calculation code; its personalized artifact lacks the current 90–720-minute range and was not imported.
+The FULL and CORE archives passed size, SHA-256 and schema checks. All eight shared members are byte-identical. The 4,207,456 raw and feature rows have unique, non-null canonical IDs with identical sets. Race labels, recorded names (including nine nulls), ages and comparable checkpoint timings align. The read-only SQLite integrity check returned `ok`. The producer's manifest reports its own size incorrectly; this documented packaging issue does not change the verified data hashes.
 
-Weather contains 227 city-year rows in 33 cities. Every row has 24 hourly readings, and the source URLs specify local timezones and wind in m/s. A single city-year weather row joins to one raw race label; 226 supplied weather rows have raw records. Helsinki 2025 records a 06:00 weather hour against a listed 15:00 start and is excluded from usable weather. Exact half-hour ties at the scheduled start are valid. Tokyo 2025 has weather but no raw records.
+Weather contains 235 unique city-year rows. The source URLs specify local timezones and wind in m/s. Helsinki 2025 still has a 06:00 weather hour against a listed 15:00 start and is excluded from usable weather; 234 rows pass measurement checks. Exact half-hour ties at the scheduled start are valid. Race-day conditions do not establish individual wave exposure.
 
-The unchanged base parser yields 3,152,691 eligible finishes from the full corpus. It excludes 604,133 missing/unparsed records, 217,277 non-increasing records and 4,559 outside the timing-quality bounds; no exact duplicates were removed. Of eligible finishes, 31,987 lack valid unique weather and 14 belong to an edition below the 100-finish requirement. The final comparison has **3,120,690 finishes, 174 editions and 29 cities**. These are performances and weather editions, not independently identified people. Feature `valid_splits` is a different cohort and is not substituted for this parser's eligibility.
+The base parser removes 616,424 missing/unparsed records, 217,295 non-increasing records and 4,677 outside timing bounds. No exact duplicates are removed. Of 3,369,060 timing-eligible finishes, a reviewed edition-quality policy excludes another 40,901 from known-invalid grids, partial ingestions, unresolved producer holds and a selected top-finisher field. This leaves **3,328,159 eligible finishes**. Feature `valid_splits` is a different cohort: a blanket flag filter would incorrectly discard 36,151 otherwise eligible records with unrecorded sex. Their inclusion in the all-runner view does not infer a sex category.
+
+After excluding 3,211 finishes in two editions without usable weather and 14 in an edition below the 100-finish requirement, the final comparison has **3,324,934 finishes, 177 editions and 27 cities**. These are performances and weather editions, not independently identified people. The [source-quality audit](evidence/2026-09-11/refresh-1107/source-quality-audit.json) records each excluded edition and disjoint count.
 
 For each runner, late slowing is `100 × ((time40 − time20) / time20 − 1)`. The two blocks are 0–20 km and 20–40 km, with the final 2.195 km excluded. The outcome is the median of individual changes in each edition. Each edition is equally weighted. No individual-mile splits, missing checkpoints, exact ages or wave starts are inferred.
 
@@ -34,13 +36,13 @@ Course means the supplied city, not a historically verified route. The model can
 
 ## Site behavior and reproduction
 
-The original ten remain ranked together. The two new questions appear under “Conditions, in more detail” on the homepage and directory, and are linked from the existing temperature page. Only candidates with a ready decision receive a route. The page-level source date and About page distinguish the two vintages.
+The original ten remain ranked together. The two new questions appear under “Conditions, in more detail” on the homepage and directory, and are linked from the existing temperature page. Only candidates with a ready decision receive a route. Page-level source labels show the exact release tag, so successive same-day uploads remain distinguishable. About describes the shared current source and separately dates the original core study.
 
 The units control converts weather display too: °F temperature changes and mph in miles mode, °C changes and km/h in kilometres mode. Temperature changes never receive the +32 offset used for absolute Fahrenheit temperatures. The percentage-point estimate, uncertainty and sample stay unchanged. A course selector browses unadjusted edition observations and an accessible table; it does not refit or personalize the adjusted result. Course browsing is shareable through `course=` and retained through unit changes.
 
 ```bash
 python -m pip install -r analysis/requirements.txt
-python analysis/download_release.py --bundle FULL --tag private-export-20260911-0336 --output /path/to/weather-input
+python analysis/download_release.py --bundle FULL --tag private-export-20260911-1107 --output /path/to/weather-input
 python analysis/build_weather.py --input /path/to/weather-input --output /path/to/evidence.json
 python -m unittest discover -s analysis -p 'test_*.py'
 npm run verify:data
@@ -51,4 +53,4 @@ The [Weather evidence screen workflow](../.github/workflows/weather-analysis.yml
 
 ## Validation on September 11
 
-All 20 Python tests, `npm run verify:data`, and the production build passed; the build generated 139 pages. An independent regression implementation reproduced the numerical results. Desktop and 390-pixel mobile browser checks covered both pages, miles/metric conversions, course selection and reload persistence, a course with a single edition, the accessible data table, and navigation excluding humidity. The original source pin, core aggregates and existing packs have no changes in this release.
+All 27 Python tests passed. Independent full-course-indicator regression reproduced all three refreshed estimates and all 6,000 bootstrap intervals within `1e-8`; [review evidence](evidence/2026-09-11/refresh-1107/independent-weather-review.json) records the comparison. The frozen publication rule, seed, outcome and practical threshold are unchanged from the earlier 0336 calculation. Warming and wind still qualify; humidity remains inconclusive. The refresh report records site, workflow and deployment validation as it completes.
