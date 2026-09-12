@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-09-12T14:48:00.739967+00:00",
+  "source_release": "private-export-20260912-0934",
+  "python_tests": 53,
+  "npm_verify_data": "passed",
+  "next_build": "passed",
+  "static_pages": 138,
+  "visible_export_identifiers": 0,
+  "visible_upload_dates": 0,
+  "research_questions": 35,
+  "research_chart_views": 109,
+  "personalized_questions": 12,
+  "personalized_profiles_tested": 1200,
+  "personalized_charts_tested": 9202,
+  "all_runner_records_recounted": 4462379,
+  "all_eligible_peer_finishes_recounted": 3517336,
+  "independent_pace_quartile_samples": 16,
+  "browser_checks": [
+    "About: 256 editions and new Frankfurt/Hamburg/New York/Oslo years",
+    "Two selected Oslo races: pacing, same-edition gender peers, missing-age explanation, weather and terrain",
+    "Miles to kilometres: selected races, finish times and percentages retained; pace/temperature/wind/elevation converted",
+    "New Frankfurt 2022 record: searchable, pacing and elevation available, missing weather explicitly explained",
+    "New York 2008: searchable with updated unreconciled-hold reason",
+    "New Frankfurt personalized cohort: 758 finishes from one edition; mile pace chart loads"
+  ],
+  "runner_manifest_sha256": "41632a5249afed6421e0e30e428eecdca3130cac18927a109d79456b3ee1ebe6",
+  "context_manifest_sha256": "4a4af03e7c1f13f67ed3fdc810988fafe30eacb14e0e8fe16ee7c8f79e0d2123",
+  "scope": "Local release validation. Deployment and public-byte verification are recorded separately in the refresh pull request."
+}

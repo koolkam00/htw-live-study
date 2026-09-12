@@ -1,27 +1,27 @@
 # Analysis catalog
 
-Updated for the full refresh from **`private-export-20260911-1107`**. The counts, source timestamps and methods below are generated from that calculation's metadata. [REFRESH_20260911_1107.md](REFRESH_20260911_1107.md) separately records validated import and production status; calculated does not mean deployed. The subsequent current-source supporting study and runner-search implementation replaces old live/core website inputs; its validation and deployment are separate from PR #35.
+Updated for the full refresh from **`private-export-20260912-0934`**. The counts, source timestamps and methods below are generated from that calculation's metadata. [REFRESH_20260912_0934.md](REFRESH_20260912_0934.md) separately records validated import and production status; calculated does not mean deployed. The supporting study, runner search and runner context use this same input; exact calculation, import and deployment evidence is recorded with the refresh.
 
 ## How to read the catalog
 
 - The primary site has [ten ranked analyses](TOP_TEN_ANALYSES.md), defined in [lib/ten-analyses.ts](../lib/ten-analyses.ts). They reuse ten of twelve personalized engine paths, not independent datasets.
-- Three additional weather candidates are screened together by `build_weather.py`. Only ready candidates receive pages; all results remain in `public/data/weather/evidence.json`. The current 1107 output supports warming and a precise null for typical wind speed, while moisture is too uncertain. See [WEATHER_ANALYSES.md](WEATHER_ANALYSES.md).
+- Three additional weather candidates are screened together by `build_weather.py`. Only ready candidates receive pages; all results remain in `public/data/weather/evidence.json`. The current 0934 output supports warming and a precise null for typical wind speed, while moisture is too uncertain. See [WEATHER_ANALYSES.md](WEATHER_ANALYSES.md).
 - The research archive contains 35 questions: eight foundation packs from `build_pacing.py`, 25 from `build_extended.py`, and two measurement-limited questions (group running and congestion). `write_findings.py` writes narratives from the aggregate values.
 - Stable S/R/RN/P routes now map to current extensions, the new current-source supporting study, or explicit unsupported states. Historical numerical files remain in Git history rather than active website data. Route aliases are not independent studies.
 - `/runners` searches recorded names and compares visitor-confirmed candidate races from the current source. Raw records remain discoverable when invalid timings prevent an analysis; candidate identity is not verified personhood.
 - Ready describes an implemented, supported output under its stated method. It does not establish causation or resolve the full breadth of an original question. Full source records are public; chart sample thresholds serve reliability, not access restrictions.
 
-The 1107 personalized engine has **3,328,159 eligible finishes**, including **1,170,588 with exact age** and **524,323 with a recent prior benchmark**. It retains twelve paths, whole-minute targets 90–720 and 28 cities plus All courses. Missing age, valid history, historical route validity and start/proximity measurements still limit specific comparisons.
+The 0934 personalized engine has **3,517,336 eligible finishes**, including **1,225,873 with exact age** and **555,437 with a recent prior benchmark**. It retains twelve paths, whole-minute targets 90–720 and 29 cities plus All courses. Missing age, valid history, historical route validity and start/proximity measurements still limit specific comparisons.
 
-The September 10 failed refresh and schema/archive incompatibilities are dated historical evidence. Current 1107 CORE/FULL member layout, canonical IDs and comparable timing units passed audit; the runtime canonical join is restricted to that explicitly audited release. See [ACCESS.md](../analysis/ACCESS.md).
+The September 10 failed refresh and schema/archive incompatibilities are dated historical evidence. Current 0934 CORE/FULL member layout, canonical IDs and comparable timing units passed audit; the runtime canonical join is enabled for the audited September 11 and September 12 releases. See [ACCESS.md](../analysis/ACCESS.md).
 
 ## Shared inputs and calculation contracts
 
 Foundation input uses raw edition labels, runner for deduplication, recorded gender, exact age and nine elapsed checkpoint strings. Parse to seconds, require every checkpoint and strict increase, finish 90 minutes–12 hours and each section 2–20 min/km. Compare equal-distance 0–20 and 20–40 km, not measured half-marathon splits. Do not interpolate missing data.
 
-Then apply the release-specific [source-quality policy](../analysis/source_quality.py). Ten reviewed invalid-grid, incomplete, held or selected-field editions exclude 40,901 otherwise timing-valid finishes, leaving 3,328,159 from 3,369,060 timing-eligible records. Excluded editions cannot supply earlier benchmarks. Missing age or recorded gender alone does not remove usable timing from All. Every output records policy/script hashes and edition counts.
+Then apply the release-specific [source-quality policy](../analysis/source_quality.py). Eleven reviewed invalid-grid, incomplete, held or selected-field editions exclude 78,090 otherwise timing-valid finishes, leaving 3,517,336 from 3,595,426 timing-eligible records. Excluded editions cannot supply earlier benchmarks. Missing age or recorded gender alone does not remove usable timing from All. Every output records policy/script hashes and edition counts.
 
-Extended calculations use retained raw IDs, supplied feature linkage and edition dates; course analyses also use course segments. Audited 1107 raw/feature IDs join canonically only after runtime checks of unique matching sets and labels, then full-timing agreement. September 7 reproduction retains one-to-one edition/name/full-timing matching. Cross-race identities remain supplied candidates, screened for ambiguity, conflicting gender/birth year and duplicate editions. Recent best uses only the two strictly earlier calendar years, excluding all same-year results. See [data architecture](DATA_ARCHITECTURE.md).
+Extended calculations use retained raw IDs, supplied feature linkage and edition dates; course analyses also use course segments. Audited 0934 raw/feature IDs join canonically only after runtime checks of unique matching sets and labels, then full-timing agreement. September 7 reproduction retains one-to-one edition/name/full-timing matching. Cross-race identities remain supplied candidates, screened for ambiguity, conflicting gender/birth year and duplicate editions. Recent best uses only the two strictly earlier calendar years, excluding all same-year results. See [data architecture](DATA_ARCHITECTURE.md).
 
 Eligible finishes, linked finishes, benchmark observations, pairs and weather editions are different populations. Public cells generally require 100 observations, with additional matched/edition rules. The metadata, linked summary and table contracts preserve the actual denominator, observation unit, provenance and limitations. These sources take precedence over an abbreviated question title.
 
@@ -72,8 +72,8 @@ Eligible finishes, linked finishes, benchmark observations, pairs and weather ed
 How do people actually pace a marathon?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r10_unravel_typology`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **3328159**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **3517336**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_pacing_shapes/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_pacing_shapes/summary.json).
 - Tables: [patterns.csv](../public/data/packs/ext_pacing_shapes/tables/patterns.csv), [profile.csv](../public/data/packs/ext_pacing_shapes/tables/profile.csv).
 
@@ -91,8 +91,8 @@ Methods and limitations from this pack:
 What does an unusually good race look like?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r05_exceptional_vs_prior`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_performance_profiles/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_performance_profiles/summary.json).
 - Tables: [profiles.csv](../public/data/packs/ext_performance_profiles/tables/profiles.csv).
 
@@ -113,8 +113,8 @@ Methods and limitations from this pack:
 What are the rewards and risks of an aggressive start?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r01_banking_time`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **359172**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **375388**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_opening_tradeoffs/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_opening_tradeoffs/summary.json).
 - Tables: [matched_openings.csv](../public/data/packs/ext_opening_tradeoffs/tables/matched_openings.csv).
 
@@ -136,8 +136,8 @@ Methods and limitations from this pack:
 How do runners successfully respond to a slow start?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r02_recover_slow_start`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **44688**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **49164**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_slow_start_responses/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_slow_start_responses/summary.json).
 - Tables: [responses.csv](../public/data/packs/ext_slow_start_responses/tables/responses.csv).
 
@@ -158,8 +158,8 @@ Methods and limitations from this pack:
 Can two runners reach 20 km together but have different prospects?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r03_accel_vs_decel_20k`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **1891811**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **1920435**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_pace_trend_at_20k/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_pace_trend_at_20k/summary.json).
 - Tables: [matched_trends.csv](../public/data/packs/ext_pace_trend_at_20k/tables/matched_trends.csv).
 
@@ -178,8 +178,8 @@ Methods and limitations from this pack:
 How early can the splits reveal how the race will finish?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r08_early_blowup_signal`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **861691**; observation unit: eligible finishes; evidence scope: validated forecast.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **869761**; observation unit: eligible finishes; evidence scope: validated forecast.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_checkpoint_forecast_validation/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_checkpoint_forecast_validation/summary.json).
 - Tables: [calibration.csv](../public/data/packs/ext_checkpoint_forecast_validation/tables/calibration.csv), [errors.csv](../public/data/packs/ext_checkpoint_forecast_validation/tables/errors.csv).
 
@@ -199,8 +199,8 @@ Methods and limitations from this pack:
 When can runners regain their rhythm after a bad patch?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r09_bad_patch_recoverable`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **1039878**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **1084906**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_bad_patch_recovery/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_bad_patch_recovery/summary.json).
 - Tables: [recovery.csv](../public/data/packs/ext_bad_patch_recovery/tables/recovery.csv).
 
@@ -219,8 +219,8 @@ Methods and limitations from this pack:
 Is a negative split always associated with a better performance?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r30_negative_split_success`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_split_pattern_success/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_split_pattern_success/summary.json).
 - Tables: [success_rates.csv](../public/data/packs/ext_split_pattern_success/tables/success_rates.csv).
 
@@ -241,8 +241,8 @@ Methods and limitations from this pack:
 Is there one good pacing strategy, or several?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r31_multiple_good_strategies`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **170906**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **182246**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_successful_race_shapes/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_successful_race_shapes/summary.json).
 - Tables: [pattern_mix.csv](../public/data/packs/ext_successful_race_shapes/tables/pattern_mix.csv).
 
@@ -263,8 +263,8 @@ Methods and limitations from this pack:
 Which pacing approaches offer consistency, and which are more variable?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r34_pacing_risk_reward`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_strategy_outcome_spread/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_strategy_outcome_spread/summary.json).
 - Tables: [shortfalls.csv](../public/data/packs/ext_strategy_outcome_spread/tables/shortfalls.csv), [spread.csv](../public/data/packs/ext_strategy_outcome_spread/tables/spread.csv).
 
@@ -285,8 +285,8 @@ Methods and limitations from this pack:
 What is each course’s pacing fingerprint?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `s3_course_breaks`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **3328159**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **3517336**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_course_pacing_profiles/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_course_pacing_profiles/summary.json).
 - Tables: [course_profiles.csv](../public/data/packs/ext_course_pacing_profiles/tables/course_profiles.csv).
 
@@ -304,8 +304,8 @@ Methods and limitations from this pack:
 How do runners adjust their pace to climbs and descents?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r11_course_section_traps`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **3325197**; observation unit: eligible finishes; evidence scope: route proxy.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **3514374**; observation unit: eligible finishes; evidence scope: route proxy.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_terrain_pacing_proxy/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_terrain_pacing_proxy/summary.json).
 - Tables: [terrain.csv](../public/data/packs/ext_terrain_pacing_proxy/tables/terrain.csv).
 
@@ -324,8 +324,8 @@ Methods and limitations from this pack:
 What would your time be on another course?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r12_fastest_by_ability`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **82987**; observation unit: linked race pairs; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **85672**; observation unit: linked race pairs; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_paired_course_comparisons/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_paired_course_comparisons/summary.json).
 - Tables: [course_pairs.csv](../public/data/packs/ext_paired_course_comparisons/tables/course_pairs.csv).
 
@@ -345,8 +345,8 @@ Methods and limitations from this pack:
 Which marathon offers speed, and which offers consistency?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r13_great_day_vs_consistency`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_course_outcome_spread/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_course_outcome_spread/summary.json).
 - Tables: [course_spread.csv](../public/data/packs/ext_course_outcome_spread/tables/course_spread.csv).
 
@@ -367,8 +367,8 @@ Methods and limitations from this pack:
 Does knowing the course improve execution?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r14_knowing_course`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **258554**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **263490**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_course_familiarity/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_course_familiarity/summary.json).
 - Tables: [familiarity.csv](../public/data/packs/ext_course_familiarity/tables/familiarity.csv).
 
@@ -390,8 +390,8 @@ Methods and limitations from this pack:
 How does weather change the way a marathon is run?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r15_weather_penalty_who`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: weather proxy.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555415**; observation unit: eligible finishes; evidence scope: weather proxy.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_weather_pacing_patterns/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_weather_pacing_patterns/summary.json).
 - Tables: [weather_outcomes.csv](../public/data/packs/ext_weather_pacing_patterns/tables/weather_outcomes.csv), [weather_profiles.csv](../public/data/packs/ext_weather_pacing_patterns/tables/weather_profiles.csv).
 
@@ -414,8 +414,8 @@ Methods and limitations from this pack:
 Was it my pacing or a difficult race day?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `s5_pacing_vs_difficult_day`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_race_day_context/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_race_day_context/summary.json).
 - Tables: [race_days.csv](../public/data/packs/ext_race_day_context/tables/race_days.csv).
 
@@ -437,8 +437,8 @@ Methods and limitations from this pack:
 Are stronger performers better at adjusting their pace to the course?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r35_course_adaptation`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_course_response_profiles/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_course_response_profiles/summary.json).
 - Tables: [course_responses.csv](../public/data/packs/ext_course_response_profiles/tables/course_responses.csv).
 
@@ -460,8 +460,8 @@ Methods and limitations from this pack:
 Does being on pace mean you will hit your goal?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r04_on_pace_goal_hits`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **3328159**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **3517336**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_checkpoint_outcomes/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_checkpoint_outcomes/summary.json).
 - Tables: [goal_rates.csv](../public/data/packs/ext_checkpoint_outcomes/tables/goal_rates.csv).
 
@@ -479,8 +479,8 @@ Methods and limitations from this pack:
 How much of a marathon is decided after 30 km?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r06_decided_after_30k`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **3328145**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **3517322**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_late_rank_changes/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_late_rank_changes/summary.json).
 - Tables: [rank_changes.csv](../public/data/packs/ext_late_rank_changes/tables/rank_changes.csv).
 
@@ -498,8 +498,8 @@ Methods and limitations from this pack:
 How much finishing speed appears when a milestone is within reach?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r17_milestone_kick`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **990704**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **1051810**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_milestone_finishing_speed/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_milestone_finishing_speed/summary.json).
 - Tables: [hits.csv](../public/data/packs/ext_milestone_finishing_speed/tables/hits.csv), [kick.csv](../public/data/packs/ext_milestone_finishing_speed/tables/kick.csv).
 
@@ -518,7 +518,7 @@ Methods and limitations from this pack:
 Do qualifying rules change how people race?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r18_bq_rule_changes`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
 - Reported n: **854**; observation unit: eligible finishes; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_qualifying_threshold_comparison/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_qualifying_threshold_comparison/summary.json).
 - Tables: [thresholds.csv](../public/data/packs/ext_qualifying_threshold_comparison/tables/thresholds.csv).
@@ -540,8 +540,8 @@ Methods and limitations from this pack:
 What happens when a goal slips away?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `s10_goal_slips`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **250129**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **263589**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_goal_slip_recovery/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_goal_slip_recovery/summary.json).
 - Tables: [slips.csv](../public/data/packs/ext_goal_slip_recovery/tables/slips.csv).
 
@@ -560,8 +560,8 @@ Methods and limitations from this pack:
 Does a strong finish suggest unused capacity?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r25_huge_kick_next`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **546847**; observation unit: linked race pairs; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **583670**; observation unit: linked race pairs; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_strong_finish_followup/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_strong_finish_followup/summary.json).
 - Tables: [kick_followup.csv](../public/data/packs/ext_strong_finish_followup/tables/kick_followup.csv), [kick_success.csv](../public/data/packs/ext_strong_finish_followup/tables/kick_success.csv).
 
@@ -581,8 +581,8 @@ Methods and limitations from this pack:
 Do pacing changes follow distance or elapsed time?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r07_wall_clock_vs_distance`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **2253478**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **2372738**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_distance_and_elapsed_change/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_distance_and_elapsed_change/summary.json).
 - Tables: [distance.csv](../public/data/packs/ext_distance_and_elapsed_change/tables/distance.csv), [elapsed.csv](../public/data/packs/ext_distance_and_elapsed_change/tables/elapsed.csv).
 
@@ -601,8 +601,8 @@ Methods and limitations from this pack:
 Do runners have persistent pacing habits?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r20_pacing_personalities`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **546847**; observation unit: linked race pairs; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **583670**; observation unit: linked race pairs; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_pacing_habit_persistence/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_pacing_habit_persistence/summary.json).
 - Tables: [correlation.csv](../public/data/packs/ext_pacing_habit_persistence/tables/correlation.csv), [transitions.csv](../public/data/packs/ext_pacing_habit_persistence/tables/transitions.csv).
 
@@ -622,8 +622,8 @@ Methods and limitations from this pack:
 How do speed and pace retention vary by age?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r22_aging_changes`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **1165597**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **1220878**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_age_pacing/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_age_pacing/summary.json).
 - Tables: [age_pacing.csv](../public/data/packs/ext_age_pacing/tables/age_pacing.csv).
 
@@ -641,8 +641,8 @@ Methods and limitations from this pack:
 How does pacing differ across recorded gender groups?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r23_gender_pacing`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **2769673**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **2917861**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_gender_pacing/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_gender_pacing/summary.json).
 - Tables: [gender_matched.csv](../public/data/packs/ext_gender_pacing/tables/gender_matched.csv), [gender_pooled.csv](../public/data/packs/ext_gender_pacing/tables/gender_pooled.csv).
 
@@ -661,8 +661,8 @@ Methods and limitations from this pack:
 Does a near miss bring people back?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r19_near_miss_return`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **202208**; observation unit: eligible finishes; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **214476**; observation unit: eligible finishes; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_near_miss_recorded_return/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_near_miss_recorded_return/summary.json).
 - Tables: [returns.csv](../public/data/packs/ext_near_miss_recorded_return/tables/returns.csv).
 
@@ -682,8 +682,8 @@ Methods and limitations from this pack:
 What changes as runners gain experience?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r21_learn_from_blowup`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **524323**; observation unit: eligible finishes; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **555437**; observation unit: eligible finishes; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_experience_and_pacing/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_experience_and_pacing/summary.json).
 - Tables: [experience.csv](../public/data/packs/ext_experience_and_pacing/tables/experience.csv), [next_changes.csv](../public/data/packs/ext_experience_and_pacing/tables/next_changes.csv).
 
@@ -705,8 +705,8 @@ Methods and limitations from this pack:
 How does the previous marathon affect the next one?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r24_interval_after_pb`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **567474**; observation unit: dated race pairs; evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **603825**; observation unit: dated race pairs; evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_race_spacing_outcomes/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_race_spacing_outcomes/summary.json).
 - Tables: [spacing.csv](../public/data/packs/ext_race_spacing_outcomes/tables/spacing.csv).
 
@@ -726,8 +726,8 @@ Methods and limitations from this pack:
 How have marathon speed and pacing changed over time?
 
 - Producer: [analysis/build_pacing.py](../analysis/build_pacing.py); display question `r26_pacing_over_20y`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:27:35Z`.
-- Reported n: **3216336**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:12:22Z`.
+- Reported n: **3398784**; observation unit: eligible finishes (consult method for subgroup/pair denominators); evidence scope: descriptive.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_pacing_over_time/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_pacing_over_time/summary.json).
 - Tables: [yearly_pacing.csv](../public/data/packs/ext_pacing_over_time/tables/yearly_pacing.csv).
 
@@ -745,8 +745,8 @@ Methods and limitations from this pack:
 Where do runners gain the time that produces a personal best?
 
 - Producer: [analysis/build_extended.py](../analysis/build_extended.py); display question `r32_where_pbs_are_gained`.
-- Calculated state: **ready**; bundle `private-20260911-1107`; input timestamp `2026-09-11T15:10:45Z`; calculation timestamp `2026-09-11T16:28:17Z`.
-- Reported n: **259262**; observation unit: earlier-best comparisons; evidence scope: partial comparison.
+- Calculated state: **ready**; bundle `private-20260912-0934`; input timestamp `2026-09-12T13:37:16Z`; calculation timestamp `2026-09-12T14:13:07Z`.
+- Reported n: **278878**; observation unit: earlier-best comparisons; evidence scope: partial comparison.
 - Contracts: [metadata / cohort / provenance](../public/data/packs/ext_earlier_best_section_gains/pack_meta.json); [answer / chart specifications](../public/data/packs/ext_earlier_best_section_gains/summary.json).
 - Tables: [gains.csv](../public/data/packs/ext_earlier_best_section_gains/tables/gains.csv).
 
@@ -765,7 +765,7 @@ Methods and limitations from this pack:
 
 Producer: [analysis/build_personalized.py](../analysis/build_personalized.py), called from build_extended.py with --personalized-output. Renderer/calculation selection: [lib/personalized.ts](../lib/personalized.ts); question wording: [lib/personalized-catalog.ts](../lib/personalized-catalog.ts). Output: [metadata](../public/data/packs/ext_personalized_guide/pack_meta.json) and [summary and city-file mapping](../public/data/packs/ext_personalized_guide/summary.json), with tables/city_XX.json and tables/checkpoint_XX.json shards. Import using import_personalized.py separately from the 33-pack import.
 
-The primary page order and wording come from [the ten-analysis registry](../lib/ten-analyses.ts); the engine catalog below retains its original focus labels and two additional paths, `downhill` and `return`. The primary default is an All courses / 4:00 example, with no assumed age, gender or prior performance. The 1107 pack uses input timestamp `2026-09-11T15:10:45Z` and calculation timestamp `2026-09-11T16:28:51Z`. Every integer target from 90 through 720 minutes has exact threshold support, but profile, near-finish, checkpoint and history cells publish only when their own sample rules pass. Extreme or sparse selections can therefore have no result.
+The primary page order and wording come from [the ten-analysis registry](../lib/ten-analyses.ts); the engine catalog below retains its original focus labels and two additional paths, `downhill` and `return`. The primary default is an All courses / 4:00 example, with no assumed age, gender or prior performance. The 0934 pack uses input timestamp `2026-09-12T13:37:16Z` and calculation timestamp `2026-09-11T16:28:51Z`. Every integer target from 90 through 720 minutes has exact threshold support, but profile, near-finish, checkpoint and history cells publish only when their own sample rules pass. Extreme or sparse selections can therefore have no result.
 
 All questions share the eligible and prior-history preparation described above. A displayed filter may be broadened only with explicit labeling. Read each method for dimensions deliberately varied, achieved-time conditioning and prior-time exclusions.
 
@@ -843,7 +843,7 @@ Select finishes in the displayed achieved-time band that beat the runner’s fas
 
 ## Current supporting study and compatibility routes
 
-`analysis/build_public_explorer.py` generates `public/data/study/evidence.json` from the same 1107 input, eligibility parser, source-quality policy and history join. Its methods and denominators replace the old live/core summaries. These implementation changes require their own verification before being described as deployed.
+`analysis/build_public_explorer.py` generates `public/data/study/evidence.json` from the same 0934 input, eligibility parser, source-quality policy and history join. Its methods and denominators replace the old live/core summaries. The current refresh and publication evidence are recorded in [the refresh record](REFRESH_20260912_0934.md).
 
 | Route or entry | Current data and interpretation |
 | --- | --- |
@@ -869,9 +869,9 @@ Group dynamics (`r16_groups_hold_or_fall`) and congestion (`r33_start_congestion
 
 The race display retains missing/raw timing values and quality-exclusion reasons. Eligible runner comparisons use actual recorded splits: early pace covers 5–20 km, late pace covers 30 km–finish, and the opening covers 0–5 km. Section charts use each actual section distance, including the final 2.195 km. A best among selected records is an observed database best, not a verified lifetime best. Course/weather/age context must retain its measured or proxy status; the lookup does not infer training, fueling, health or personal goals.
 
-The [runner-context extension](RUNNER_CONTEXT_AND_PEERS.md), locally calculated on `codex/runner-context-and-peers` with publication pending, adds same-edition finish placement for All, recorded gender, exact-age band and combined groups, plus 15-minute achieved-time pacing quartiles. These groups use the same 3,328,159 eligible finishes and require 101 observations. Finish percentiles exclude the selected record, with other ties receiving half weight; group medians and pace quartiles include it. Higher percentile means a faster recorded finish among eligible database peers, not official standing. Selected-race section differences are descriptive elapsed-time comparisons.
+The [runner-context extension](RUNNER_CONTEXT_AND_PEERS.md) adds same-edition finish placement for All, recorded gender, exact-age band and combined groups, plus 15-minute achieved-time pacing quartiles. These groups use the same 3,517,336 eligible finishes and require 101 observations. Finish percentiles exclude the selected record, with other ties receiving half weight; group medians and pace quartiles include it. Higher percentile means a faster recorded finish among eligible database peers, not official standing. Selected-race section differences are descriptive elapsed-time comparisons.
 
-Its separate 240-shard context output is bound to the exact runner manifest. Weather has 233 valid edition matches with five supplied hourly readings and source-unit checks; elevation covers 238 editions and remains an unverified historical-route proxy. Whole-profile and section elevation measurements are retained separately. This adds contextual views, not a causal weather/elevation model, new identity linkage, extra independent studies, or a validated finish-time adjustment. Builders, gap details and independent verification are in [RUNNER_CONTEXT_AND_PEERS.md](RUNNER_CONTEXT_AND_PEERS.md).
+Its separate 256-shard context output is bound to the exact runner manifest. Weather has 249 valid edition matches with five supplied hourly readings and source-unit checks; elevation covers 254 editions and remains an unverified historical-route proxy. Whole-profile and section elevation measurements are retained separately. This adds contextual views, not a causal weather/elevation model, new identity linkage, extra independent studies, or a validated finish-time adjustment. Builders, gap details and independent verification are in [RUNNER_CONTEXT_AND_PEERS.md](RUNNER_CONTEXT_AND_PEERS.md).
 
 ## Maintaining this document
 

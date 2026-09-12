@@ -1,0 +1,98 @@
+{
+  "release_tag": "private-export-20260912-0934",
+  "reviewed_code_commit": "1325f105c550c5d943140c9395d5075db9c7c448",
+  "calculations": [
+    {
+      "name": "pacing and personalized",
+      "run_id": 34698506587,
+      "conclusion": "success",
+      "head_sha": "1325f105c550c5d943140c9395d5075db9c7c448",
+      "artifacts": [
+        {
+          "name": "pacing-aggregate-packs",
+          "id": 10299800924,
+          "sha256": "68f73609c56b8eb95d516c73b78dd18bfed0eb46212f1e555fe713ff9b3df3fc"
+        },
+        {
+          "name": "pacing-personalized-aggregates",
+          "id": 10299054717,
+          "sha256": "f0fd426385736898d0f53844f7b0fedfa477f09e5e422255fca32f505b4f4c1b"
+        },
+        {
+          "name": "pacing-export-inspection",
+          "id": 10299860549,
+          "sha256": "88fb4b6b4d9817f9768203ee6902b4729ccf65ac3e0be165fbe5aff8c805c1d3"
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "run_id": 34698526747,
+      "conclusion": "success",
+      "head_sha": "1325f105c550c5d943140c9395d5075db9c7c448",
+      "artifacts": [
+        {
+          "name": "weather-evidence",
+          "id": 10298924630,
+          "sha256": "774b18aef78d75d6df0b30280bf721de8735578855f6cdc740ac2e526e12c392"
+        }
+      ]
+    },
+    {
+      "name": "supporting study and runner search",
+      "run_id": 34698959354,
+      "conclusion": "success",
+      "head_sha": "52b6680c79f4b3eef36ff360e61b0767be609ae1",
+      "artifacts": [
+        {
+          "name": "public-runner-explorer",
+          "id": 10300300374,
+          "sha256": "5f29937e990bb483b59f55a9b840b6d6ea769828d5f929b9ed816bb3f127f256"
+        }
+      ]
+    },
+    {
+      "name": "runner context and peers",
+      "run_id": 34699701258,
+      "head_sha": "089ee2923f3230ebfa99da36932e38bae60dd0af",
+      "conclusion": "success",
+      "artifacts": [
+        {
+          "name": "runner-context",
+          "id": 10300251196,
+          "sha256": "bc7073715df9c8c01039a9f355a12a4fa4f6b9622d3bdbeb0fbd977a5486221e"
+        }
+      ]
+    }
+  ],
+  "supporting_study": {
+    "eligible_finishes": 3517336,
+    "sustained_slowdown_finishes": 1070946,
+    "rate_percent": 30.447645604514324
+  },
+  "runner_lookup": {
+    "raw_records": 4462379,
+    "named_records": 4462237,
+    "unsearchable_name_records": 142,
+    "profiles": 3523474,
+    "index_rows": 8953676,
+    "shards": 7766,
+    "manifest_sha256": "41632a5249afed6421e0e30e428eecdca3130cac18927a109d79456b3ee1ebe6",
+    "as_of": "2026-09-12T14:21:17Z"
+  },
+  "runner_context": {
+    "release_tag": "private-export-20260912-0934",
+    "as_of": "2026-09-12T14:36:26Z",
+    "runner_manifest_as_of": "2026-09-12T14:21:17Z",
+    "runner_manifest_sha256": "41632a5249afed6421e0e30e428eecdca3130cac18927a109d79456b3ee1ebe6",
+    "totals": {
+      "eligible": 3517336,
+      "groups": 1729,
+      "pace_cells": 13523,
+      "cdf_cells": 5183347,
+      "weather_editions": 249,
+      "terrain_editions": 254
+    },
+    "manifest_sha256": "4a4af03e7c1f13f67ed3fdc810988fafe30eacb14e0e8fe16ee7c8f79e0d2123"
+  }
+}
