@@ -16,7 +16,7 @@ Module._resolveFilename = function (request, ...args) {
 const contextFile = require.resolve('../lib/runner-context.ts');
 const freshClient = () => { delete require.cache[contextFile]; return require(contextFile); };
 const client = freshClient();
-const { RUNNER_RELEASE, RUNNER_POINTS } = require('../lib/runner-search.ts');
+const { RUNNER_RELEASE, RUNNER_POINTS, loadRunnerManifest, runnerManifestDigest } = require('../lib/runner-search.ts');
 const clone = value => structuredClone(value);
 const close = (actual, expected, label) => assert.ok(Math.abs(actual - expected) < 1e-8, `${label}: expected ${expected}, received ${actual}`);
 const tests = [];
@@ -137,35 +137,62 @@ function fixture(options = {}) {
   options.data?.(data);
   const bytes = gzipSync(Buffer.from(JSON.stringify(data)));
   const sha256 = createHash('sha256').update(bytes).digest('hex');
+  // Include whitespace and a final newline so hashing reserialized JSON cannot
+  // accidentally pass as hashing the exact downloaded manifest bytes.
+  const runnerBytes = Buffer.from(JSON.stringify(runners, null, 2) + '\n');
+  const changedRunners = clone(runners);
+  options.runners?.(changedRunners);
+  const servedRunnerBytes = options.runners ? Buffer.from(JSON.stringify(changedRunners, null, 2) + '\n') : runnerBytes;
   const manifest = { schema_version: 1, release_tag: RUNNER_RELEASE, input_as_of: runners.input_as_of, as_of: '2026-09-12T02:00:00Z', runner_manifest_as_of: runners.as_of,
-    runner_manifest_sha256: createHash('sha256').update(JSON.stringify(runners)).digest('hex'), cohort: { raw: runners.raw_records, eligible: 201 },
+    runner_manifest_sha256: createHash('sha256').update(runnerBytes).digest('hex'), cohort: { raw: runners.raw_records, eligible: 201 },
     editions: { '0': { file: 'editions/000.json.gz', bytes: bytes.byteLength, sha256 } } };
   options.manifest?.(manifest);
-  return { data, bytes, manifest };
+  return { data, bytes, manifest, servedRunnerBytes };
 }
 async function withFetch(options, run) {
   const payload = fixture(options), requests = [], previous = global.fetch;
   global.fetch = async (url, init = {}) => {
-    requests.push({ url: String(url), signal: init.signal });
     if (init.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-    if (String(url).includes('/manifest.json?')) return new Response(JSON.stringify(payload.manifest), { status: options.manifestStatus || 200 });
+    if (String(url).includes('/data/runners/manifest.json?')) return new Response(payload.servedRunnerBytes);
+    requests.push({ url: String(url), signal: init.signal });
+    if (String(url).includes('/data/runner-context/manifest.json?')) return new Response(JSON.stringify(payload.manifest), { status: options.manifestStatus || 200 });
     assert.match(String(url), /\/data\/runner-context\/editions\/000\.json\.gz\?v=[a-f0-9]{64}$/);
     if (options.editionResponse) return options.editionResponse(payload, init);
     return new Response(options.corrupt ? options.corrupt(Buffer.from(payload.bytes)) : payload.bytes, { status: options.editionStatus || 200 });
   };
-  try { return await run(freshClient(), payload, requests); } finally { global.fetch = previous; }
+  try {
+    payload.runners = await loadRunnerManifest();
+    assert.equal(runnerManifestDigest(payload.runners), createHash('sha256').update(payload.servedRunnerBytes).digest('hex'));
+    return await run(freshClient(), payload, requests);
+  } finally { global.fetch = previous; }
 }
 test('loader opens genuine gzip bytes, verifies their hash and reuses an edition', async () => {
   await withFetch({}, async (loaded, payload, requests) => {
     const control = new AbortController(), selected = [race(), race({ id: 2, finish: 14500 })];
-    const result = await loaded.loadRaceInsights(selected, runners, control.signal);
+    const result = await loaded.loadRaceInsights(selected, payload.runners, control.signal);
     assert.deepEqual(Object.keys(result), ['1', '2']); assert.equal(result[1].comparisons.all.n, 201);
     assert.equal(result[2].comparisons.all.rank, 102); assert.equal(result[1].weather, null);
     assert.equal(requests.length, 2, 'Two selected records in one edition require one compressed file');
     assert.ok(requests.every(request => request.signal === control.signal));
     assert.ok(requests[1].url.endsWith(payload.manifest.editions['0'].sha256));
-    await loaded.loadRaceInsights([race()], runners, control.signal);
+    await loaded.loadRaceInsights([race()], payload.runners, control.signal);
     assert.equal(requests.length, 3, 'A verified cached edition is reused after the manifest is checked again');
+  });
+});
+test('loader rejects a changed runner shard manifest with identical tag, timestamps and counts', async () => {
+  await withFetch({ runners: value => { value.shards['profiles/000.json.gz'] = { bytes: 123, sha256: 'a'.repeat(64) }; } }, async (loaded, payload, requests) => {
+    for (const key of ['release_tag', 'input_as_of', 'as_of', 'raw_records', 'named_records', 'profiles']) assert.equal(payload.runners[key], runners[key]);
+    assert.notEqual(runnerManifestDigest(payload.runners), payload.manifest.runner_manifest_sha256);
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not be verified/);
+    assert.equal(requests.length, 1, 'A runner-manifest mismatch must stop before any edition download');
+  });
+});
+test('loader refuses a plain manifest object without a verified transport digest', async () => {
+  await withFetch({}, async (loaded, payload, requests) => {
+    const unverified = clone(payload.runners);
+    assert.equal(runnerManifestDigest(unverified), undefined);
+    await assert.rejects(loaded.loadRaceInsights([race()], unverified, new AbortController().signal), /could not be verified/);
+    assert.equal(requests.length, 0, 'An unverified manifest must fail before requesting context');
   });
 });
 for (const [label, change] of [
@@ -175,7 +202,7 @@ for (const [label, change] of [
   ['raw population', value => { value.cohort.raw++; }],
 ]) test(`loader rejects stale ${label} before requesting edition data`, async () => {
   await withFetch({ manifest: change }, async (loaded, payload, requests) => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, new AbortController().signal), /could not be verified/);
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not be verified/);
     assert.equal(requests.length, 1);
   });
 });
@@ -187,37 +214,37 @@ for (const [label, change] of [
   ['CDF ordering', value => { value.groups.all.finish.reverse(); }],
   ['pace quantiles', value => { value.groups.all.pace['240'].q25[0] = 500; }],
 ]) test(`loader rejects invalid ${label} despite a matching transport checksum`, async () => {
-  await withFetch({ data: change }, async loaded => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, new AbortController().signal), /could not be verified/);
+  await withFetch({ data: change }, async (loaded, payload) => {
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not be verified/);
   });
 });
 test('loader rejects wrong SHA before attempting decompression', async () => {
-  await withFetch({ corrupt: bytes => { bytes[bytes.length - 1] ^= 1; return bytes; } }, async loaded => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, new AbortController().signal), /could not be verified/);
+  await withFetch({ corrupt: bytes => { bytes[bytes.length - 1] ^= 1; return bytes; } }, async (loaded, payload) => {
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not be verified/);
   });
 });
 test('loader rejects an incorrect declared compressed size', async () => {
-  await withFetch({ manifest: value => { value.editions['0'].bytes++; } }, async loaded => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, new AbortController().signal), /could not be verified/);
+  await withFetch({ manifest: value => { value.editions['0'].bytes++; } }, async (loaded, payload) => {
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not be verified/);
   });
 });
 test('loader distinguishes an unavailable response from verified data', async () => {
-  for (const options of [{ manifestStatus: 503 }, { editionStatus: 404 }]) await withFetch(options, async loaded => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, new AbortController().signal), /could not load/);
+  for (const options of [{ manifestStatus: 503 }, { editionStatus: 404 }]) await withFetch(options, async (loaded, payload) => {
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, new AbortController().signal), /could not load/);
   });
 });
 test('loader propagates cancellation before fetching and during an edition request', async () => {
   const before = new AbortController(); before.abort();
   await withFetch({}, async (loaded, payload, requests) => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, before.signal), { name: 'AbortError' });
-    assert.equal(requests.length, 1);
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, before.signal), { name: 'AbortError' });
+    assert.equal(requests.length, 0);
   });
   const during = new AbortController();
   await withFetch({ editionResponse: (payload, { signal }) => new Promise((resolve, reject) => {
     signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true });
     queueMicrotask(() => during.abort());
   }) }, async (loaded, payload, requests) => {
-    await assert.rejects(loaded.loadRaceInsights([race()], runners, during.signal), { name: 'AbortError' });
+    await assert.rejects(loaded.loadRaceInsights([race()], payload.runners, during.signal), { name: 'AbortError' });
     assert.equal(requests.length, 2); assert.ok(requests.every(request => request.signal === during.signal));
   });
 });

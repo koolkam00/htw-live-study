@@ -10,8 +10,9 @@ const folder = args.length ? path.resolve(args[1]) : path.join(root, 'public/dat
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const runnersPath = path.join(root, 'public/data/runners/manifest.json'), runners = read(runnersPath);
-const manifest = validateContextManifest(read(path.join(folder, 'manifest.json')), runners);
-assert.equal(manifest.runner_manifest_sha256, hash(fs.readFileSync(runnersPath)));
+const runnerManifestSha = hash(fs.readFileSync(runnersPath));
+const manifest = validateContextManifest(read(path.join(folder, 'manifest.json')), runners, runnerManifestSha);
+assert.equal(manifest.runner_manifest_sha256, runnerManifestSha);
 assert.equal(manifest.input_asset_sha256, runners.input_asset_sha256);
 assert.equal(manifest.input_manifest_sha256, runners.input_manifest_sha256);
 assert.deepEqual(manifest.cohort, runners.cohort);

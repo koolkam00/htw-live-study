@@ -1,4 +1,4 @@
-import { RUNNER_RELEASE, RUNNER_POINTS, runnerMetrics, type RunnerRace, type RunnerManifest, type RunnerEdition } from './runner-search';
+import { RUNNER_RELEASE, RUNNER_POINTS, runnerMetrics, runnerManifestDigest, type RunnerRace, type RunnerManifest, type RunnerEdition } from './runner-search';
 
 export type Quantiles = { q25: number; median: number; q75: number };
 export type PacePeers = { n: number; from_sec: number; to_sec: number; q25: number[]; median: number[]; q75: number[]; late_change: Quantiles };
@@ -68,8 +68,9 @@ export function compareRunnerRaces(focus: RunnerRace, reference: RunnerRace, run
   const sections = a.sections.map((s, i) => ({ start: s.start, end: s.end, seconds: s.elapsed - b.sections[i].elapsed }));
   return { finish: a.finish - b.finish, early: Number(focus.times[5]) - Number(reference.times[5]), late: (a.finish - Number(focus.times[5])) - (b.finish - Number(reference.times[5])), sections, sameCourse: runners.editions[focus.edition].city === runners.editions[reference.edition].city };
 }
-export function validateContextManifest(value: unknown, runners: RunnerManifest): ContextManifest {
+export function validateContextManifest(value: unknown, runners: RunnerManifest, expectedRunnerSha: string): ContextManifest {
   const d = value as ContextManifest;
+  if (!/^[a-f0-9]{64}$/.test(expectedRunnerSha) || d?.runner_manifest_sha256 !== expectedRunnerSha) throw error();
   if (!d || d.schema_version !== 1 || d.release_tag !== RUNNER_RELEASE || d.release_tag !== runners.release_tag || d.input_as_of !== runners.input_as_of || d.runner_manifest_as_of !== runners.as_of || !Number.isFinite(Date.parse(d.as_of)) || !/^[a-f0-9]{64}$/.test(d.runner_manifest_sha256) || d.cohort?.raw !== runners.raw_records || !integer(d.cohort.eligible, 1) || !d.editions || Object.keys(d.editions).length !== runners.editions.length) throw error();
   for (let i = 0; i < runners.editions.length; i++) { const meta = d.editions[String(i)]; if (!meta || meta.file !== `editions/${String(i).padStart(3, '0')}.json.gz` || !integer(meta.bytes, 1) || !/^[a-f0-9]{64}$/.test(meta.sha256)) throw error(); }
   return d;
@@ -104,9 +105,11 @@ async function loadEdition(index: number, manifest: ContextManifest, runners: Ru
   return data;
 }
 export async function loadRaceInsights(races: RunnerRace[], runners: RunnerManifest, signal: AbortSignal): Promise<Record<number, RaceInsights>> {
+  const digest = runnerManifestDigest(runners);
+  if (!digest) throw error();
   const response = await fetch(base + 'manifest.json?v=' + encodeURIComponent(RUNNER_RELEASE), { signal });
   if (!response.ok) throw new Error('Race comparisons could not load. Check your connection and try again.');
-  const manifest = validateContextManifest(await response.json(), runners);
+  const manifest = validateContextManifest(await response.json(), runners, digest);
   const editions = [...new Set(races.map(r => r.edition))], result: Record<number, RaceInsights> = {};
   let next = 0;
   await Promise.all(Array.from({ length: Math.min(3, editions.length) }, async () => {

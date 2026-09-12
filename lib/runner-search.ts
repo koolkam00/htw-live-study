@@ -26,6 +26,10 @@ export function runnerSearchPage(matches: RunnerMatch[], page: number): RunnerMa
 }
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const shardCache = new Map<string, unknown>();
+// Bind the exact fetched bytes to their parsed object without adding fields to
+// the published manifest or trusting a digest supplied inside that manifest.
+const manifestDigests = new WeakMap<RunnerManifest, string>();
+export const runnerManifestDigest = (manifest: RunnerManifest): string | undefined => manifestDigests.get(manifest);
 const problem = () => new Error('The runner data could not be verified. Please reload and try again.');
 const integer = (value: unknown): value is number => Number.isSafeInteger(value) && Number(value) >= 0;
 
@@ -59,7 +63,11 @@ export function validateRunnerManifest(value: unknown): RunnerManifest {
 export async function loadRunnerManifest(signal?: AbortSignal): Promise<RunnerManifest> {
   const response = await fetch(basePath + '/data/runners/manifest.json?v=' + encodeURIComponent(RUNNER_RELEASE), { signal });
   if (!response.ok) throw new Error('Runner search could not load. Check your connection and try again.');
-  return validateRunnerManifest(await response.json());
+  const bytes = await response.arrayBuffer();
+  const manifest = validateRunnerManifest(JSON.parse(new TextDecoder().decode(bytes)));
+  const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), byte => byte.toString(16).padStart(2, '0')).join('');
+  manifestDigests.set(manifest, digest);
+  return manifest;
 }
 
 async function loadShard(path: string, manifest: RunnerManifest, signal: AbortSignal): Promise<unknown> {
