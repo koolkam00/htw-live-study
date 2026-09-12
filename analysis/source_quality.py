@@ -21,6 +21,16 @@ RULES = [
     ('Amsterdam', 2025, 'unreconciled_hold', 'Source audit marks HOLD: 23,328 listed versus 23,325 retrieved. This conservative hold does not establish a large bias from the three missing records.'),
     ('Valencia', 2017, 'incomplete_ingestion', 'Source audit marks HOLD: 3,373 listed detail pages missing; the observed records also lack 20 km.'),
 ]
+LATEST_RELEASE = 'private-export-20260912-0934'
+LATEST_RULES = [
+    (city, year, 'unreconciled_hold',
+     'Previously partial ingestion has grown to 38,047 records, but source-total reconciliation and explicit completion evidence are absent; keep the prior hold pending review.')
+    if (city, year) == ('New York', 2008) else (city, year, category, reason)
+    for city, year, category, reason in RULES
+] + [
+    ('Valencia', 2018, 'incomplete_ingestion', 'Producer handoff retains an incomplete/HOLD status; the edition also lacks the observed 20 km checkpoint.'),
+]
+REVIEWED_POLICIES = {RELEASE: RULES, LATEST_RELEASE: LATEST_RULES}
 METHOD = ('Apply the reviewed source-quality edition exclusions for this exact export after the timing checks. '
           'Known invalid split grids, incomplete ingestion, unreconciled HOLD editions and a selected top-finisher field '
           'do not contribute to the analyses or prior benchmarks. Report source exclusions separately; an already '
@@ -34,9 +44,9 @@ def release_tag(source):
 
 
 def policy_metadata(tag):
-    active = tag == RELEASE
+    active = tag in REVIEWED_POLICIES
     rules = [{'city': city, 'year': year, 'category': category, 'reason': reason}
-             for city, year, category, reason in RULES] if active else []
+             for city, year, category, reason in REVIEWED_POLICIES[tag]] if active else []
     payload = {'version': 1, 'release_tag': tag, 'reviewed_edition_policy': active, 'editions': rules}
     payload['policy_sha256'] = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()).hexdigest()
     payload['script_sha256'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
@@ -75,7 +85,7 @@ def validate_source_quality(meta):
     count = meta['cohort'].get('source_quality_excluded', 0)
     report = meta.get('source_quality')
     if report is None:
-        assert tag != RELEASE and count == 0, 'Missing reviewed source-quality provenance'
+        assert tag not in REVIEWED_POLICIES and count == 0, 'Missing reviewed source-quality provenance'
         return
     expected = policy_metadata(tag)
     for key in ('version', 'release_tag', 'reviewed_edition_policy', 'policy_sha256', 'script_sha256'):

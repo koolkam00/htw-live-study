@@ -10,7 +10,7 @@ See the dated [public-access verification status](docs/PROJECT_HANDOFF.md#public
 
 Start with [AGENTS.md](AGENTS.md) and [Project handoff](docs/PROJECT_HANDOFF.md), then the [data architecture](docs/DATA_ARCHITECTURE.md), [website architecture](docs/WEBSITE_ARCHITECTURE.md), [analysis catalog](docs/ANALYSIS_CATALOG.md) and [operations runbook](docs/OPERATIONS.md).
 
-All displayed analyses use **`private-export-20260911-1107`**: 4,207,456 raw records across 34 cities and 240 city/year editions. The reviewed timing and edition-quality cohort contains 3,328,159 eligible finishes; exact-age, history and weather questions use smaller documented subsets. The main and weather pins, 33 broad packs, personalized engine, supporting study and public runner lookup must agree before publication. Group-running and congestion results remain unavailable because required measurements are missing.
+All displayed analyses use **`private-export-20260912-0934`**: 4,462,379 raw records across 34 cities and 256 city/year editions. The reviewed timing and edition-quality cohort contains 3,517,336 eligible finishes; exact-age, history and weather questions use smaller documented subsets. The main and weather pins, 33 broad packs, personalized engine, supporting study, public runner lookup and its exactly bound peer/context manifest must agree before publication. Group-running and congestion results remain unavailable because required measurements are missing.
 
 The `/runners` section searches recorded names and lets visitors explicitly select their races before analyzing finish progression and section pacing. Candidate identities are not verified people. Incomplete and held records remain visible with reasons; only eligible selected races enter calculations. Full records and source checkpoints remain publicly downloadable.
 
@@ -38,6 +38,6 @@ npm run verify:data
 npm run build
 ```
 
-The build creates static output in `out/`. The configured public host is [Marathon Pacing Study](https://htw-live-study.vercel.app); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
+The build creates static output in `out/`. The configured public host is [Marathon Pacing Study](https://splithappens.run); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
 
 Calculations, checksums, imports and per-release ID contracts are documented in [analysis/README.md](analysis/README.md). Keep missing measurements explicit, preserve source citations and make the full underlying data available alongside the chart aggregates. Existing repository names, file keys and compatibility URLs remain stable where required by the data contract.

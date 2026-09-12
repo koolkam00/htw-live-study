@@ -1,0 +1,154 @@
+{
+  "release_tag": "private-export-20260912-0934",
+  "input_provenance": {
+    "repository": "koolkam00/htw-live-study",
+    "release_tag": "private-export-20260912-0934",
+    "release_published_at": "2026-09-12T13:56:21Z",
+    "asset": "htw-private-export-FULL-20260912-0934.tar.gz",
+    "asset_sha256": "cb4e0ab7432010de29755ec5d75ca3b370e64e481eda5b20c44b359f39552204",
+    "bundle": "FULL",
+    "manifest_sha256": "a6f534d40bac291e0a1bc2eeb70633660acd00a710a090320876736de9c30f4d"
+  },
+  "audit_script_sha256": "21c36ec1163e25cfbda0c46da8af30b24d558bf10e6ba3c6e3ff879ce6c65a5c",
+  "member_sha256": {
+    "MANIFEST.json": "a6f534d40bac291e0a1bc2eeb70633660acd00a710a090320876736de9c30f4d",
+    "race_records.parquet": "f684c6e4cab0df046f29d1a1e5f64ade55d0adbeec3c50b3e3912235bf386caa",
+    "race_conditions.parquet": "82b4c71e3e25dd376754edcab71a3c8a40d38fbda338b88840e2d68ea2142faf",
+    "course_profiles.parquet": "c4778f2ea3a82ec95cdd677fb607c1d13e30f3c012642484f10b3befb9b9d6f1",
+    "course_segments.parquet": "2d3fece603481f7c92f3020e51ea12aec94884d6e5ff411ff37ffe6632f7b266",
+    "sources.parquet": "56cb22f4aa59848a50d96d836535337900f2d2217e1a69639491f259a8f457e8",
+    "races_summary.json": "93adcfbb99f6dd93e8ad87313f2d194329ee3e64165869d840f62a8e1de0fdd5",
+    "features.parquet": "0e01c206e7de139401e09f81231cfcb65fd0327ccb31098aaf39f3bb2982b86e",
+    "README.md": "ef09e6b93b1ad42d3fcb2115c1beba8893d694ddc07c57280bce71bdbe4ea16f"
+  },
+  "manifest_size_notes": [],
+  "r_ids": {
+    "rows": 4462379,
+    "non_null": 4462379,
+    "unique_ids": 4462379
+  },
+  "f_ids": {
+    "rows": 4462379,
+    "non_null": 4462379,
+    "unique_ids": 4462379
+  },
+  "alignment": {
+    "joined": 4462379,
+    "unmatched": 0,
+    "edition_mismatch": 0,
+    "name_mismatch": 0,
+    "age_mismatch": 0
+  },
+  "sex_normalization": [
+    {
+      "raw_sex": "X",
+      "feature_sex": "NULL",
+      "rows": 552
+    }
+  ],
+  "timings": [
+    {
+      "comparable": 4380087,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 1.8189894035458565e-12,
+      "raw": "split_5km",
+      "feature": "cum_05"
+    },
+    {
+      "comparable": 4351608,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 1.8189894035458565e-12,
+      "raw": "split_10km",
+      "feature": "cum_10"
+    },
+    {
+      "comparable": 4250865,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 5.4569682106375694e-12,
+      "raw": "split_15km",
+      "feature": "cum_15"
+    },
+    {
+      "comparable": 3896551,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 7.275957614183426e-12,
+      "raw": "split_20km",
+      "feature": "cum_20"
+    },
+    {
+      "comparable": 3875586,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 1.0913936421275139e-11,
+      "raw": "split_25km",
+      "feature": "cum_25"
+    },
+    {
+      "comparable": 3866881,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_30km",
+      "feature": "cum_30"
+    },
+    {
+      "comparable": 3856825,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_35km",
+      "feature": "cum_35"
+    },
+    {
+      "comparable": 3847821,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 2.1827872842550278e-11,
+      "raw": "split_40km",
+      "feature": "cum_40"
+    },
+    {
+      "comparable": 4431679,
+      "mismatches": 0,
+      "valid_mismatches": 0,
+      "max_error_seconds": 7.275957614183426e-12,
+      "raw": "split_42_2km",
+      "feature": "finish_time"
+    }
+  ],
+  "coverage": {
+    "raw_records": 4462379,
+    "cities": 34,
+    "race_years": 256,
+    "max_ingested_at": "2026-09-12T10:00:03Z",
+    "null_age": 2893395
+  },
+  "features": {
+    "valid_splits": 3558154,
+    "sustained_slowdown_among_valid": 1082894,
+    "null_name": 11,
+    "supplied_dates": 0
+  },
+  "course_validity": {
+    "profiles": 32,
+    "valid_from": 0,
+    "valid_to": 0
+  },
+  "weather": {
+    "rows": 251,
+    "unique_editions": 251,
+    "dates_agree": 251
+  },
+  "core_full_shared_hashes_match": true,
+  "previous_delta": {
+    "added": 254923,
+    "deleted": 0,
+    "changed": 0,
+    "unchanged": 4207456
+  },
+  "previous_release": "private-export-20260911-1107"
+}

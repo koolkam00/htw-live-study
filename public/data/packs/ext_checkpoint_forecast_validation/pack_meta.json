@@ -4,33 +4,33 @@
   "question_id": "r08_early_blowup_signal",
   "title": "How early can splits reveal the finish?",
   "status": "ready",
-  "as_of": "2026-09-11T16:28:17Z",
-  "n": 861691,
-  "input_export_id": "private-20260911-1107",
-  "input_as_of": "2026-09-11T15:10:45Z",
-  "live_json_as_of": "2026-09-07T04:44:53Z",
-  "input_asset_sha256": "ffe901857c2603ac4305d9376a194eed171052d9835223c8ba5b19b59067a656",
-  "input_manifest_sha256": "4aa3d330cb567ea02aa8c78d0f02015ac0fec35f3c8000215fbc8933ede398e2",
-  "analysis_script_sha256": "46c3c611af86c4ed9d6fc12aa5517ce157fd127470359b89c7f3c1fac6a99600",
+  "as_of": "2026-09-12T14:13:07Z",
+  "n": 869761,
+  "input_export_id": "private-20260912-0934",
+  "input_as_of": "2026-09-12T13:37:16Z",
+  "live_json_as_of": "2026-09-12T04:11:06Z",
+  "input_asset_sha256": "cb4e0ab7432010de29755ec5d75ca3b370e64e481eda5b20c44b359f39552204",
+  "input_manifest_sha256": "a6f534d40bac291e0a1bc2eeb70633660acd00a710a090320876736de9c30f4d",
+  "analysis_script_sha256": "4a26017aa2c2b2796e8d5f3498ea5e0a2f3c1e691a7332ef20cdbc256d4cdd42",
   "analysis_version": 2,
   "engine": "DuckDB 1.4.4",
   "corpus": {
-    "n_records": 4207456,
+    "n_records": 4462379,
     "n_cities": 34,
-    "n_race_years": 240
+    "n_race_years": 256
   },
   "cohort": {
-    "deduplicated": 4207456,
-    "complete": 3591032,
-    "increasing": 3373737,
-    "timing_eligible": 3369060,
-    "eligible": 3328159,
-    "source_quality_excluded": 40901,
-    "raw": 4207456,
+    "deduplicated": 4462379,
+    "complete": 3830211,
+    "increasing": 3604993,
+    "timing_eligible": 3595426,
+    "eligible": 3517336,
+    "source_quality_excluded": 78090,
+    "raw": 4462379,
     "duplicates_removed": 0,
-    "missing_or_unparsed": 616424,
-    "non_increasing": 217295,
-    "outside_quality_bounds": 4677
+    "missing_or_unparsed": 632168,
+    "non_increasing": 225218,
+    "outside_quality_bounds": 9567
   },
   "methodology_prose": [
     "At each checkpoint, start with elapsed time \u00d7 42.195 / distance. The elapsed-only model multiplies this by the training median actual/projected ratio in 30-second-per-km elapsed-pace bands. The trend model adds the most recent section\u2019s change from the previous section (faster than \u22122%, within \u00b12%, or slower than +2%). At 5 km no trend exists.",
@@ -46,7 +46,7 @@
   "minimum_public_cell": 100,
   "source_quality": {
     "version": 1,
-    "release_tag": "private-export-20260911-1107",
+    "release_tag": "private-export-20260912-0934",
     "reviewed_edition_policy": true,
     "editions": [
       {
@@ -97,11 +97,11 @@
       {
         "city": "New York",
         "year": 2008,
-        "category": "incomplete_ingestion",
-        "reason": "Release notes identify a partial live-ingestion snapshot of only 200 records.",
-        "raw_records": 200,
-        "deduplicated_records": 200,
-        "timing_eligible_excluded": 198
+        "category": "unreconciled_hold",
+        "reason": "Previously partial ingestion has grown to 38,047 records, but source-total reconciliation and explicit completion evidence are absent; keep the prior hold pending review.",
+        "raw_records": 38047,
+        "deduplicated_records": 38047,
+        "timing_eligible_excluded": 37387
       },
       {
         "city": "Chicago",
@@ -138,27 +138,36 @@
         "raw_records": 12485,
         "deduplicated_records": 12485,
         "timing_eligible_excluded": 0
+      },
+      {
+        "city": "Valencia",
+        "year": 2018,
+        "category": "incomplete_ingestion",
+        "reason": "Producer handoff retains an incomplete/HOLD status; the edition also lacks the observed 20 km checkpoint.",
+        "raw_records": 19236,
+        "deduplicated_records": 19236,
+        "timing_eligible_excluded": 0
       }
     ],
-    "policy_sha256": "c638b6c0abe3167a2d3d51aee485eae54fd6175761ef9d26d5914c9671eb15b0",
-    "script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6"
+    "policy_sha256": "c08e83c993025dc41c0344be7b5442d74b3fb0588c38949481d5bc0a08f45fa0",
+    "script_sha256": "433e8b9566b5afd809f4de1180fab222e63ad40678a33f6c93f08712cf820c77"
   },
-  "source_quality_script_sha256": "cf1e6b359008087cf3bf9f241be13412af84358d9e808255f42bc2c292e243e6",
+  "source_quality_script_sha256": "433e8b9566b5afd809f4de1180fab222e63ad40678a33f6c93f08712cf820c77",
   "observation_unit": "eligible finishes",
   "evidence_scope": "validated forecast",
   "supporting_script_sha256": "7c6959b427fa1b06bb9600bb3377ecb226257d14aa0ec61a71a63f42bc87a3dd",
   "linkage_audit": {
-    "feature_rows": 4207456,
-    "safe_identity_groups": 2715330,
+    "feature_rows": 4462379,
+    "safe_identity_groups": 2892236,
     "record_join_method": "canonical_record_id",
     "canonical_id_contract_verified": true,
-    "candidate_link_rows": 3008457,
+    "candidate_link_rows": 3194070,
     "natural_key_candidate_rows": 0,
-    "canonical_id_candidate_rows": 3008457,
+    "canonical_id_candidate_rows": 3194070,
     "ambiguous_cross_export_matches": 0,
-    "linked_eligible_finishes": 3008457,
-    "recent_benchmark_finishes": 524323,
-    "consecutive_cross_year_pairs": 546847,
-    "linked_with_supplied_date": 3006219
+    "linked_eligible_finishes": 3194070,
+    "recent_benchmark_finishes": 555437,
+    "consecutive_cross_year_pairs": 583670,
+    "linked_with_supplied_date": 3185321
   }
 }

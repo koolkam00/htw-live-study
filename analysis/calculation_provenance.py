@@ -5,7 +5,7 @@ from pathlib import Path
 
 def validate_calculation_provenance(meta):
     # Historical outputs identify their original code, not today's builders.
-    if meta['input_export_id'] != 'private-20260911-1107':
+    if meta['input_export_id'] not in ('private-20260911-1107', 'private-20260912-0934'):
         return
     if meta.get('presentation') == 'personalized-guide':
         scripts = {'analysis_script_sha256': 'build_personalized.py',

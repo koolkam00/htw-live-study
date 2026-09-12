@@ -1,0 +1,200 @@
+{
+  "2014": {
+    "total": 38672,
+    "non_increasing": 38659,
+    "pct_non_increasing": 99.9664,
+    "incomplete": 70,
+    "missing_20km": 15,
+    "finish_null": 0,
+    "all_nine_present": 38602,
+    "all_nine_present_and_ni": 38602,
+    "n_parsed_checkpoints_hist": {
+      "1": 12,
+      "2": 1,
+      "4": 1,
+      "5": 1,
+      "7": 8,
+      "8": 47,
+      "9": 38602
+    },
+    "first_fail_pair": {
+      "split_40km->split_42_2km": 37707,
+      "split_25km->split_30km": 409,
+      "split_35km->split_40km": 186,
+      "split_30km->split_35km": 104,
+      "split_10km->split_15km": 103,
+      "split_15km->split_20km": 81,
+      "split_5km->split_10km": 63,
+      "split_20km->split_25km": 6
+    },
+    "pair_fails": {
+      "split_40km->split_42_2km": 38649,
+      "split_25km->split_30km": 471,
+      "split_35km->split_40km": 282,
+      "split_30km->split_35km": 151,
+      "split_10km->split_15km": 109,
+      "split_15km->split_20km": 95,
+      "split_5km->split_10km": 63,
+      "split_20km->split_25km": 16
+    }
+  },
+  "2015": {
+    "total": 40261,
+    "non_increasing": 40200,
+    "pct_non_increasing": 99.8485,
+    "incomplete": 460,
+    "missing_20km": 249,
+    "finish_null": 0,
+    "all_nine_present": 39801,
+    "all_nine_present_and_ni": 39801,
+    "n_parsed_checkpoints_hist": {
+      "1": 39,
+      "2": 21,
+      "3": 49,
+      "4": 78,
+      "5": 62,
+      "6": 24,
+      "7": 33,
+      "8": 154,
+      "9": 39801
+    },
+    "first_fail_pair": {
+      "split_40km->split_42_2km": 38992,
+      "split_15km->split_20km": 292,
+      "split_10km->split_15km": 248,
+      "split_5km->split_10km": 208,
+      "split_25km->split_30km": 198,
+      "split_35km->split_40km": 183,
+      "split_30km->split_35km": 69,
+      "split_20km->split_25km": 10
+    },
+    "pair_fails": {
+      "split_40km->split_42_2km": 40152,
+      "split_15km->split_20km": 432,
+      "split_35km->split_40km": 395,
+      "split_25km->split_30km": 343,
+      "split_10km->split_15km": 341,
+      "split_30km->split_35km": 239,
+      "split_5km->split_10km": 208,
+      "split_20km->split_25km": 96
+    }
+  },
+  "2016": {
+    "total": 41795,
+    "non_increasing": 41742,
+    "pct_non_increasing": 99.8732,
+    "incomplete": 391,
+    "missing_20km": 282,
+    "finish_null": 0,
+    "all_nine_present": 41404,
+    "all_nine_present_and_ni": 41404,
+    "n_parsed_checkpoints_hist": {
+      "1": 21,
+      "2": 32,
+      "3": 74,
+      "4": 99,
+      "5": 56,
+      "6": 24,
+      "7": 39,
+      "8": 46,
+      "9": 41404
+    },
+    "first_fail_pair": {
+      "split_40km->split_42_2km": 40354,
+      "split_25km->split_30km": 340,
+      "split_35km->split_40km": 269,
+      "split_10km->split_15km": 263,
+      "split_5km->split_10km": 253,
+      "split_15km->split_20km": 125,
+      "split_30km->split_35km": 102,
+      "split_20km->split_25km": 36
+    },
+    "pair_fails": {
+      "split_40km->split_42_2km": 41684,
+      "split_35km->split_40km": 575,
+      "split_25km->split_30km": 523,
+      "split_10km->split_15km": 358,
+      "split_30km->split_35km": 353,
+      "split_15km->split_20km": 267,
+      "split_5km->split_10km": 253,
+      "split_20km->split_25km": 176
+    }
+  },
+  "2017": {
+    "total": 41734,
+    "non_increasing": 41729,
+    "pct_non_increasing": 99.988,
+    "incomplete": 62,
+    "missing_20km": 5,
+    "finish_null": 0,
+    "all_nine_present": 41672,
+    "all_nine_present_and_ni": 41672,
+    "n_parsed_checkpoints_hist": {
+      "1": 5,
+      "7": 2,
+      "8": 55,
+      "9": 41672
+    },
+    "first_fail_pair": {
+      "split_40km->split_42_2km": 40988,
+      "split_25km->split_30km": 329,
+      "split_35km->split_40km": 253,
+      "split_30km->split_35km": 42,
+      "split_15km->split_20km": 42,
+      "split_5km->split_10km": 38,
+      "split_10km->split_15km": 36,
+      "split_20km->split_25km": 1
+    },
+    "pair_fails": {
+      "split_40km->split_42_2km": 41724,
+      "split_25km->split_30km": 350,
+      "split_35km->split_40km": 300,
+      "split_30km->split_35km": 54,
+      "split_15km->split_20km": 46,
+      "split_10km->split_15km": 40,
+      "split_5km->split_10km": 38,
+      "split_20km->split_25km": 7
+    }
+  },
+  "2018": {
+    "total": 42522,
+    "non_increasing": 42466,
+    "pct_non_increasing": 99.8683,
+    "incomplete": 441,
+    "missing_20km": 305,
+    "finish_null": 0,
+    "all_nine_present": 42081,
+    "all_nine_present_and_ni": 42081,
+    "n_parsed_checkpoints_hist": {
+      "1": 39,
+      "2": 16,
+      "3": 79,
+      "4": 82,
+      "5": 89,
+      "6": 46,
+      "7": 16,
+      "8": 74,
+      "9": 42081
+    },
+    "first_fail_pair": {
+      "split_40km->split_42_2km": 40624,
+      "split_25km->split_30km": 595,
+      "split_10km->split_15km": 445,
+      "split_35km->split_40km": 218,
+      "split_15km->split_20km": 199,
+      "split_30km->split_35km": 192,
+      "split_5km->split_10km": 179,
+      "split_20km->split_25km": 14
+    },
+    "pair_fails": {
+      "split_40km->split_42_2km": 42420,
+      "split_25km->split_30km": 806,
+      "split_10km->split_15km": 551,
+      "split_35km->split_40km": 459,
+      "split_30km->split_35km": 441,
+      "split_15km->split_20km": 334,
+      "split_5km->split_10km": 179,
+      "split_20km->split_25km": 110
+    }
+  }
+}

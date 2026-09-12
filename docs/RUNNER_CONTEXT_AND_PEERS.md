@@ -1,5 +1,7 @@
 # Runner comparisons and environmental context
 
+Current source is `private-export-20260912-0934`: **4,462,379 raw records, 256 editions and 3,517,336 eligible finishes**. The rebuilt context contains 1,729 peer groups, 13,523 pace groups and 5,183,347 exact finish-distribution cells. Weather context matches 249 editions and terrain 254. New York 2008 now has weather, while Frankfurt 2022 has none; the New York aggregate hold remains pending completion evidence. See [the current refresh record](REFRESH_20260912_0934.md) for exact rebuilt runner/context manifest bindings, group counts and production evidence. The implementation and numerical evidence below describe the earlier 1107 calculation.
+
 Implementation record for `codex/runner-context-and-peers`, September 12, 2026 UTC. Source remains **`private-export-20260911-1107`**. This extends the [public runner search](CURRENT_SITE_AND_RUNNER_SEARCH.md); it does not replace the ten primary analyses or change their source pin. The full calculation, controlled import, website checks and browser QA are complete. [PR #37](https://github.com/koolkam00/htw-live-study/pull/37) records CI, merge and production verification separately; this calculation record alone does not certify deployment.
 
 ## What the runner view adds

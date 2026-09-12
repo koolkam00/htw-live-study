@@ -19,3 +19,6 @@ Thumbs.db
 *.tar.gz
 analysis/private/
 __pycache__/
+
+# DuckDB spill files from local calculations
+.tmp/
