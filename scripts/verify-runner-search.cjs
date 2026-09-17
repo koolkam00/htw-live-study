@@ -55,8 +55,14 @@ async function main() {
   assert.ok(runnerMetrics({ ...base, times: [...base.times.slice(0, 8), base.times[7] + 2.195 * 120] }), 'A permitted boundary pace must survive floating-point distance subtraction');
   const slowing = race(4, 1, 300, { times: RUNNER_POINTS.map(km => km * 300 + Math.max(0, km - 30) * 60) });
   close(runnerMetrics(slowing).lateChange, 20);
-  const missing = race(5, 0, 200, { eligible: false, reason: 'Missing source checkpoint', times: [null, ...base.times.slice(1)] });
-  const held = race(6, 0, 200, { eligible: false, reason: 'Incomplete edition held for review' });
+  const missing = race(5, 0, 200, {
+    name: 'Casey Partial', eligible: false, reason: 'Missing source checkpoint', times: [null, ...base.times.slice(1)],
+    raw_times: [null, '00:50:00', 'unparsed source reading', '01:40:00', '02:05:00', '02:30:00', '02:55:00', '03:20:00', '03:30:58.500'],
+  });
+  const held = race(6, 1, 200, {
+    name: 'Casey Partial', eligible: false, reason: 'Incomplete edition held for review',
+    raw_times: ['00:16:40.000', '00:33:20', '00:50:00', '01:06:40', '01:23:20', '01:40:00', '01:56:40', '02:13:20', '02:20:39'],
+  });
   assert.equal(runnerMetrics(missing), null); assert.equal(runnerMetrics(held), null, 'Plausible fast times in an excluded edition must not become a best');
   assert.equal(runnerMetrics({ ...base, times: base.times.map((time, i) => i === 1 ? base.times[0] : time) }), null);
   assert.equal(runnerProgression([held, missing], manifest), null);
@@ -82,10 +88,27 @@ async function main() {
   assert.match(render([base, smallGain], 'mi'), /0:00:00\.2 faster than/, 'A measurable fractional-second change must not be called the same time');
   const mileHtml = render([base, held], 'mi');
   assert.match(mileHtml, /8:03\/mi/); assert.match(mileHtml, /3:30:58\.5/); assert.match(mileHtml, /the same pace as your early pace/);
-  assert.match(mileHtml, /1 selected record is excluded/); assert.doesNotMatch(mileHtml, /the same pace than/);
+  assert.match(mileHtml, /limited analysis/i); assert.doesNotMatch(mileHtml, /the same pace than/);
+  assert.match(mileHtml, /Casey Partial/); assert.match(mileHtml, /Incomplete edition held for review/);
+  assert.match(mileHtml, /02:20:39/, 'Keep the faster held result visible as its recorded finish');
+  assert.match(mileHtml, /00:16:40\.000/, 'Keep original checkpoint formatting rather than recomputing it');
+  assert.match(mileHtml, /<strong>3:30:58\.5<\/strong><span>Fastest selected eligible finish/, 'A faster held result cannot replace the eligible best');
   assert.match(mileHtml, /26\.22 mi/); assert.doesNotMatch(mileHtml, /5:00\/km/);
   const kmHtml = render([base], 'km'); assert.match(kmHtml, /5:00\/km/); assert.match(kmHtml, /42\.195 km/);
-  assert.match(render([held, missing], 'mi'), /cannot support a pacing analysis/);
+  const assertLimitedRecordsVisible = html => {
+    assert.match(html, /Your race records are here/);
+    assert.match(html, /Casey Partial/);
+    assert.match(html, /London 2020/); assert.match(html, /Boston 2020/);
+    assert.match(html, /Missing source checkpoint/); assert.match(html, /Incomplete edition held for review/);
+    assert.match(html, /03:30:58\.500/); assert.match(html, /02:20:39/);
+    assert.match(html, /unparsed source reading/); assert.match(html, /00:16:40\.000/);
+    assert.match(html, /Not recorded/, 'Missing checkpoints remain missing');
+    assert.doesNotMatch(html, /Fastest selected eligible finish|Average pace|Late vs early pace|[0-9]:[0-5][0-9]\/(?:mi|km)/,
+      'Showing source records must not invent a best, pace or pacing comparison');
+    assert.doesNotMatch(html, /runner-numbers|runner-peer|finish-percentile/, 'Wholly ineligible records have no calculated performance or peer metrics');
+  };
+  assertLimitedRecordsVisible(render([held, missing], 'mi'));
+  assertLimitedRecordsVisible(render([held, missing], 'km'));
 
   const originalFetch = global.fetch;
   const requests = [];
@@ -138,7 +161,24 @@ async function main() {
     await assert.rejects(() => loadRunnerProfile(profile.id, sourceFor(profilePath, staleProfile), signal), /verified/);
     const duplicateProfile = descriptor({ release_tag: RUNNER_RELEASE, profiles: [profile, profile] }); served = duplicateProfile.bytes;
     await assert.rejects(() => loadRunnerProfile(profile.id, sourceFor(profilePath, duplicateProfile), signal), /verified/);
+
+    // Exercise the actual search -> verified gzip profile -> selected-record view
+    // for a named candidate with no eligible race, not just its metric helper.
+    const limitedProfile = { id: 5, names: ['Casey Partial'], races: [missing, held] };
+    const limitedIndexPath = `index/${await runnerShardKey('par')}.json.gz`;
+    const limitedIndex = descriptor({ release_tag: RUNNER_RELEASE, rows: [['Casey Partial', 5, 2, 2020, 2020, 'London']] });
+    const limitedProfilePath = `profiles/${await runnerShardKey('5')}.json.gz`;
+    const limitedShard = descriptor({ release_tag: RUNNER_RELEASE, profiles: [limitedProfile] });
+    const limitedSource = { ...manifest, shards: { [limitedIndexPath]: limitedIndex.meta, [limitedProfilePath]: limitedShard.meta } };
+    served = limitedIndex.bytes;
+    const limitedMatches = await searchRunnerNames('Casey Partial', limitedSource, signal);
+    assert.deepEqual(limitedMatches, [['Casey Partial', 5, 2, 2020, 2020, 'London']], 'A candidate with only held/missing-split records must be discoverable');
+    served = limitedShard.bytes;
+    const loadedLimited = await loadRunnerProfile(limitedMatches[0][1], limitedSource, signal);
+    assert.deepEqual(loadedLimited, limitedProfile, 'Loading retains all races and original readings even with no eligible race');
+    assert.equal(runnerProgression(loadedLimited.races, limitedSource), null);
+    assertLimitedRecordsVisible(render(loadedLimited.races, 'mi'));
   } finally { global.fetch = originalFetch; }
-  console.log('Runner search checks passed: Unicode/token matching, complete pagination, explicit eligibility, year-only progression, mi/km readings and verified versioned gzip loading.');
+  console.log('Runner search checks passed: Unicode/token matching, complete pagination, all-ineligible search/profile views, retained source readings, explicit eligibility, year-only progression, mi/km readings and verified versioned gzip loading.');
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });
