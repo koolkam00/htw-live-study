@@ -503,7 +503,7 @@ input:focus,select:focus { border-color:var(--course); }
 .creator-credit { color:var(--slate); font-size:.8125rem; line-height:1.6; margin-top:1rem; }
 .creator-credit a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
 .creator-credit a:hover { color:var(--course); }
-.hero-copy > .creator-credit { margin-top:1.4rem; }
+.hero-copy > .creator-credit { margin:1.4rem 0; }
 .analysis-request-callout { padding:2rem 0; margin-top:2rem; border-top:1px solid var(--rule); }
 .analysis-request-callout h2 { font-size:1.8rem; line-height:1.2; }
 .analysis-request-callout p { color:var(--slate); max-width:38rem; }
