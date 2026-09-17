@@ -7,6 +7,7 @@ import { distanceLabel, elevationLabel, unitText, type UnitSystem } from '@/lib/
 import { clock } from '@/lib/personalized';
 import { TEN_ANALYSES, analysisHref } from '@/lib/ten-analyses';
 import { sourceReleaseHref } from '@/lib/data-source';
+import { trackAnalytics } from '@/lib/analytics';
 import { ALL_FINISHER_DEFAULT, allFinisherCharts, allFinisherFamily, allFinisherGroupLabel, allFinisherGroups, allFinisherRow, allFinisherSearch, earlyPaceLabel, loadAllFinisherContext, readAllFinisherSelection,
   type AllFinisherEvidence, type AllFinisherGroup, type AllFinisherKind, type AllFinisherSelection, type AllFinisherStart } from '@/lib/all-finisher-context';
 
@@ -66,7 +67,7 @@ export default function AllFinisherAnalysis({ kind, start, history, title, descr
   const groups = useMemo(() => row ? allFinisherGroups(row, kind, selection.opening) : [], [row, kind, selection.opening]);
   const focus = groups.find(group => group.id === focusId) || groups[0];
   const comparison = comparisonId === 'none' ? undefined : groups.find(group => group.id === comparisonId && group.id !== focus?.id) || groups.find(group => group.id !== focus?.id);
-  const apply = (next: AllFinisherSelection) => { setSelection(next); setDraft(next); setFocusId(''); setComparisonId(''); window.history.pushState(null, '', window.location.pathname + allFinisherSearch(next) + '&units=' + units); };
+  const apply = (next: AllFinisherSelection) => { if (kind === 'courses' || kind === 'weather') trackAnalytics('analysis_filters_applied', { analysis: kind, course_scope: next.city === 'All courses' ? 'all' : 'single' }); setSelection(next); setDraft(next); setFocusId(''); setComparisonId(''); window.history.pushState(null, '', window.location.pathname + allFinisherSearch(next) + '&units=' + units); };
   const mode = (value: 'all' | 'history') => {
     const params = new URLSearchParams(window.location.search); params.set('comparison', value); params.set('units', units);
     if (value === 'all') { params.delete('previous'); params.delete('prior'); }
@@ -126,6 +127,7 @@ export default function AllFinisherAnalysis({ kind, start, history, title, descr
       .af-method details { margin:1.5rem 0; }
       .af-method summary,.af-coverage-details summary { font-size:.875rem; }
       .af-coverage-details { margin-top:1.5rem; color:var(--slate); font-size:.85rem; }
+      .af-page .analysis-next { display:flex; flex-wrap:wrap; gap:1rem 2rem; justify-content:space-between; margin-top:3rem; }
       @media(max-width:650px) { .af-numbers { grid-template-columns:1fr 1fr; } .af-numbers>div:last-child { grid-column:1/-1; } }
       @media(max-width:420px) { .af-controls,.af-line-controls,.af-modes { grid-template-columns:1fr; } }
     `}</style>
