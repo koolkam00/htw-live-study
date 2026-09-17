@@ -1,0 +1,131 @@
+# Course, weather and opening comparisons without earlier finishes
+
+This extension uses the adopted source in [analysis/release.json](../analysis/release.json), with the exact published runner lookup and matching edition context. It adds descriptive within-race comparisons; it does not recalculate or relabel the existing earlier-result calculations. The [fast-start analysis](FAST_START_ANALYSIS.md) already supports finishes without earlier history.
+
+## Scope and questions
+
+The broader views answer these questions using a single eligible race:
+
+- **Courses:** How much late slowing and pacing variation appears in each course's observed race fields?
+- **Weather:** How do recorded pacing patterns and sustained slowdown compare across supplied start-temperature bands?
+- **Race days:** What pacing pattern appears within a particular recorded edition?
+- **Downhill openings:** How do opening pace and later pacing line up on courses whose supplied current route begins downhill?
+- **Slow openings and pacing tradeoffs:** What happens after a slow or fast first recorded section compared with the same race's subsequent early pace?
+
+These are separate from personal improvement, learning, familiarity, return races or the same runner's performance on different courses. Those questions need earlier or repeated results by definition. Their existing calculations retain that requirement; a broader current-race comparison must not claim to show personal improvement.
+
+Earlier-result modes on the course and weather pages continue to measure finish change from a recent earlier best. A blank earlier-time filter means all available earlier benchmarks in that mode, not all finishes. The benchmark is the fastest eligible result in the two strictly earlier calendar years in a screened supplied identity candidate. It is not measured fitness, a declared goal, the last marathon, or a verified lifetime best. Earlier performance is not required for the new default views.
+
+## Routes and preserved history
+
+The primary `/analyses/course-comparison` and `/analyses/race-day-weather` pages use the broader views by default and offer the distinct earlier-result comparison. `/analyses/downhill-start` adds the broader downhill view with access to the original history-based guide. The twelve-question research guide retains its original method and links to these broader views.
+
+These research archive routes and their existing aliases expose the new defaults while retaining their original earlier-result evidence in a separate mode or, for opening views, an expandable section:
+
+| Archive route | Broader default |
+| --- | --- |
+| `/packs/r02_recover_slow_start` | All-finisher opening view, initially more than 5% slower. |
+| `/packs/r01_banking_time` | All-finisher opening view, initially more than 10% faster. |
+| `/packs/r34_pacing_risk_reward` | All-finisher opening outcomes and ranges, initially within 2%. |
+| `/packs/r13_great_day_vs_consistency` | Within-edition late-pacing variation by course. |
+| `/packs/r35_course_adaptation` | Within-race section profiles by course. |
+| `/packs/r15_weather_penalty_who` | Within-race section profiles across temperature bands. |
+| `/packs/s5_pacing_vs_difficult_day` | Selected race-edition pacing summaries and a link to individual same-edition peers. |
+
+The opening pages reuse the previously verified all-finisher fast-start output and its optional earlier-best mode. The other defaults use the new context output. Shared underlying observations do not make these independent studies; archive alternatives do not alter the primary ten's ranking. Earlier-result questions that inherently need multiple races remain clearly identified as such.
+
+## Inputs, eligibility and exact filters
+
+[build_all_finisher_context.py](../analysis/build_all_finisher_context.py) reads every published runner shard and every runner-context edition shard. It checks compressed byte sizes and SHA-256 checksums, record and candidate-profile uniqueness, source calculation hashes, exact edition mapping, the reviewed edition policy and raw/eligible counts. The runner-context manifest must bind the exact runner manifest's hash and timestamp. A matching release tag alone is insufficient. Refreshing either source requires rebuilding the new output.
+
+The current source contains **4,462,379 raw records** and **3,517,336 eligible finishes** across **196 editions** with eligible timings. All eligible finishes can contribute without any previous-result or identity-link requirement. Incomplete timings and reviewed held/selected-field editions remain excluded from aggregate outcomes. Their records remain searchable under the [runner lookup contract](CURRENT_SITE_AND_RUNNER_SEARCH.md).
+
+Exact filters are course, recorded age band, recorded gender and the same race's early pace. Unknown age or gender remains in All; neither is imputed. There is no eventual-finish, target-time or earlier-result selection in the new calculation. No sparse result is silently replaced with another course or a broader demographic group.
+
+Early pace is the recorded **5–20 km** elapsed time divided by 15 km. Bands are below 270, 270 to below 330, 330 to below 390, and at least 390 seconds/km. These are observed current-race pace bands, not pre-race ability. Their boundaries are included in the higher band. The builder recovers the baseline from the existing all-finisher observation matrix and uses a `1e−8` seconds/km tolerance only for binary recovery noise at exact boundaries; source timings are preserved. The independent verifier classifies original decimal elapsed times by exact integer cross-products.
+
+## Edition balance and sample rules
+
+Across-edition course, weather and downhill groups first require **20 eligible finishes within each exact edition/filter/group**. After removing smaller edition cells, a displayed group requires **100 finishes and three editions**. For downhill comparisons, the 20-finish gate applies separately to each opening band within an edition. A sample count includes only records from those supported edition cells.
+
+The single-edition race-day view requires **100 finishes in the exact selected edition/filter**. The three-edition requirement applies to cross-edition comparisons; it does not prevent describing one observed race day. A single edition cannot provide a between-edition comparison or reliability estimate.
+
+For cross-edition groups, each included edition receives equal weight:
+
+| Published measure | Calculation and interpretation |
+| --- | --- |
+| Sustained-slowdown percentage | Mean of each edition's detected-finish percentage; it is not pooled detections divided by pooled finishes. |
+| Late pace change | Mean of each edition's median individual late percentage change. |
+| Time difference after 20 km | Mean of each edition's median difference from continuing that race's 5–20 km pace. |
+| Nine-section pace curve | Mean of edition medians for each recorded section's percentage difference from that race's 5–20 km baseline. |
+| Within-edition late-pacing spread | Mean of each edition's 90th minus 10th percentile of individual late changes. It describes variation within observed fields, not consistency of the same runner across races. |
+| Between-edition ranges | 10th and 90th percentiles of edition slowdown percentages or edition median late changes. They are observed spread, not confidence intervals. |
+| Actual finish median | Median across the included individual finishes, intentionally pooled to show differences in field composition. |
+| First qualifying section | Pooled counts and shares among detected finishes, with at least 100 detections. This uses a different denominator and weighting from the edition-balanced slowdown percentage. |
+
+Each output group lists its exact edition indices. Counts are recorded performances, not unique people or all starters. Large marathons do not dominate the equal-edition metrics solely because their fields contain more records, but equal edition weights do not remove confounding or make repeated editions independent randomized experiments.
+
+## Within-race outcomes
+
+Let `B = (time at 20 km − time at 5 km) / 15` in seconds/km.
+
+- Late percentage change is `100 × (((finish − time at 30 km) / 12.195) / B − 1)`.
+- After-20 km time difference is `finish − time at 20 km − 22.195 × B`.
+- Each section's percentage change is `100 × (section pace / B − 1)`.
+
+Positive changes mean slower pace or more elapsed time than that recorded reference. The after-20 difference is arithmetic accounting, not time caused by an opening choice, weather or terrain, and not time a runner could necessarily recover. Separate section medians do not reconstruct one representative race.
+
+Sustained slowdown retains the site's definition: pace at least **25% slower than the 5–20 km baseline for at least 5 km after 20 km**, with `1e−12` ratio tolerance for binary rounding. The final 2.195 km cannot qualify alone. First qualifying sections start at 20, 25, 30 or 35 km; timing mats locate a recorded section rather than the exact moment or physiological cause of slowing. The neutral [published-method reference](https://doi.org/10.1371/journal.pone.0251513) remains linked on the site.
+
+Only complete eligible finishes are observed. Withdrawals, non-finishers, fueling, training and exertion are not measured by these comparisons.
+
+## Weather and terrain
+
+Weather groups use validated modeled temperature at the supplied scheduled start, with half-open boundaries at **5, 10, 15 and 20°C**. Missing or rejected context is omitted, never converted to zero. The input context matches **3,507,396 eligible finishes in 193 editions** before sample thresholds. Amsterdam 2020, Frankfurt 2022 and Vienna 2022 have eligible finishes without supplied valid weather context. These counts describe context availability; publication thresholds can further reduce a selected chart's denominator.
+
+Scheduled-start temperature is not a runner's personal wave time or exposure along the course. Start-time provenance retains the source limitations documented in [runner context](RUNNER_CONTEXT_AND_PEERS.md). Optional course and early-pace filters make comparisons more specific but do not isolate a causal temperature effect. Course, field composition, year, pace strategy, congestion and fitness can differ across groups. The existing warming/wind analyses and withheld humidity decision retain their separate evidence rules.
+
+The supplied current-route context covers **3,514,374 eligible finishes in 194 editions** before sample thresholds. Melbourne 2015 and Vienna 2022 lack a terrain profile. A descriptive downhill opening means the supplied first-5 km section has net change **strictly below −25 m**. The exact boundary belongs to other known openings; missing terrain is neither flat nor part of that comparison.
+
+Before opening-band and demographic thresholds, the larger-descent source category contains Boston (seven eligible editions), Sydney (three) and Warsaw (four). In particular, Boston has a distinct selected race field. This composition is material context when interpreting the grouped comparison.
+
+Historical route validity remains unknown. A current supplied profile does not establish the elevation used in a historical edition. Net change can hide both climbs and descents; supplied section gain/loss and whole-profile totals have different processing and are not interchangeable. No elevation-adjusted finish, terrain penalty, effort estimate or causal downhill effect is calculated.
+
+Opening pace bands retain the [all-finisher fast-start definitions](FAST_START_ANALYSIS.md): first 5 km versus 5–20 km, with six fixed bands from more than 10% faster to more than 5% slower. The opening and later outcomes share a baseline; a quick first section is not proof of excessive effort. A runner who holds an ambitious pace through 20 km and then fades can remain in the steady-opening group.
+
+## Measured output for the adopted source
+
+The additive output contains **1,362 exact filter rows and 21,800 groups**: 1,816 course comparisons, 1,789 temperature comparisons, 4,301 opening/terrain comparisons and 13,894 individual race-edition summaries. Its size is **13,602,357 bytes**, with SHA-256 `97ca3dfdad73f9b6c3307cf8a5097ea6ceb99661bfe96c15934d7eae0becb24e`.
+
+With All courses, ages, recorded genders and early paces:
+
+| View | Published coverage after its sample gates |
+| --- | --- |
+| Courses | 24 courses; 3,398,784 finishes. |
+| Weather | Five temperature bands; 192 editions; 3,507,382 finishes. |
+| Race days | 195 individual editions; 3,517,322 finishes. |
+| Opening/terrain | Twelve terrain/opening groups; 3,513,963 finishes across all six opening bands. |
+
+These denominators differ from total eligible and context-available records because of the stated edition/group thresholds. The default downhill page selects one opening band; its displayed denominator must not use the sum over all twelve groups.
+
+The unfiltered edition-balanced slowdown percentages across the five temperature bands are **31.6%, 27.0%, 32.6%, 39.0% and 35.3%**, from coldest to warmest. The relationship is not monotonic. Different race fields and conditions remain mixed; these observations do not establish an optimal temperature or a causal heat penalty.
+
+## Reproduction and independent verification
+
+From the repository root, with the adopted runner and context data already imported:
+
+```bash
+python -m unittest discover -s analysis -p test_all_finisher_context.py -v
+python analysis/build_all_finisher_context.py --runners public/data/runners --context public/data/runner-context --pin analysis/release.json --output public/data/all-finisher-context/evidence.json
+node scripts/verify-all-finisher-context.cjs
+npm run verify:data
+npm run build
+```
+
+The separate [JavaScript verifier](../scripts/verify-all-finisher-context.cjs) imports no calculation helper. It independently verifies every source shard, traverses every raw profile record, checks record/profile uniqueness, reconstructs each exact eligible filter, rejects missing/unsupported groups, recounts every published group's edition membership, sample, detected count and onset shares, and recomputes every edition-balanced slowdown percentage and between-edition rate range.
+
+Full numeric verification covers every unfiltered course, temperature band and published race day, plus representative downhill, age, gender and early-pace combinations. It independently recomputes individual section/late/after-20 outcomes, edition quantiles, equal-edition summaries, pooled actual-finish medians and both within- and between-edition spreads. Numeric checks share typed-array edition cells to keep memory bounded. Boundary fixtures separately distinguish missing from zero, preserve unknown demographics in All, include exact temperature/early-pace boundaries, apply the strict downhill boundary, and reject the short last section as a slowdown episode by itself.
+
+The completed independent run passed against the artifact identified above. It checked **all 7,766 runner shards and 256 context shards**, reconciled **4,462,379 raw records and 3,517,336 eligible finishes**, validated **all 21,800 published groups** and **8,209 omitted sparse groups**, and independently recomputed the complete numeric metrics in **228 groups across 257 edition cells**. The latter include every unfiltered course, temperature band and published race day plus four representative filtered/terrain groups. All twelve new Python method tests passed. This certifies the stated local calculation checks, not visual browser behavior or production publication.
+
+This document describes calculation and verification scope. Calculation output, test results, PR checks, merge and production verification must be recorded separately before claiming the addition is live. Existing earlier-result outputs remain preserved with their original bytes and provenance.

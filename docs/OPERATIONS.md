@@ -1,5 +1,20 @@
 # Operations runbook
 
+## All-finisher context refresh
+
+After refreshing and verifying both lookup and environmental context, build the additive context file against those exact manifests:
+
+```bash
+python -m unittest discover -s analysis -p 'test_all_finisher_context.py'
+python analysis/build_all_finisher_context.py --output /path/to/all-finisher-context/evidence.json
+node scripts/verify-all-finisher-context.cjs --input /path/to/all-finisher-context/evidence.json
+cp /path/to/all-finisher-context/evidence.json public/data/all-finisher-context/evidence.json
+npm run verify:data
+npm run build
+```
+
+The dedicated `all-finisher-context.yml` workflow recalculates and independently verifies without importing or deploying. Existing source and aggregate files remain unchanged when adding these views; source refreshes require rebuilding dependent context instead of relabeling hashes. Record local, CI and production evidence separately in [ALL_FINISHER_ANALYSES.md](ALL_FINISHER_ANALYSES.md).
+
 Use [analysis/README.md](../analysis/README.md) for the complete calculation and import contracts. The current full-refresh source is **`private-export-20260912-0934`**. The [current refresh](REFRESH_20260912_0934.md) records source, calculation, import and deployment evidence; earlier feature updates have their own dated records; a prior deployment does not certify a later change.
 
 ## Verify access and source state

@@ -1,0 +1,133 @@
+'use client';
+
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { UnitLink as Link, useUnits } from './UnitsProvider';
+import QuestionViz from './QuestionViz';
+import { distanceLabel, elevationLabel, unitText, type UnitSystem } from '@/lib/units';
+import { clock } from '@/lib/personalized';
+import { TEN_ANALYSES, analysisHref } from '@/lib/ten-analyses';
+import { sourceReleaseHref } from '@/lib/data-source';
+import { ALL_FINISHER_DEFAULT, allFinisherCharts, allFinisherFamily, allFinisherGroupLabel, allFinisherGroups, allFinisherRow, allFinisherSearch, earlyPaceLabel, loadAllFinisherContext, readAllFinisherSelection,
+  type AllFinisherEvidence, type AllFinisherGroup, type AllFinisherKind, type AllFinisherSelection, type AllFinisherStart } from '@/lib/all-finisher-context';
+
+const count = (value: number) => value.toLocaleString('en-US');
+const percent = (value: number) => value.toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%';
+const cityName = (city: string) => city === 'New York' ? 'New York City' : city;
+const COPY: Record<AllFinisherKind, { title: string; description: string }> = {
+  courses: { title: 'How does pacing compare across courses?', description: 'See how often runners slowed, how their pace changed, and how varied their races were. Every usable finish can contribute, even with no earlier result.' },
+  weather: { title: 'How do warm and cool races compare?', description: 'Follow the pace from the early stages to the finish across recorded start-hour temperatures. Give each race edition equal weight.' },
+  downhill: { title: 'What follows a downhill opening?', description: 'Compare similar opening patterns on courses with larger supplied opening descents and other openings. Follow what happened later in each race.' },
+  'weather-profile': { title: 'How does pacing change across race-day temperatures?', description: 'Compare the shape of a race in cooler and warmer conditions, using each finish’s own early pace as the reference.' },
+  'course-consistency': { title: 'How much do pacing experiences vary on each course?', description: 'Some race fields finish with a similar rhythm; others spread out. Compare the variation within each edition before averaging across years.' },
+  'course-profile': { title: 'How do pacing patterns differ between courses?', description: 'Put the course patterns side by side, using each finish’s own early pace as the reference. No earlier marathon is needed.' },
+  'race-day': { title: 'How did runners pace a particular race day?', description: 'Choose a race edition to see its pacing, recorded conditions and late slowing. Compare other runners from the same edition, with no earlier marathon required.' },
+};
+
+export function AllFinisherResults({ groups, kind, start, units, focus, comparison }: { groups: AllFinisherGroup[]; kind: AllFinisherKind; start: AllFinisherStart; units: UnitSystem; focus: AllFinisherGroup; comparison?: AllFinisherGroup }) {
+  const raceDay = kind === 'race-day';
+  const charts = allFinisherCharts(raceDay ? [focus, ...(comparison && comparison.id !== focus.id ? [comparison] : [])] : groups, focus, comparison, kind, units);
+  const family = allFinisherFamily(kind);
+  const label = (group: AllFinisherGroup) => allFinisherGroupLabel(group, kind, units);
+  const profileFirst = kind === 'course-profile' || kind === 'weather-profile' || raceDay;
+  const total = groups.reduce((sum, group) => sum + group.n, 0);
+  const primary = profileFirst ? charts.profile : kind === 'course-consistency' ? charts.consistency : charts.slowdown;
+  const editions = start.edition_labels.filter(edition => focus.edition_indices?.includes(edition.index));
+  const includedCities = [...new Set(editions.map(edition => edition.city))].sort();
+  return <>
+    <section className="analysis-finding af-finding"><p className="eyebrow">What these race fields show</p><h2>{groups.length === 1 ? 'One group has enough data for these filters.' : `${groups.length} ${raceDay ? 'race editions' : family === 'weather' ? 'temperature bands' : kind === 'downhill' ? 'opening-terrain groups' : 'courses'} to compare.`}</h2><p>{count(total)} eligible finishes {raceDay ? 'across the available editions.' : 'contribute to the groups shown.'} {raceDay ? 'Choose an edition to follow its runners. The chart shows the selected edition and optional comparison; changing filters selects matching finishes within each edition.' : 'Each race edition has equal weight within a group, so a large race cannot outweigh a smaller one simply because it has more finishers.'}</p><p className="control-help">{raceDay ? 'This describes eligible finishes in one edition, not official standings or all starters. To compare an individual with peers from their edition, use Find a runner.' : family === 'weather' ? 'Temperature describes the modeled scheduled start hour. Humidity, wind, sunshine, course and race-field differences remain mixed together.' : kind === 'downhill' ? `A larger opening descent means a supplied net drop greater than ${elevationLabel(25, units)} over the first ${distanceLabel(5, units)}. Historical route validity is unverified; these groups describe supplied profiles.` : 'The runners, weather and historical routes differ between courses and years. These are observed pacing comparisons, not a ranking of course difficulty.'}</p></section>
+    <QuestionViz spec={primary} unitSystem={units} />
+    <p className="control-help">Every displayed group includes at least {count(start.min_cell)} finishes{!raceDay && <> across {count(start.min_editions)} editions, with at least {count(start.min_edition)} finishes in each contributing edition</>}. A missing group is unavailable, not zero.</p>
+    <section className="af-section"><p className="eyebrow">Follow the selected group</p><h2>{label(focus)}</h2><div className="af-numbers"><div><strong>{percent(focus.slowdown_pct)}</strong><span>{raceDay ? 'Slowdown rate in this edition' : 'Mean edition slowdown rate'}</span><small>{raceDay ? `${count(focus.detected_n)} of ${count(focus.n)} included finishes` : 'Each race edition has equal weight'}</small></div><div><strong>{percent(focus.late_pct)}</strong><span>Typical late pace change</span><small>{raceDay ? 'Median in this edition; positive means slower' : 'Average of edition medians; positive means slower'}</small></div><div><strong>{clock(focus.actual_finish_median_s, true)}</strong><span>Median recorded finish</span><small>All {count(focus.n)} included finishes pooled together</small></div></div><p>{count(focus.n)} eligible finishes · {count(focus.edition_n)} {focus.edition_n === 1 ? 'race edition' : 'race editions'} · {count(focus.city_n)} {focus.city_n === 1 ? 'course' : 'courses'}. The typical late change compares {distanceLabel(30, units)} to the finish with {distanceLabel(5, units)}–{distanceLabel(20, units)} pace.</p>{raceDay && <p className="control-help">{focus.temp_c == null ? 'Start-hour temperature is unavailable.' : `Modeled start-hour temperature: ${Number((units === 'mi' ? focus.temp_c * 1.8 + 32 : focus.temp_c).toFixed(1))}°${units === 'mi' ? 'F' : 'C'}.`} {focus.opening_net_m == null ? 'Supplied opening elevation is unavailable.' : `Supplied net elevation change over the first ${distanceLabel(5, units)}: ${elevationLabel(focus.opening_net_m, units)}. Historical route validity is unverified.`}</p>}{!profileFirst && <QuestionViz spec={charts.profile} unitSystem={units} />}{profileFirst && <QuestionViz spec={charts.late} unitSystem={units} />}<details className="af-coverage-details"><summary>Included courses and race years</summary><p>{includedCities.map(cityName).join(', ')}.</p><ul>{includedCities.map(city => <li key={city}><strong>{cityName(city)}:</strong> {editions.filter(edition => edition.city === city).map(edition => edition.year).sort((a, b) => a - b).join(', ')}</li>)}</ul>{kind === 'downhill' && <p>These named courses supply this opening-terrain group. Their fields and other course features differ, so the comparison cannot isolate a downhill effect.</p>}</details></section>
+    <section className="af-section"><p className="eyebrow">Find the turning point</p><h2>Where did sustained slowing begin?</h2><p>A sustained slowdown is at least 25% slower than {distanceLabel(5, units)}–{distanceLabel(20, units)} pace, lasting at least {distanceLabel(5, units)} after {distanceLabel(20, units)}. This follows the <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">published slowdown method (2021)</a>.</p>{charts.onset ? <><p className="control-help">For {label(focus).toLowerCase()}, this chart covers {count(focus.detected_n)} detected finishes only. {raceDay ? 'The slowdown rate above uses every included finish in that edition.' : 'It pools those finishes; the main comparison above instead gives editions equal weight.'}</p><QuestionViz spec={charts.onset} unitSystem={units} /></> : <div className="empty-comparison"><h3>Too few detected slowdowns to show the onset pattern.</h3><p>At least {count(start.min_cell)} detected finishes are required. This group has {count(focus.detected_n)}.</p></div>}</section>
+    {!profileFirst && <section className="af-section"><p className="eyebrow">Look beyond the slowdown threshold</p><h2>How much time accumulated later?</h2><p>Many races slow without crossing the sustained-slowdown threshold. Compare the actual time after {distanceLabel(20, units)} with the time that distance would take at each finish’s recorded early pace.</p><QuestionViz spec={charts.time} unitSystem={units} /><p className="control-help">This is arithmetic context, not a predicted finish, avoidable time loss or evidence that a condition caused the difference.</p></section>}
+  </>;
+}
+
+export default function AllFinisherAnalysis({ kind, start, history, title, description, archive = false, related }: { kind: AllFinisherKind; start: AllFinisherStart; history?: ReactNode; title?: string; description?: string; archive?: boolean; related?: ReactNode }) {
+  const { units } = useUnits();
+  const [selection, setSelection] = useState<AllFinisherSelection>(ALL_FINISHER_DEFAULT);
+  const [draft, setDraft] = useState<AllFinisherSelection>(ALL_FINISHER_DEFAULT);
+  const [data, setData] = useState<AllFinisherEvidence | null>(null);
+  const [loading, setLoading] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0);
+  const [focusId, setFocusId] = useState(''), [comparisonId, setComparisonId] = useState('');
+  const all = selection.mode === 'all' || !history;
+  const initial = allFinisherRow([start.initial], selection);
+  useEffect(() => {
+    const restore = () => { const next = readAllFinisherSelection(window.location.search, start); setSelection(next); setDraft(next); setFocusId(new URLSearchParams(window.location.search).get('focus') || ''); setComparisonId(new URLSearchParams(window.location.search).get('compare') || ''); };
+    restore(); window.addEventListener('popstate', restore); return () => window.removeEventListener('popstate', restore);
+  }, [start]);
+  useEffect(() => {
+    if (!all || initial || data) { setLoading(false); setError(''); return; }
+    const controller = new AbortController(); setLoading(true); setError('');
+    loadAllFinisherContext(start, controller.signal).then(value => { if (!controller.signal.aborted) { setData(value); setLoading(false); } }).catch(reason => { if (!controller.signal.aborted) { setError(reason instanceof Error ? reason.message : 'The comparison could not load.'); setLoading(false); } });
+    return () => controller.abort();
+  }, [all, initial, data, start, retry]);
+  const row = initial || (data ? allFinisherRow(data.rows, selection) : undefined);
+  const groups = useMemo(() => row ? allFinisherGroups(row, kind, selection.opening) : [], [row, kind, selection.opening]);
+  const focus = groups.find(group => group.id === focusId) || groups[0];
+  const comparison = comparisonId === 'none' ? undefined : groups.find(group => group.id === comparisonId && group.id !== focus?.id) || groups.find(group => group.id !== focus?.id);
+  const apply = (next: AllFinisherSelection) => { setSelection(next); setDraft(next); setFocusId(''); setComparisonId(''); window.history.pushState(null, '', window.location.pathname + allFinisherSearch(next) + '&units=' + units); };
+  const mode = (value: 'all' | 'history') => {
+    const params = new URLSearchParams(window.location.search); params.set('comparison', value); params.set('units', units);
+    if (value === 'all') { params.delete('previous'); params.delete('prior'); }
+    window.history.pushState(null, '', window.location.pathname + '?' + params.toString()); window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+  const chooseLine = (id: string, comparisonLine = false) => {
+    if (comparisonLine) setComparisonId(id); else setFocusId(id);
+    const params = new URLSearchParams(window.location.search); params.set(comparisonLine ? 'compare' : 'focus', id); params.set('units', units);
+    window.history.pushState(null, '', window.location.pathname + '?' + params.toString());
+  };
+  const raceDay = kind === 'race-day';
+  const family = allFinisherFamily(kind), primaryId = family === 'courses' ? 'courses' : family === 'weather' ? 'weather' : undefined;
+  const main = TEN_ANALYSES.find(item => item.id === primaryId);
+  const navSearch = '?' + new URLSearchParams({ race: selection.city, age: selection.age, gender: selection.gender, units }).toString();
+  const pending = all && !initial && !data && !error;
+  const modes = history && <div className="af-modes" role="group" aria-label="Choose the comparison"><button type="button" aria-pressed={all} onClick={() => mode('all')}>All eligible finishes<span>No previous race needed</span></button><button type="button" aria-pressed={!all} onClick={() => mode('history')}>With an earlier result<span>Compare with recorded race history</span></button></div>;
+  return <>
+    {!all ? <><div className="af-history-switch">{modes}<p className="control-help">This earlier-result view always requires usable recorded history. Leaving an earlier-time filter blank includes all qualifying earlier times; it does not include finishes without history.</p></div>{history}</> : <div className="analysis-layout"><aside className="analysis-sidebar"><Link href="/analyses" className="sidebar-heading">The essential ten</Link><nav aria-label="The ten ranked analyses"><ol>{TEN_ANALYSES.map(item => <li key={item.id}><Link href={analysisHref(item) + navSearch} aria-current={!archive && item.id === primaryId ? 'page' : undefined}><span>{String(item.rank).padStart(2, '0')}</span>{unitText(item.shortTitle, units)}</Link></li>)}</ol></nav><p>One question at a time.</p></aside><article className="analysis-main af-page">
+      <header className="analysis-heading"><Link href={archive ? '/packs' : '/analyses'} className="eyebrow">{archive ? 'Explore the research' : main ? `Analysis ${String(main.rank).padStart(2, '0')} of 10 / Know your course` : 'Explore your opening pace'}</Link><h1>{unitText(title || COPY[kind].title, units)}</h1><p>{unitText(description || COPY[kind].description, units)}</p></header>
+      {modes}
+      <p className="af-coverage">This view starts with {count(start.analysis_n)} eligible finishes. No earlier race or identity link is needed. {family === 'weather' && !raceDay ? 'Weather groups also need validated start-hour temperature and enough comparable observations.' : kind === 'downhill' ? 'Terrain groups also need a supplied opening elevation profile and enough comparable observations.' : 'Groups need enough comparable observations; missing weather or terrain does not exclude an otherwise eligible finish from these pacing comparisons.'}</p>
+      <form className="comparison-controls" onSubmit={event => { event.preventDefault(); apply(draft); }}><div className="controls-heading"><h2>Choose the comparison</h2><span>Exact filters, no earlier result required</span></div><div className="profile-fields af-controls">
+        <label>Course<select value={draft.city} onChange={event => setDraft({ ...draft, city: event.target.value })}>{start.cities.map(city => <option key={city} value={city}>{cityName(city)}</option>)}</select></label>
+        <label>Early-race pace<select value={draft.early_pace} onChange={event => setDraft({ ...draft, early_pace: event.target.value })}>{start.early_pace_bands.map(band => <option key={band.id} value={band.id}>{earlyPaceLabel(band, units)}</option>)}</select></label>
+        <label>Age group<select value={draft.age} onChange={event => setDraft({ ...draft, age: event.target.value })}>{start.ages.map(age => <option key={age} value={age}>{age === 'all' ? 'All ages' : age}</option>)}</select></label>
+        <label>Recorded gender<select value={draft.gender} onChange={event => setDraft({ ...draft, gender: event.target.value })}>{start.genders.map(gender => <option key={gender} value={gender}>{gender === 'all' ? 'All recorded categories' : gender}</option>)}</select></label>
+        {kind === 'downhill' && <label>Opening pace<select value={draft.opening} onChange={event => setDraft({ ...draft, opening: event.target.value })}>{start.opening_bands.map(band => <option key={band.id} value={band.id}>{band.label}</option>)}</select></label>}
+        <button type="submit" className="button-primary">Update comparison <span aria-hidden="true">↗</span></button></div><p className="control-help">Early pace is the recorded average from {distanceLabel(5, units)} to {distanceLabel(20, units)}. It is not an earlier best, target time or measure of fitness. {kind === 'downhill' && `Opening pace compares the first ${distanceLabel(5, units)} with that same reference.`} Missing ages and genders remain in All.</p></form>
+      <div className="sr-only" role="status">{pending || loading ? 'Loading your comparison.' : error ? '' : focus ? `Comparison updated. ${groups.length} groups are available.` : 'Not enough results for this exact selection.'}</div>
+      {pending || loading ? <p className="loading-message">Loading the comparison…</p> : error ? <div className="feedback-error" role="alert"><p>{error}</p><button type="button" onClick={() => setRetry(value => value + 1)}>Try again</button></div> : focus ? <><div className="af-line-controls"><label>{kind === 'race-day' ? 'Race edition to follow' : 'Group to follow'}<select value={focus.id} onChange={event => chooseLine(event.target.value)}>{groups.map(group => <option key={group.id} value={group.id}>{allFinisherGroupLabel(group, kind, units)}</option>)}</select></label><label>Compare pacing with<select value={comparison?.id || 'none'} onChange={event => chooseLine(event.target.value, true)}><option value="none">No comparison line</option>{groups.filter(group => group.id !== focus.id).map(group => <option key={group.id} value={group.id}>{allFinisherGroupLabel(group, kind, units)}</option>)}</select></label></div><AllFinisherResults groups={groups} kind={kind} start={start} units={units} focus={focus} comparison={comparison} /></> : <section className="empty-comparison"><h2>Not enough results for this exact comparison.</h2><p>The filters need at least {count(start.min_cell)} eligible finishes in each group{!raceDay && <> across {count(start.min_editions)} editions, with {count(start.min_edition)} finishes per edition</>}. Broaden the course, early pace, age or gender selection{kind === 'downhill' ? ', or try another opening group' : ''}. We do not substitute a broader group silently.</p><button className="button-secondary" type="button" onClick={() => apply(ALL_FINISHER_DEFAULT)}>Reset comparison filters</button></section>}
+      <section className="af-method"><h2>What this can tell you</h2><p>These comparisons describe complete eligible finishes. They cannot establish that a course, a temperature or an opening pace caused a result. Withdrawals, intended targets, training, fueling and fitness are not measured.</p><details><summary>Definitions, coverage and limits</summary><p>Each result supplies its own {distanceLabel(5, units)}–{distanceLabel(20, units)} reference pace. Earlier results and cross-race identity matches are not required. The same person may contribute several races. Missing splits are not inferred; incomplete and held source editions remain searchable in <Link href="/runners">Find a runner</Link>.</p><p>Exact course, early-pace, age and gender filters are applied before the sample thresholds. Each group needs {count(start.min_cell)} finishes{!raceDay && <> and {count(start.min_editions)} qualifying editions; editions with fewer than {count(start.min_edition)} matching finishes are excluded from that group</>}. Missing exact age or gender stays in All.</p><p>{raceDay ? 'Each displayed group is one race edition. The slowdown percentage uses all its included finishes; pace changes and section profiles use the medians of those finishes. Onset distributions use detected finishes only.' : 'Slowdown rates average edition rates equally. Pace changes, section profiles and time differences average edition medians equally. Finish-time context and onset distributions pool finishes instead and are labeled separately. The displayed finish count is not the denominator of the equally weighted slowdown percentage.'}</p><p>Weather describes modeled scheduled-start conditions, not personal exposure. Terrain uses supplied course profiles with unverified historical validity. Similar early pace does not remove differences in fitness, conditions or race fields; the early pace is itself affected by the race. No weather-adjusted finish or causal course ranking is calculated.</p>{kind === 'downhill' && <p>The first {distanceLabel(5, units)} terrain grouping uses supplied net elevation change, not total descent. The larger-descent group has a net drop greater than {elevationLabel(25, units)}. A course can still contain climbs. Opening pace and later slowing share the same early reference, which can contribute to their association.</p>}<p>Sustained slowdown follows the study’s 25% threshold over at least {distanceLabel(5, units)} after {distanceLabel(20, units)}. An isolated short final section cannot satisfy it. At least {count(start.min_cell)} detected finishes are needed to display an onset distribution.</p></details><p><a href={(process.env.NEXT_PUBLIC_BASE_PATH || '') + '/data/all-finisher-context/evidence.json'}>Download the analysis data</a> · <a href={sourceReleaseHref(start.release_tag)}>Open the source data</a> · <Link href="/methodology#all-finisher-context">Study methods</Link></p></section>
+      {related}
+      <nav className="analysis-next" aria-label="Continue exploring"><Link href="/analyses">← The essential ten</Link><Link href="/runners">Explore your recorded races →</Link></nav>
+    </article></div>}
+    <style jsx global>{`
+      .af-modes { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin:2rem 0 1rem; }
+      .af-modes button { text-align:left; border:1px solid var(--rule); border-radius:8px; padding:1rem; background:transparent; color:var(--ink); font:inherit; cursor:pointer; }
+      .af-modes button[aria-pressed="true"] { border-color:var(--ink); background:var(--paper); box-shadow:inset 0 0 0 1px var(--ink); }
+      .af-modes span { display:block; margin-top:.3rem; font-size:.75rem; color:var(--slate); }
+      .af-history-switch { max-width:760px; margin:0 auto 2rem; padding:0 1.25rem; }
+      .af-coverage { color:var(--slate); max-width:47rem; font-size:.9rem; margin-bottom:1.5rem; }
+      .af-controls,.af-line-controls { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:end; }
+      .af-controls label,.af-line-controls label { min-width:0; }
+      .af-controls select,.af-line-controls select { width:100%; }
+      .af-controls button { min-height:44px; }
+      .af-line-controls { margin:2rem 0; }
+      .af-line-controls label { display:flex; flex-direction:column; gap:.5rem; font-size:.8rem; color:var(--slate); }
+      .af-line-controls select { min-height:44px; padding:.7rem; border:1px solid var(--rule); background:var(--paper); color:var(--ink); border-radius:4px; font:inherit; }
+      .af-numbers { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin:1.5rem 0; }
+      .af-numbers strong { display:block; font-size:clamp(1.45rem,2.5vw,2rem); font-weight:500; letter-spacing:-.035em; line-height:1.2; }
+      .af-numbers span,.af-numbers small { display:block; color:var(--slate); font-size:.8rem; margin-top:.5rem; }
+      .af-numbers small { font-size:.7rem; line-height:1.5; }
+      .af-section,.af-method { margin-top:3rem; padding-top:2rem; border-top:1px solid var(--rule); }
+      .af-section>h2,.af-method>h2 { font-size:clamp(1.5rem,2.8vw,2rem); font-weight:500; letter-spacing:-.035em; line-height:1.2; }
+      .af-section>p,.af-method p { color:var(--slate); max-width:47rem; }
+      .af-method p { font-size:.85rem; }
+      .af-method details { margin:1.5rem 0; }
+      .af-method summary,.af-coverage-details summary { font-size:.875rem; }
+      .af-coverage-details { margin-top:1.5rem; color:var(--slate); font-size:.85rem; }
+      @media(max-width:650px) { .af-numbers { grid-template-columns:1fr 1fr; } .af-numbers>div:last-child { grid-column:1/-1; } }
+      @media(max-width:420px) { .af-controls,.af-line-controls,.af-modes { grid-template-columns:1fr; } }
+    `}</style>
+  </>;
+}

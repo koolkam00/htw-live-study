@@ -36,7 +36,7 @@ export function FastStartResults({ row, focus, start, units }: { row: FastStartR
     </div>
     <p className="fs-caution">{all ? `This finds a quick first ${distanceLabel(5, units)} relative to the next ${distanceLabel(15, units)}. It cannot tell whether the entire first half was too ambitious. Terrain, congestion, conditions and fitness remain mixed together; the opening and slowdown measures also share the same reference pace.` : 'A fast opening is measured against an earlier result, not the runner’s current fitness. These groups mix fitness changes, race days, terrain and choices.'} The differences do not prove that the start caused the result.</p>
 
-    <section className="fs-section" aria-labelledby="fs-pace-title"><p className="eyebrow">01 / Watch the race unfold</p><h2 id="fs-pace-title">Does the early speed last?</h2><p>Each section shows its typical pace relative to {all ? `the same race’s ${distanceLabel(5, units)}–${distanceLabel(20, units)} pace` : 'the earlier best’s average pace'}. Above zero means slower. {focus.band !== 'steady' && !row.groups.some(g => g.band === 'steady') && 'The similar-opening group is too small to draw a comparison line for these filters.'}</p><QuestionViz spec={charts.pace} unitSystem={units} /></section>
+    <section className="fs-section" aria-labelledby="fs-pace-title"><p className="eyebrow">01 / Watch the race unfold</p><h2 id="fs-pace-title">How did pace change after the opening?</h2><p>Each section shows its typical pace relative to {all ? `the same race’s ${distanceLabel(5, units)}–${distanceLabel(20, units)} pace` : 'the earlier best’s average pace'}. Above zero means slower. {focus.band !== 'steady' && !row.groups.some(g => g.band === 'steady') && 'The similar-opening group is too small to draw a comparison line for these filters.'}</p><QuestionViz spec={charts.pace} unitSystem={units} /></section>
 
     <section className="fs-section" aria-labelledby="fs-onset-title"><p className="eyebrow">02 / Find the turning point</p><h2 id="fs-onset-title">Where did sustained slowing begin?</h2><p>Here, sustained slowdown means at least 25% slower than the runner’s {distanceLabel(5, units)}–{distanceLabel(20, units)} pace, lasting at least {distanceLabel(5, units)} after {distanceLabel(20, units)}. This follows the <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251513">published slowdown method (2021)</a>.</p>
       {charts.onset ? <><p className="control-help">This chart covers only the {count(focus.slowdown_n)} finishes with a detected episode. It does not describe the other {count(focus.n - focus.slowdown_n)} finishes in this starting group.</p><QuestionViz spec={charts.onset} unitSystem={units} /></> : <div className="empty-comparison"><h3>Too few detected slowdowns to show a reliable onset pattern.</h3><p>The group has {count(focus.slowdown_n)} detected episodes. At least {count(start.min_cell)} are required for this chart; the overall rate above still uses all {count(focus.n)} finishes.</p></div>}
@@ -44,14 +44,14 @@ export function FastStartResults({ row, focus, start, units }: { row: FastStartR
 
     <section className="fs-section" aria-labelledby="fs-finish-title"><p className="eyebrow">03 / Look at the finish</p><h2 id="fs-finish-title">{all ? 'How much time accumulated later?' : 'How did the finish times compare?'}</h2><p>{all ? `Compare time after ${distanceLabel(20, units)} with covering that distance at the same race’s ${distanceLabel(5, units)}–${distanceLabel(20, units)} pace.` : 'A runner can fade late and still beat an earlier best.'} Compare the median and range across every starting group with enough data for your filters.</p><QuestionViz spec={charts.finishes} unitSystem={units} /><p className="control-help">Only groups with at least {count(start.min_cell)} finishes are shown. Missing groups are not treated as zero.</p></section>
 
-    <section className="fs-section" aria-labelledby="fs-minutes-title"><p className="eyebrow">04 / Follow the minutes</p><h2 id="fs-minutes-title">Did later sections give back the early minutes?</h2><p>For the <strong>{name.toLowerCase()}</strong> group, {all ? `compare the first ${distanceLabel(5, units)} and the distance after ${distanceLabel(20, units)} with the same race’s ${distanceLabel(5, units)}–${distanceLabel(20, units)} pace. The reference section contributes zero by definition.` : `compare the first ${distanceLabel(10, units)} and the rest of the race with an even pace based on the earlier best.`} That reference is not an expected or predicted finish.</p><QuestionViz spec={charts.accounting} unitSystem={units} /></section>
+    <section className="fs-section" aria-labelledby="fs-minutes-title"><p className="eyebrow">04 / Follow the minutes</p><h2 id="fs-minutes-title">Where did the time differences appear?</h2><p>For the <strong>{name.toLowerCase()}</strong> group, {all ? `compare the first ${distanceLabel(5, units)} and the distance after ${distanceLabel(20, units)} with the same race’s ${distanceLabel(5, units)}–${distanceLabel(20, units)} pace. The reference section contributes zero by definition.` : `compare the first ${distanceLabel(10, units)} and the rest of the race with an even pace based on the earlier best.`} That reference is not an expected or predicted finish.</p><QuestionViz spec={charts.accounting} unitSystem={units} /></section>
   </>;
 }
 
-export default function FastStartAnalysis({ starts }: { starts: FastStartStarts }) {
+export default function FastStartAnalysis({ starts, defaultOpening = 'fast10', title = 'What happens after a very fast start?', description = 'Follow the opening pace through the late stages and into the finish time. See who slowed, where it began, and whether an early gain lasted.', archive = false }: { starts: FastStartStarts; defaultOpening?: string; title?: string; description?: string; archive?: boolean }) {
   const { units } = useUnits();
-  const [selection, setSelection] = useState<FastStartSelection>(FAST_START_DEFAULT);
-  const [draft, setDraft] = useState<FastStartSelection>(FAST_START_DEFAULT);
+  const [selection, setSelection] = useState<FastStartSelection>({ ...FAST_START_DEFAULT, band: defaultOpening });
+  const [draft, setDraft] = useState<FastStartSelection>({ ...FAST_START_DEFAULT, band: defaultOpening });
   const [datasets, setDatasets] = useState<Partial<Record<FastStartMode, FastStartEvidence>>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -61,9 +61,9 @@ export default function FastStartAnalysis({ starts }: { starts: FastStartStarts 
   const data = datasets[selection.mode];
   const initialRow = fastStartRow([start.initial], selection);
   useEffect(() => {
-    const restore = () => { const next = readFastStartSelection(window.location.search, starts.all); setSelection(next); setDraft(next); };
+    const restore = () => { const params = new URLSearchParams(window.location.search); if (!params.has('opening')) params.set('opening', defaultOpening); const next = readFastStartSelection(params.toString(), starts.all); setSelection(next); setDraft(next); };
     restore(); window.addEventListener('popstate', restore); return () => window.removeEventListener('popstate', restore);
-  }, [starts]);
+  }, [starts, defaultOpening]);
   useEffect(() => {
     if (initialRow || data) { setLoading(false); setError(''); return; }
     const controller = new AbortController(); setLoading(true); setError('');
@@ -82,7 +82,7 @@ export default function FastStartAnalysis({ starts }: { starts: FastStartStarts 
   return <div className="analysis-layout">
     <aside className="analysis-sidebar"><Link href="/analyses" className="sidebar-heading">The essential ten</Link><nav aria-label="The ten ranked analyses"><ol>{TEN_ANALYSES.map(item => <li key={item.id}><Link href={analysisHref(item) + navSearch} aria-current={item.id === 'opening' ? 'page' : undefined}><span>{String(item.rank).padStart(2, '0')}</span>{unitText(item.shortTitle, units)}</Link></li>)}</ol></nav><p>One question at a time.</p></aside>
     <article className="analysis-main fs-page">
-      <header className="analysis-heading"><Link href="/analyses" className="eyebrow">Analysis 02 of 10 / Plan your race</Link><h1>What happens after a very fast start?</h1><p>Follow the opening pace through the late stages and into the finish time. See who slowed, where it began, and whether an early gain lasted.</p></header>
+      <header className="analysis-heading"><Link href={archive ? '/packs' : '/analyses'} className="eyebrow">{archive ? 'Research archive / Opening pace' : 'Analysis 02 of 10 / Plan your race'}</Link><h1>{title}</h1><p>{description}</p></header>
       <div className="fs-modes" role="group" aria-label="Choose the comparison"><button type="button" aria-pressed={all} onClick={() => apply({ ...draft, mode: 'all', prior: 'all' })}>All eligible finishes<span>No previous race needed</span></button><button type="button" aria-pressed={!all} onClick={() => apply({ ...draft, mode: 'history', prior: 'all' })}>With an earlier result<span>Compare with a recorded best</span></button></div>
       <p className="fs-coverage">{all ? <><strong>{count(start.analysis_n)} eligible finishes.</strong> First-time runners and people without recorded history are included. Compare the first {distanceLabel(5, units)} with the next {distanceLabel(15, units)}, then see what happened afterward.</> : <><strong>{count(start.analysis_n)} eligible finishes with earlier results.</strong> Compare the first {distanceLabel(10, units)} with an eligible recorded best from the two earlier calendar years.</>}</p>
       <form className="comparison-controls" onSubmit={event => { event.preventDefault(); apply(draft); }}>

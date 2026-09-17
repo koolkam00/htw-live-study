@@ -1,5 +1,11 @@
 # Website architecture
 
+## All-finisher context views
+
+`AllFinisherAnalysis` and `lib/all-finisher-context{,-server}.ts` serve the default rank-5 course and rank-6 temperature views, `/analyses/downhill-start`, and the archive mappings in `lib/broader-analysis-catalog.ts`. Their source is `public/data/all-finisher-context/evidence.json`, bound to both exact runner and environmental-context manifests. The static reader verifies the source and calculation hashes; the client verifies artifact bytes, SHA-256 and source before filtering. `comparison=all|history` selects descriptive within-race or retained prior-result outcomes. Course/age/gender/early-pace filters are exact, never widened. The optional legacy forms preserve explicit history mode on submission.
+
+Opening archive variants reuse `FastStartAnalysis` with a slow, steady or fast initial band and retain original archive panels. The personalized guide links to the broader views while identifying its own history-dependent questions. Legacy downhill links now open the new downhill page; return links still need the history guide. See [all-finisher methods](ALL_FINISHER_ANALYSES.md) for metrics, denominators and source validity.
+
 The current refresh adopts the 0934 source across primary analyses, supporting study, weather, runner lookup and peer/environmental context. Calculation and production evidence are recorded separately in [the refresh record](REFRESH_20260912_0934.md). See [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) and [runner-context contracts](RUNNER_CONTEXT_AND_PEERS.md).
 
 ## Runtime and routes
@@ -23,7 +29,7 @@ The primary ten are accompanied by any weather candidates that pass the fixed sc
 | /runners | app/runners/page.tsx; RunnerSearch / RunnerContext | Search names, confirm races, compare recorded performances and same-edition peers, inspect weather/current-route context |
 | /methodology | app/methodology/page.tsx | Definitions, cohorts and limitations |
 
-[lib/ten-analyses.ts](../lib/ten-analyses.ts) is the primary ordering and route registry: pacing pattern, opening pace, checkpoint, section differences, courses, weather, terrain, target context, improvement and age. The [ten-analysis guide](TOP_TEN_ANALYSES.md) maps these pages to data and limitations. The 35-question catalog in `lib/question-catalog.ts` and 33 broad extension packs remain a research archive; the personalized catalog retains 12 backing calculation paths. These are overlapping views, not independent datasets. `/your-race#guide-{id}` maps the primary ten to their new analysis pages; `#guide-downhill` and `#guide-return` open the retained twelve-question guide at `/research/personalized`. The `/packs` archive links to the ten and keeps the twelve-question list collapsed.
+[lib/ten-analyses.ts](../lib/ten-analyses.ts) is the primary ordering and route registry: pacing pattern, opening pace, checkpoint, section differences, courses, weather, terrain, target context, improvement and age. The [ten-analysis guide](TOP_TEN_ANALYSES.md) maps these pages to data and limitations. The 35-question catalog in `lib/question-catalog.ts` and 33 broad extension packs remain a research archive; the personalized catalog retains 12 backing calculation paths. These are overlapping views, not independent datasets. `/your-race#guide-{id}` maps the primary ten to their new analysis pages; `#guide-downhill` opens `/analyses/downhill-start`; `#guide-return` opens the retained twelve-question guide at `/research/personalized`. The `/packs` archive links to the ten and keeps the twelve-question list collapsed.
 
 ## Full-data access and current data paths
 
@@ -69,7 +75,7 @@ The homepage, About page and ten primary analyses default to miles and minutes p
 
 The URL parameter `units=mi|km` makes a shared comparison explicit. A valid URL selection takes precedence over the saved browser preference; absent either, the default is miles. The browser remembers changes, and navigation among analysis pages retains the selection. Unit changes are presentation state, not a reason to download or recalculate new cohorts.
 
-The new weather pages also display °F differences and mph in miles mode, or °C differences and km/h in kilometres mode. Their percentage-point outcomes stay unchanged. Course browsing is stored as `course=` and survives unit changes/reloads. The original temperature analysis keeps its published °C bands.
+The new weather pages also display °F differences and mph in miles mode, or °C differences and km/h in kilometres mode. Their percentage-point outcomes stay unchanged. Course browsing is stored as `course=` and survives unit changes/reloads. The retained earlier-result temperature analysis keeps its published °C bands; the new all-finisher temperature labels convert between °C and °F.
 
 All underlying distances and analytical definitions remain in kilometres. Use the exact conversion of 1 mile = 1.609344 km and 1 foot = 0.3048 m before rounding for display. For example, 5:00/km is approximately 8:03/mile. A source 5 km timing section displays as 3.11 miles, and the 20, 30 and 35 km checkpoint choices retain those exact underlying checkpoint keys. The site does not invent timing mats, halfway readings or individual-mile splits. Distinguish elapsed time for a recorded section from per-mile pace; converting units never changes the elapsed time.
 

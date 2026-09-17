@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import QuestionViz from './QuestionViz';
+import { BROADER_GUIDE } from '@/lib/broader-analysis-catalog';
 import { AGE_OPTIONS, GOAL_PRESETS, type Profile, type Focus } from '@/lib/personalized-catalog';
 import type { CityData, PersonalSummary, CheckpointData } from '@/lib/personalized-types';
 import { buildGuide, checkpointResult, clock, count, defaultProfile, fmt, GUIDE_PACK, parseElapsed, parseMinutes, parseSection, percentUnder, type GuideAnswer } from '@/lib/personalized';
@@ -83,6 +84,8 @@ function Answer({ answer, number, summary, profile }: { answer: GuideAnswer; num
   return <section className="question guide-question" id={`guide-${answer.id}`} aria-labelledby={`guide-title-${answer.id}`}>
     <span className="question-number">Personalized question {number} of 12</span>
     <h2 className="question-title" id={`guide-title-${answer.id}`}>{answer.title}</h2>
+    {BROADER_GUIDE[answer.id] && <p className="coverage-notice"><Link href={BROADER_GUIDE[answer.id].href}>{BROADER_GUIDE[answer.id].label} ↗</Link>. This archived comparison below requires an earlier recorded result.</p>}
+    {['gains', 'return'].includes(answer.id) && <p className="coverage-notice">This question measures change across races and requires linked results. With one race, explore <Link href="/runners">your pacing, conditions and same-edition peers</Link>.</p>}
     <p className="answer">{answer.answer}</p>
     <p className="answer-detail">{answer.detail}</p>
     {answer.comparison && <p className="study-meta guide-coverage">Comparison: {answer.comparison}.{answer.sample && ` ${count(answer.sample.n)} observations across ${answer.sample.editions} race editions.`}</p>}

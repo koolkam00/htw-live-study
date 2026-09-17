@@ -1,5 +1,9 @@
 # Analysis catalog
 
+## Broader views without earlier results
+
+The existing pack computations below remain reproducible and unchanged. Their website presentation now adds default single-race views for ranks 5/6 and seven archive questions, with separate original-history options. Downhill starts additionally have `/analyses/downhill-start`. [ALL_FINISHER_ANALYSES.md](ALL_FINISHER_ANALYSES.md) is the authoritative mapping for these additions, their distinct metric definitions and eligibility. No one-race comparison is labeled personal improvement, learning or verified course adaptation.
+
 Updated September 17, 2026 with the additive [fast-start analysis](FAST_START_ANALYSIS.md), on the unchanged **`private-export-20260912-0934`** source. Its local calculation and independent verification passed; publication is a separate step. Existing pack counts, timestamps and methods below retain the September 12 calculation metadata. [REFRESH_20260912_0934.md](REFRESH_20260912_0934.md) separately records that refresh's validated import and production status; calculated does not mean deployed. The supporting study, runner search and runner context use this same input.
 
 ## How to read the catalog

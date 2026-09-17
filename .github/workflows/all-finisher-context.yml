@@ -1,0 +1,48 @@
+name: All-finisher context analyses
+
+on:
+  pull_request:
+    paths:
+      - 'analysis/build_all_finisher_context.py'
+      - 'analysis/test_all_finisher_context.py'
+      - 'analysis/build_fast_start*.py'
+      - 'public/data/all-finisher-context/**'
+      - 'public/data/runners/**'
+      - 'public/data/runner-context/**'
+      - 'analysis/release.json'
+      - 'scripts/verify-all-finisher-context.cjs'
+      - '.github/workflows/all-finisher-context.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r analysis/requirements.txt
+      - name: Test context cohorts and edition weighting
+        run: python -m unittest discover -s analysis -p 'test_all_finisher_context.py'
+      - name: Recalculate from verified runner and environmental shards
+        run: python analysis/build_all_finisher_context.py --output "$RUNNER_TEMP/all-finisher-context/evidence.json"
+      - name: Independently reconcile published and recalculated evidence
+        run: |
+          node scripts/verify-all-finisher-context.cjs
+          node scripts/verify-all-finisher-context.cjs --input "$RUNNER_TEMP/all-finisher-context/evidence.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: all-finisher-context-evidence
+          path: ${{ runner.temp }}/all-finisher-context/evidence.json
+          if-no-files-found: error
+          retention-days: 30
