@@ -17,7 +17,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">Skip to content</a>
         <header className="site-header">
           <div className="container header-inner">
-            <Link href="/" className="site-title"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>Pace Notes</span></Link>
+            <div className="header-brand">
+              <Link href="/" className="site-title"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>Pace Notes</span></Link>
+              <a className="header-credit" href="https://www.instagram.com/run_with_kam/" aria-label="Run_with_Kam on Instagram">by Run_with_Kam</a>
+            </div>
             <div className="header-controls"><SiteNav /><UnitSwitch /></div>
           </div>
         </header>
