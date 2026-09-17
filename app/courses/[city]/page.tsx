@@ -7,7 +7,7 @@ const slugify = slugifyCity;
 export function generateStaticParams() { return getCourseNames().map(city => ({ city: slugify(city) })); }
 export function generateMetadata({ params }: { params: { city: string } }) {
   const city = getCourseNames().find(city => slugify(city) === params.city);
-  return { title: `${city || 'Course'} | Marathon Pacing Study` };
+  return { title: `${city || 'Course'} | Pace Notes` };
 }
 export default function CityPage({ params }: { params: { city: string } }) {
   const name = getCourseNames().find(city => slugify(city) === params.city);

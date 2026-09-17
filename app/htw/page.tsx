@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Sustained slowdown | Marathon Pacing Study',
+  title: 'Sustained slowdown | Pace Notes',
   description: 'Explore the sustained slowdown analysis at its new address.',
   alternates: { canonical: 'https://htw-live-study.vercel.app/slowdown' },
   robots: { index: false, follow: true },

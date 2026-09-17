@@ -26,5 +26,5 @@ export default function Page({ params }: { params: { packId: string } }) {
 // The dedicated compatibility page owns this path in the static export.
 export function generateStaticParams() { return routes.filter(packId => packId !== 'smyth_htw').map(packId => ({ packId })); }
 export function generateMetadata({ params }: { params: { packId: string } }) {
-  return { title: `${broaderArchive(params.packId)?.title || getExtraAnswer(params.packId).title} | Marathon Pacing Study` };
+  return { title: `${broaderArchive(params.packId)?.title || getExtraAnswer(params.packId).title} | Pace Notes` };
 }

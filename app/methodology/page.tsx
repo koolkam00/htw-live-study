@@ -6,7 +6,7 @@ import { getPersonalMethod, getPersonalSummary } from '@/lib/personalized-data';
 import { TEN_ANALYSES, analysisHref } from '@/lib/ten-analyses';
 import { PERSONAL_QUESTIONS } from '@/lib/personalized-catalog';
 
-export const metadata = { title: 'Methodology | Marathon Pacing Study' };
+export const metadata = { title: 'Methodology | Pace Notes' };
 
 const additions = [
   { name: 'Hourly weather', fields: 'Temperature, dew point, humidity, rain, wind, cloud cover, and solar radiation.', benefit: 'Match conditions to the time each runner reaches a segment. Use a consistent historical model across years.', href: 'https://open-meteo.com/en/docs/historical-weather-api', source: 'Open-Meteo historical weather', coverage: 'Broad historical coverage; modeled grid estimates, not conditions measured at the runner.' },

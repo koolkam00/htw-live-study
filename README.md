@@ -1,6 +1,8 @@
-# Marathon Pacing Study
+# Pace Notes
 
-Marathon Pacing Study helps runners explore pacing patterns, compare courses, prepare for a race and understand a past result. The main experience presents ten ranked analyses, one question per page at `/analyses/{slug}`, with comparisons that respond to the supported course, time, age, recorded gender and earlier-performance controls. The [ten-analysis guide](docs/TOP_TEN_ANALYSES.md) maps each question to its methods and limits. The wider 35-question catalog, 33 calculated broad packs, course summaries and sustained-slowdown figures remain a research archive; the shared personalized engine retains 12 calculation paths.
+By [Run_with_Kam · Andrew Kam](https://www.instagram.com/run_with_kam/). [Explore the site](https://splithappens.run) or [request an analysis](https://splithappens.run/request-analysis).
+
+Pace Notes helps runners explore pacing patterns, compare courses, prepare for a race and understand a past result. The main experience presents ten ranked analyses, one question per page at `/analyses/{slug}`, with comparisons that respond to the supported course, time, age, recorded gender and earlier-performance controls. The [ten-analysis guide](docs/TOP_TEN_ANALYSES.md) maps each question to its methods and limits. The wider 35-question catalog, 33 calculated broad packs, course summaries and sustained-slowdown figures remain a research archive; the shared personalized engine retains 12 calculation paths.
 
 The website is a static Next.js application that renders current analysis JSON/CSV and loads compressed public runner-search shards from `public/data`. Project policy makes the source code, complete runner records, database snapshots, exports and overlays available for anyone to open and download without an account. Use ordinary unencrypted Parquet/SQLite files; compression is optional. Large binary datasets are best distributed through public [GitHub Releases](https://github.com/koolkam00/htw-live-study/releases). The website has no direct connection to the ingestion database.
 
@@ -38,6 +40,6 @@ npm run verify:data
 npm run build
 ```
 
-The build creates static output in `out/`. The configured public host is [Marathon Pacing Study](https://splithappens.run); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
+The build creates static output in `out/`. The configured public host is [Pace Notes](https://splithappens.run); deployment is a separate authorized step. An optional `NEXT_PUBLIC_BASE_PATH` supports hosting under a subpath.
 
 Calculations, checksums, imports and per-release ID contracts are documented in [analysis/README.md](analysis/README.md). Keep missing measurements explicit, preserve source citations and make the full underlying data available alongside the chart aggregates. Existing repository names, file keys and compatibility URLs remain stable where required by the data contract.
