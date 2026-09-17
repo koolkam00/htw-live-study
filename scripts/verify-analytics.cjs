@@ -13,6 +13,7 @@ const policy = require('../lib/analytics-policy.ts');
 const dirty = { event: '$pageview', uuid: 'test-event', $set: { email: 'private@example.com' }, $set_once: { name: 'Private Name' }, properties: {
   token: 'test-project', distinct_id: '$posthog_cookieless', $current_url: 'https://splithappens.run/runners?q=Private+Name&email=private@example.com#123',
   $referrer: 'https://www.google.com/search?q=Private+Name', $pathname: '/runners',
+  $raw_user_agent: 'Mozilla/5.0 AnalyticsVerification/1.0',
   $initial_current_url: 'https://splithappens.run/?q=Private+Name', $session_entry_url: 'https://splithappens.run/?q=Private+Name',
   $set: { email: 'private@example.com' }, $set_once: { $initial_person_info: { email: 'private@example.com' } },
   q: 'Private Name', name: 'Private Name', record_id: 123, age: 40, $browser: 'Chrome', $device_type: 'Desktop',
@@ -22,6 +23,9 @@ assert.equal(clean.properties.$current_url, 'https://splithappens.run/runners');
 assert.equal(clean.properties.$referrer, 'https://www.google.com');
 assert.equal(clean.properties.$referring_domain, 'www.google.com');
 assert.equal(clean.properties.$cookieless_mode, true);
+assert.equal(clean.properties.$raw_user_agent, dirty.properties.$raw_user_agent, 'Cookieless ingestion requires the SDK browser user agent');
+assert.equal(clean.properties.$host, 'splithappens.run', 'Cookieless ingestion requires the canonical host');
+assert.equal(policy.sanitizeAnalyticsEvent({ ...dirty, properties: { ...dirty.properties, $raw_user_agent: { name: 'Private Name' } } }).properties.$raw_user_agent, undefined);
 assert.equal(policy.sanitizeAnalyticsEvent({ ...dirty, properties: { ...dirty.properties, distinct_id: 'private@example.com' } }).properties.distinct_id, '$posthog_cookieless');
 assert.equal(clean.properties.$process_person_profile, false);
 assert.doesNotMatch(JSON.stringify(clean), /Private|private@|record_id|initial_current_url|session_entry_url/);
