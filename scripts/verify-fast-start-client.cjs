@@ -12,17 +12,19 @@ Module._resolveFilename = function(request, ...args) { return resolve.call(this,
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const { FAST_START_DEFAULT, PRIOR_OPTIONS, fastStartSearch, readFastStartSelection, fastStartRow, fastStartCharts, timeChange, loadFastStartEvidence } = require('../lib/fast-start.ts');
-const { getFastStartStart } = require('../lib/fast-start-server.ts');
+const { getFastStartStarts } = require('../lib/fast-start-server.ts');
 const { FastStartResults, default: FastStartAnalysis } = require('../components/FastStartAnalysis.tsx');
 const { default: MethodologyPage } = require('../app/methodology/page.tsx');
-const start = getFastStartStart();
+const starts = getFastStartStarts(), start = starts.history;
 const bytes = fs.readFileSync(path.join(__dirname, '../public/data/fast-start/evidence.json'));
 const evidence = JSON.parse(bytes);
+const allBytes = fs.readFileSync(path.join(__dirname, '../public/data/fast-start/all-finishers.json'));
+const allEvidence = JSON.parse(allBytes);
 const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
 
 async function main() {
   for (const prior of PRIOR_OPTIONS) for (const band of start.bands) {
-    const selection = {city:'New York',age:'35–39',gender:'Women',prior:prior.id,band:band.id};
+    const selection = {mode:'history',city:'New York',age:'35–39',gender:'Women',prior:prior.id,band:band.id};
     assert.deepEqual(readFastStartSelection(fastStartSearch(selection),start),selection);
   }
   assert.deepEqual(readFastStartSelection('?race=unknown&age=unknown&gender=unknown&prior=unknown&opening=unknown',start),FAST_START_DEFAULT);
@@ -32,6 +34,15 @@ async function main() {
   assert.equal(readFastStartSelection('?previous=240',start).prior,'4plus');
   assert.equal(readFastStartSelection('?previous=&goal=180',start).prior,'all','A target must not silently select prior ability');
   assert.equal(readFastStartSelection('?previous=240&prior=all',start).prior,'all','An explicit reset must clear earlier-time filtering');
+  assert.equal(readFastStartSelection('',starts.all).mode,'all','New visitors include finishes without history');
+  assert.equal(readFastStartSelection('?previous=240',start).mode,'history','Old earlier-time links retain their comparison');
+  assert.equal(readFastStartSelection('?prior=all',start).mode,'history','Old shared opening URLs retain their comparison');
+  assert.deepEqual(readFastStartSelection('?comparison=all&prior=under3&previous=180',start),FAST_START_DEFAULT,'All mode must clear incompatible earlier-time restrictions');
+  assert.equal(readFastStartSelection('?comparison=history',start).mode,'history');
+  for(const band of starts.all.bands) {
+    const selection={...FAST_START_DEFAULT,city:'New York',age:'35–39',gender:'Women',band:band.id};
+    assert.deepEqual(readFastStartSelection(fastStartSearch(selection),starts.all),selection);
+  }
   assert.equal(fastStartRow(evidence.rows,{...FAST_START_DEFAULT,city:'Missing course'}),undefined,'Sparse cohorts cannot fall back to All');
   assert.equal(fastStartRow(evidence.rows,FAST_START_DEFAULT).groups.length,6);
   const focus=start.initial.groups.find(g=>g.band==='fast10');
@@ -66,9 +77,28 @@ async function main() {
   const zero={...focus,n:100,editions:5,slowdown_n:0,onset:null,finish_delta_median_s:0};
   assert.match(render(FastStartResults,{row:start.initial,focus:zero,start,units:'km'}),/about the same as/);
   assert.doesNotMatch(render(FastStartResults,{row:start.initial,focus:zero,start,units:'km'}),/same time than/);
-  const page=render(FastStartAnalysis,{start});
-  assert.match(page,/Opening pace/); assert.match(page,/Earlier recorded best/); assert.doesNotMatch(page,/>Target time</);
-  assert.match(page,/withdrawals/i); assert.match(page,/555,437/);
+  const page=render(FastStartAnalysis,{starts});
+  assert.match(page,/Opening pace/); assert.match(page,/No previous race needed/); assert.doesNotMatch(page,/>Earlier recorded best</); assert.doesNotMatch(page,/>Target time</);
+  assert.match(page,/withdrawals/i); assert.match(page,/3,517,336/);
+  assert.match(page,/aria-pressed="true">All eligible finishes/);
+  assert.match(page,/With an earlier result/);
+  const allRow=starts.all.initial, allFocus=allRow.groups.find(g=>g.band==='fast10');
+  assert.equal(allRow.groups.reduce((sum,g)=>sum+g.n,0),3517336);
+  const allCharts=fastStartCharts(allRow,allFocus,starts.all.bands,'all');
+  assert.equal(allCharts.finishes.rows[0].median,allFocus.after20_delta_median_s/60,'All mode foregrounds the subsequent outcome, not a finish difference partly defined by the opening');
+  assert.equal(allCharts.accounting.rows[0].label,'Opening 5 km');
+  assert.equal(allCharts.accounting.rows[1].label,'After 20 km');
+  assert.ok(Math.abs(allCharts.accounting.rows[0].value+allCharts.accounting.rows[1].value-allCharts.accounting.rows[2].value)<1e-6);
+  for(const units of ['mi','km']) {
+    const html=render(FastStartResults,{row:allRow,focus:allFocus,start:starts.all,units});
+    assert.match(html,/Median recorded finish/); assert.match(html,/not a prediction or avoidable time loss/);
+    assert.match(html,/cannot tell whether the entire first half was too ambitious/);
+    assert.match(html,/share the same reference pace/);
+    assert.match(html,units==='mi'?/3\.11 mi/:/5 km/);
+    assert.match(html,units==='mi'?/12\.43 mi/:/20 km/);
+    assert.doesNotMatch(html,/earlier recorded best|earlier-best|All earlier times/,'All mode cannot present its reference as a prior result');
+    assert.doesNotMatch(html,/private-export-|20260912/);
+  }
   const methodology=render(MethodologyPage,{});
   const legacyOpening=(methodology.match(/<details\b[^>]*>[\s\S]*?<\/details>/g)||[]).find(detail=>detail.includes('Which openings are associated with finishing under my target?'));
   assert.ok(legacyOpening,'Keep the legacy opening explanation available');
@@ -95,6 +125,13 @@ async function main() {
     const loaded=await loadFastStartEvidence(start,signal); assert.equal(loaded.history_n,555437);
     assert.ok(calls.at(-1).url.endsWith('?v='+start.sha256)); assert.equal(calls.at(-1).signal,signal);
     const before=calls.length; await loadFastStartEvidence(start,signal); assert.equal(calls.length,before,'Use only a verified content-bound cache');
+    served=allBytes;
+    const allLoaded=await loadFastStartEvidence(starts.all,signal);assert.equal(allLoaded.analysis_n,3517336);
+    assert.ok(calls.at(-1).url.includes('/all-finishers.json?v='),'Each comparison loads its own artifact');
+    served=bytes;const historyLoaded=await loadFastStartEvidence(start,signal);assert.equal(historyLoaded.history_n,555437);
+    assert.ok(calls.at(-1).url.includes('/evidence.json?v='),'Mode changes never reuse the other comparison payload');
+    served=Buffer.from(JSON.stringify({...allEvidence,mode:undefined}));
+    await assert.rejects(()=>loadFastStartEvidence({...starts.all,bytes:served.length,sha256:crypto.createHash('sha256').update(served).digest('hex')},signal),/mode/,'Reject incorrect mode semantics even with matching transport bytes');
   } finally {global.fetch=originalFetch;}
   console.log('Fast-start client checks passed: exact filters and URL restore/reset, no target leakage or sparse fallback, chart denominators and signed accounting, mi/km rendered results, hash-bound loading and errors.');
 }

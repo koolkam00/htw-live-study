@@ -6,7 +6,7 @@ import AnalysisExplorer from '@/components/AnalysisExplorer';
 import WeatherAnalysis from '@/components/WeatherAnalysis';
 import { getWeatherAnalyses, getWeatherEvidence } from '@/lib/weather-data';
 import FastStartAnalysis from '@/components/FastStartAnalysis';
-import { getFastStartStart } from '@/lib/fast-start-server';
+import { getFastStartStarts } from '@/lib/fast-start-server';
 
 export function generateStaticParams() { return [...TEN_ANALYSES, ...getWeatherAnalyses()].map(item => ({ slug: item.slug })); }
 export function generateMetadata({ params }: { params: { slug: string } }) {
@@ -23,7 +23,7 @@ export default function AnalysisPage({ params }: { params: { slug: string } }) {
   }
   const definition = analysisBySlug(params.slug);
   if (!definition) notFound();
-  if (definition.id === 'opening') return <FastStartAnalysis start={getFastStartStart()} />;
+  if (definition.id === 'opening') return <FastStartAnalysis starts={getFastStartStarts()} />;
   const { summary, answers } = getAnalysisStart();
   return <AnalysisExplorer key={definition.id} definition={definition} summary={summary} initialAnswer={answers.find(answer => answer.id === definition.id)!} weatherQuestions={weatherQuestions} />;
 }
