@@ -5,6 +5,7 @@ import { UnitLink as Link, useUnits } from './UnitsProvider';
 import { distanceLabel, paceLabel, type UnitSystem } from '@/lib/units';
 import RunnerContext from './RunnerContext';
 import { sourceLabel, sourceReleaseHref } from '@/lib/data-source';
+import { trackAnalytics } from '@/lib/analytics';
 import {
   loadRunnerManifest, loadRunnerProfile, normalizeRunnerName, runnerDuration, runnerProgression, runnerSearchPage, searchRunnerNames, RUNNER_PAGE_SIZE,
   type RunnerManifest, type RunnerMatch, type RunnerProfile, type RunnerRace,
@@ -87,10 +88,11 @@ export default function RunnerSearch() {
     setProfile(null); setProfileLoading(null); setProfileError(''); setMatches([]); setPage(0); setSearchError('');
     if (!normalizeRunnerName(value)) { setSearched(''); setSearchError('Enter a recorded name or the beginning of a name.'); setSearchLoading(false); return; }
     setSearched(value.trim()); setSearchLoading(true);
+    trackAnalytics('runner_search_submitted', {});
     try {
       const results = await searchRunnerNames(value, source, controller.signal);
-      if (!controller.signal.aborted) { setMatches(results); setSearchLoading(false); }
-    } catch (error) { if (!controller.signal.aborted) { setSearchError(errorMessage(error)); setSearchLoading(false); } }
+      if (!controller.signal.aborted) { setMatches(results); setSearchLoading(false); trackAnalytics('runner_search_completed', { outcome: results.length ? 'matches' : 'no_matches' }); }
+    } catch (error) { if (!controller.signal.aborted) { setSearchError(errorMessage(error)); setSearchLoading(false); trackAnalytics('runner_search_completed', { outcome: 'error' }); } }
   }, []);
 
   useEffect(() => {
@@ -119,7 +121,7 @@ export default function RunnerSearch() {
     setProfile(null); setProfileLoading(id); setProfileError('');
     try {
       const value = await loadRunnerProfile(id, manifest, controller.signal);
-      if (!controller.signal.aborted) { setProfile(value); setProfileLoading(null); }
+      if (!controller.signal.aborted) { setProfile(value); setProfileLoading(null); trackAnalytics('runner_profile_opened', {}); }
     } catch (error) { if (!controller.signal.aborted) { setProfileError(errorMessage(error)); setProfileLoading(null); } }
   };
   useEffect(() => { if (profile) profileHeading.current?.focus({ preventScroll: false }); }, [profile]);
@@ -156,7 +158,7 @@ export default function RunnerSearch() {
         {!race.eligible && <RecordedCheckpoints race={race} manifest={manifest} units={units} />}
       </li>)}</ul>
     </section>}</div>
-    {manifest && selected.length > 0 && <section className="runner-selection" aria-labelledby="runner-selection-title"><h2 id="runner-selection-title">{count(selected.length)} {selected.length === 1 ? 'race' : 'races'} selected</h2><p className="control-help">Choose only the races you recognize. View them together, with pacing and comparisons available for results that pass the timing and edition checks.</p><ul>{selected.map(race => <li key={race.id}><span>{race.name || 'Name not recorded'} · {raceLabel(race, manifest)} · {finishLabel(race)}{!race.eligible && <small>Recorded result · limited analysis</small>}</span><button type="button" onClick={() => toggleRace(race)} aria-label={`Remove ${race.name}, ${raceLabel(race, manifest)}, record ${race.id}`}>Remove</button></li>)}</ul><div className="runner-selection-actions"><button className="button-primary" type="button" onClick={() => { setConfirmed([...selected]); requestAnimationFrame(() => analysisRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })); }}>View selected races <span aria-hidden="true">→</span></button><button className="button-secondary" type="button" onClick={() => { setSelected([]); setConfirmed(null); }}>Clear selection</button></div></section>}
+    {manifest && selected.length > 0 && <section className="runner-selection" aria-labelledby="runner-selection-title"><h2 id="runner-selection-title">{count(selected.length)} {selected.length === 1 ? 'race' : 'races'} selected</h2><p className="control-help">Choose only the races you recognize. View them together, with pacing and comparisons available for results that pass the timing and edition checks.</p><ul>{selected.map(race => <li key={race.id}><span>{race.name || 'Name not recorded'} · {raceLabel(race, manifest)} · {finishLabel(race)}{!race.eligible && <small>Recorded result · limited analysis</small>}</span><button type="button" onClick={() => toggleRace(race)} aria-label={`Remove ${race.name}, ${raceLabel(race, manifest)}, record ${race.id}`}>Remove</button></li>)}</ul><div className="runner-selection-actions"><button className="button-primary" type="button" onClick={() => { trackAnalytics('race_comparison_opened', { selection: selected.length === 1 ? 'one' : 'multiple', availability: selected.every(race => race.eligible) ? 'eligible' : selected.some(race => race.eligible) ? 'mixed' : 'limited' }); setConfirmed([...selected]); requestAnimationFrame(() => analysisRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })); }}>View selected races <span aria-hidden="true">→</span></button><button className="button-secondary" type="button" onClick={() => { setSelected([]); setConfirmed(null); }}>Clear selection</button></div></section>}
     <div ref={analysisRef}>{confirmed && manifest && <SelectedAnalysis races={confirmed} manifest={manifest} units={units} />}</div>
     {manifest && <footer className="runner-source"><p>{count(manifest.named_records)} race records have searchable names, out of {count(manifest.raw_records)} records in the database. These are finishes and source records, not a count of unique people.{manifest.raw_records > manifest.named_records && <> The remaining {count(manifest.raw_records - manifest.named_records)} records have no usable name for lookup; they are retained in the complete data download.</>}</p><p>Source: <a href={sourceReleaseHref(manifest.release_tag)}>{sourceLabel(manifest.input_as_of, manifest.release_tag)}</a>. <a href={sourceReleaseHref(manifest.release_tag)}>Download the complete data</a>. <Link href="/about#data-coverage">Marathons, years and recorded fields</Link>.</p><details><summary>How search and analysis work</summary><p>Search matches the recorded name parts after normalizing accents, punctuation and letter case. Suggested groups use the database’s candidate links with consistency checks. Shared names, changed names and incomplete source fields can leave false or separate matches, so you choose the records explicitly.</p><p>All named results can appear, including records with missing timings or excluded editions. Pacing calculations use only selected results that pass the same timing and source-quality checks as the study. Finish-time comparisons are descriptive: they do not adjust for weather, terrain or fitness, and they are not predictions.</p><p>Races are ordered by recorded year. Races in the same year are not assumed to be in chronological order. A fastest selected time is not necessarily a lifetime personal best.</p></details></footer>}
     <style jsx global>{`

@@ -10,6 +10,7 @@ import { sourceReleaseHref } from '@/lib/data-source';
 import { FAST_START_DEFAULT, PRIOR_OPTIONS, fastStartCharts, fastStartRow, fastStartSearch, loadFastStartEvidence, readFastStartSelection, referenceTimeDifference, timeChange,
   type FastStartEvidence, type FastStartGroup, type FastStartRow, type FastStartSelection, type FastStartStart, type FastStartStarts, type FastStartMode } from '@/lib/fast-start';
 import QuestionViz from './QuestionViz';
+import { trackAnalytics } from '@/lib/analytics';
 
 const count = (n: number) => n.toLocaleString('en-US');
 const percent = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%';
@@ -74,6 +75,7 @@ export default function FastStartAnalysis({ starts, defaultOpening = 'fast10', t
   const row = useMemo(() => initialRow || (data ? fastStartRow(data.rows, selection) : undefined), [initialRow, data, selection]);
   const focus = row?.groups.find(group => group.band === selection.band);
   const apply = (next: FastStartSelection) => {
+    trackAnalytics('analysis_filters_applied', { analysis: 'opening', course_scope: next.city === 'All courses' ? 'all' : 'single' });
     setSelection(next); setDraft(next);
     window.history.pushState(null, '', window.location.pathname + fastStartSearch(next) + '&units=' + units);
   };

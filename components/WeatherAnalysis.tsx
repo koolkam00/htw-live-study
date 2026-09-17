@@ -7,6 +7,7 @@ import { weatherHref } from '@/lib/weather-catalog';
 import { weatherFinding, weatherLabel, weatherNumber, weatherUnit, weatherValue } from '@/lib/weather-display';
 import { unitText } from '@/lib/units';
 import { sourceLabel, sourceReleaseHref } from '@/lib/data-source';
+import { trackAnalytics } from '@/lib/analytics';
 import type { WeatherCandidate, WeatherDefinition, WeatherEdition, WeatherEvidence } from '@/lib/weather-types';
 
 export default function WeatherAnalysis({ definition, candidate, evidence, questions }: { definition: WeatherDefinition; candidate: WeatherCandidate; evidence: WeatherEvidence; questions: WeatherDefinition[] }) {
@@ -57,6 +58,7 @@ export default function WeatherAnalysis({ definition, candidate, evidence, quest
       <section className="weather-observations" aria-labelledby={`${controlId}-observations`}><p className="eyebrow">Behind the comparison</p><h2 id={`${controlId}-observations`}>See the race days.</h2><p>Each dot represents one edition. These are the observed values before adjustment. Browse a course to see its editions; the adjusted result above remains the full-study comparison.</p>
         <label className="weather-course-control" htmlFor={`${controlId}-course`}>Browse race editions<select id={`${controlId}-course`} value={course} onChange={event => {
           const value = event.target.value; setCourse(value);
+          trackAnalytics('analysis_filters_applied', { analysis: candidate.id, course_scope: value === 'All courses' ? 'all' : 'single' });
           const url = new URL(window.location.href); if (value === 'All courses') url.searchParams.delete('course'); else url.searchParams.set('course', value);
           url.searchParams.set('units', units); window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
         }}><option>All courses</option>{courses.map(city => <option key={city}>{city}</option>)}</select></label>

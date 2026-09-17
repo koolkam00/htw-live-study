@@ -17,6 +17,10 @@ Updated September 17, 2026 for the expanded [fast-start analysis](FAST_START_ANA
 
 The [analysis README](../analysis/README.md) gives calculation and import contracts; [export access](../analysis/ACCESS.md) provides direct public downloads.
 
+## Website analytics
+
+The [PostHog integration](ANALYTICS.md) adds cookieless page and feature analytics, with search/identity redaction, session recordings disabled and a visitor opt-out. Account setup, build variables and production event verification are separate launch requirements; see that runbook before claiming collection is live. This integration does not change research inputs or calculations.
+
 ## Verified 0934 input and analytical cohort
 
 The September 12 0934 CORE and FULL archives have matching shared files and **4,462,379 raw and feature rows**, spanning **34 cities and 256 city/year editions**. Canonical IDs are unique, non-null and have identical sets. Edition labels, recorded names and ages agree; all comparable cumulative timings agree within 1 ms after converting feature minutes to seconds. Against the September 11 1107 snapshot, the raw table has **254,923 added, zero deleted and zero changed records**, including 16 new editions. The latest included ingestion timestamp is `2026-09-12T10:00:03Z`; manifest creation is `2026-09-12T13:37:16Z`.

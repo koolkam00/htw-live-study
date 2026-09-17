@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { DEFAULT_UNITS, unitText, type UnitSystem } from '@/lib/units';
 import { unitsFromSearch, withUnits } from '@/lib/unit-preference';
+import { trackAnalytics } from '@/lib/analytics';
 
 const STORAGE_KEY = 'marathon-study-units';
 const UnitsContext = createContext<{ units: UnitSystem; setUnits: (units: UnitSystem) => void }>({ units: DEFAULT_UNITS, setUnits: () => {} });
@@ -26,6 +27,7 @@ export default function UnitsProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('popstate', restore);
   }, [pathname]);
   const setUnits = useCallback((next: UnitSystem) => {
+    trackAnalytics('units_changed', { units: next });
     updateUnits(next);
     try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
     window.history.replaceState(window.history.state, '', withUnits(window.location.pathname + window.location.search + window.location.hash, next));
