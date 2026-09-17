@@ -88,3 +88,7 @@ The subsequent ten-analysis redesign shipped in [PR #32](https://github.com/kool
 ## Reader-facing data descriptions
 
 About lists the marathon names and exact recorded years from the runner manifest, plus weather and supplied-route coverage from the context manifest. Source labels across all primary and archive pages use plain language, without export identifiers or upload/calculation dates. Keep exact pins, download URLs, checksums and calculation provenance intact. Race years and dates remain visible where they describe a race.
+
+## Visitor analytics
+
+The root layout mounts `SiteAnalytics` for production-only PostHog pageviews and explicit feature events. The `/privacy` route documents collection and provides a browser opt-out. See [analytics configuration, event definitions and verification](ANALYTICS.md). Search terms, runner IDs, personal filter values and URL queries are excluded; analytics does not read or change the public research data.
