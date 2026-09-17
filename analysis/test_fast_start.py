@@ -77,6 +77,21 @@ class FastStartTests(unittest.TestCase):
         self.assertAlmostEqual(observed[OPENING]+observed[REMAINDER], observed[FINISH])
         self.assertLess(observed[OPENING], 0)
 
+    def test_legal_section_pace_boundaries_survive_decimal_subtraction(self):
+        # At 40 km the runner has elapsed 12,000 seconds. Finishing in 12,263.4
+        # makes the final 2.195 km exactly 120 seconds/km; binary subtraction
+        # can instead produce 119.99999999999982 and must not reject the race.
+        for final_pace in (120, 1200):
+            recorded = race(1, 0)
+            recorded['times'][-1] = 12000+2.195*final_pace
+            self.assertEqual(len(observation(recorded, 12658.5, 1)), WIDTH)
+        # This is rounding tolerance only, not a change to the eligible range.
+        for final_pace in (120-1e-6, 1200+1e-6):
+            recorded = race(1, 0)
+            recorded['times'][-1] = 12000+2.195*final_pace
+            with self.assertRaisesRegex(ValueError, 'section pace bounds'):
+                observation(recorded, 12658.5, 1)
+
     def test_group_quantiles_onset_threshold_and_additivity(self):
         data = np.zeros((100, WIDTH))
         data[:, EDITION] = np.arange(100) % 3

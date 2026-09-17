@@ -51,7 +51,7 @@ The builder checks all 7,766 compressed runner shards and source script hashes, 
 
 Globally, openings more than 10% faster than the earlier benchmark have **47.0% sustained slowdown**, compared with **17.9%** for openings within 2%. The most common first qualifying sections are 30–35 km and 35–40 km, respectively. The faster-opening group's median finish nevertheless improves on its earlier benchmark by **16:37**; changing fitness and other differences remain mixed together. Do not turn late slowing into a claimed causal finish-time penalty or treat an earlier best as current fitness. Only eligible recorded finishers are represented, not withdrawals.
 
-Eight calculation tests and the independent JavaScript verifier passed. The verifier recomputed counts, editions, slowdown and onset for every published cell, plus every numeric metric in 36 groups across six filter combinations. [Methods, exact boundaries, measured findings and reproduction commands](FAST_START_ANALYSIS.md) document the completed local evidence. Publication remains subject to separate PR and production verification.
+Nine calculation tests and the independent JavaScript verifier passed. The verifier recomputed counts, editions, slowdown and onset for every published cell, plus every numeric metric in 36 groups across six filter combinations. [Methods, exact boundaries, measured findings and reproduction commands](FAST_START_ANALYSIS.md) document the completed local evidence. CI and production publication evidence are recorded separately in [PR #41](https://github.com/koolkam00/htw-live-study/pull/41).
 
 ## Public runner lookup
 

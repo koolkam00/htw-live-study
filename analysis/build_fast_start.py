@@ -22,6 +22,7 @@ POINTS = [5, 10, 15, 20, 25, 30, 35, 40, 42.195]
 LENGTHS = np.diff([0, *POINTS])
 MIN_CELL = 100
 RATIO_EPSILON = 1e-12
+PACE_BOUND_EPSILON = 1e-8
 AGE_BANDS = ['all', '18–24', *[f'{age}–{age+4}' for age in range(25, 90, 5)]]
 GENDERS = ['all', 'Men', 'Women']
 PRIOR_BANDS = ['all', 'under3', '3to330', '330to4', '4plus']
@@ -152,7 +153,11 @@ def observation(race, recent_best, city):
             'Eligible race violates the timing contract')
     durations = [times[0], *[b-a for a, b in zip(times, times[1:])]]
     paces = [duration/length for duration, length in zip(durations, LENGTHS)]
-    require(all(120 <= pace <= 1200 for pace in paces), 'Eligible race violates section pace bounds')
+    # The published eligibility flag already applies the source bounds. Decimal
+    # elapsed subtraction and the final 2.195 km distance can drift slightly at
+    # an exact limit, so use the independent runner verifier's rounding tolerance.
+    require(all(120-PACE_BOUND_EPSILON <= pace <= 1200+PACE_BOUND_EPSILON for pace in paces),
+            'Eligible race violates section pace bounds')
     baseline = (times[3]-times[0])/15
     # Every tested section here is 5 km. A qualifying final 2.195 km cannot
     # start an episode on its own; if it extends an episode, onset is earlier.

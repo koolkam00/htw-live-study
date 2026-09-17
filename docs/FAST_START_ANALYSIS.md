@@ -1,6 +1,6 @@
 # Fast starts, late slowing and finish time
 
-Implemented September 17, 2026 for rank 2, `/analyses/starting-pace`. The local calculation, eight Python tests and independent source-data verification have passed. PR checks and production publication are separate steps and remain pending in this implementation record.
+Implemented September 17, 2026 for rank 2, `/analyses/starting-pace`. The local calculation, nine Python tests and independent source-data verification have passed. CI and production publication evidence are recorded separately in [PR #41](https://github.com/koolkam00/htw-live-study/pull/41).
 
 ## Scope and source
 
@@ -91,7 +91,7 @@ npm run verify:data
 npm run build
 ```
 
-The measured build used NumPy 2.2.6 and records its actual engine version. The eight [Python tests](../analysis/test_fast_start.py) cover exact percentage and decimal-timing boundaries, strictly earlier-year benchmarks, unavailable demographics, the short final section, threshold inclusion, signed time accounting, percentiles and sparse-cohort behavior.
+The measured build used NumPy 2.2.6 and records its actual engine version. The nine [Python tests](../analysis/test_fast_start.py) cover exact percentage and decimal-timing boundaries, strictly earlier-year benchmarks, unavailable demographics, the short final section, threshold inclusion, signed time accounting, percentiles and sparse-cohort behavior. A regression fixture also preserves valid exact section-pace bounds after decimal elapsed-time subtraction while rejecting genuinely out-of-range paces. This uses the runner verifier's `1e−8` seconds/km rounding tolerance at 120 and 1200 seconds/km; it does not change the underlying eligibility rules.
 
 The separate [JavaScript verifier](../scripts/verify-fast-start.cjs) independently scans all profile records, reconstructs the 555,437 earlier benchmarks, and recomputes **all 2,846 published cells' counts, edition counts, slowdown counts and onset distributions**, including omitted sparse cells. It independently recalculates every numeric metric in **36 groups across six filter combinations**, including all six global opening groups and five varied filtered combinations. It uses separate exact integer cross-products for decimal boundary classification. This full verification passed after the final calculation.
 

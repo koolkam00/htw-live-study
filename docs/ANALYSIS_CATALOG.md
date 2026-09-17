@@ -775,7 +775,7 @@ Sustained slowdown retains the official definition: at least 25% slower than the
 
 The file contains **576 filter combinations / 2,846 published groups**. Across All filters, openings more than 10% faster have **47.0% sustained slowdown**, compared with **17.9%** for steady openings. The faster group's median finish is nevertheless **16:37 faster** than its earlier benchmark. Both results must remain visible: improved fitness, course and conditions can confound these pooled comparisons. This is not a causal time penalty, recommendation to start fast, or model of withdrawals.
 
-All 2,846 cells' counts, edition counts, slowdown counts and onset distributions were independently recomputed from the profiles, including sparse-cell omissions. All numeric metrics were independently checked for 36 groups across six filter combinations, alongside eight Python tests. The output binds the exact runner-manifest hash and must be rebuilt whenever that manifest changes. Existing personalized/research payloads remain unchanged; publication is verified separately.
+All 2,846 cells' counts, edition counts, slowdown counts and onset distributions were independently recomputed from the profiles, including sparse-cell omissions. All numeric metrics were independently checked for 36 groups across six filter combinations, alongside nine Python tests. The output binds the exact runner-manifest hash and must be rebuilt whenever that manifest changes. Existing personalized/research payloads remain unchanged; publication is verified separately.
 
 ## Personalized engine: twelve calculation paths and methods
 
