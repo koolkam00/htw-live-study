@@ -1,10 +1,10 @@
 # Analysis catalog
 
-Updated for the full refresh from **`private-export-20260912-0934`**. The counts, source timestamps and methods below are generated from that calculation's metadata. [REFRESH_20260912_0934.md](REFRESH_20260912_0934.md) separately records validated import and production status; calculated does not mean deployed. The supporting study, runner search and runner context use this same input; exact calculation, import and deployment evidence is recorded with the refresh.
+Updated September 17, 2026 with the additive [fast-start analysis](FAST_START_ANALYSIS.md), on the unchanged **`private-export-20260912-0934`** source. Its local calculation and independent verification passed; publication is a separate step. Existing pack counts, timestamps and methods below retain the September 12 calculation metadata. [REFRESH_20260912_0934.md](REFRESH_20260912_0934.md) separately records that refresh's validated import and production status; calculated does not mean deployed. The supporting study, runner search and runner context use this same input.
 
 ## How to read the catalog
 
-- The primary site has [ten ranked analyses](TOP_TEN_ANALYSES.md), defined in [lib/ten-analyses.ts](../lib/ten-analyses.ts). They reuse ten of twelve personalized engine paths, not independent datasets.
+- The primary site has [ten ranked analyses](TOP_TEN_ANALYSES.md), defined in [lib/ten-analyses.ts](../lib/ten-analyses.ts). Nine reuse personalized engine paths; rank 2 uses the additive fast-start calculation. These are overlapping views of the same source, not independent datasets. The earlier personalized opening path remains available in the research guide.
 - Three additional weather candidates are screened together by `build_weather.py`. Only ready candidates receive pages; all results remain in `public/data/weather/evidence.json`. The current 0934 output supports warming and a precise null for typical wind speed, while moisture is too uncertain. See [WEATHER_ANALYSES.md](WEATHER_ANALYSES.md).
 - The research archive contains 35 questions: eight foundation packs from `build_pacing.py`, 25 from `build_extended.py`, and two measurement-limited questions (group running and congestion). `write_findings.py` writes narratives from the aggregate values.
 - Stable S/R/RN/P routes now map to current extensions, the new current-source supporting study, or explicit unsupported states. Historical numerical files remain in Git history rather than active website data. Route aliases are not independent studies.
@@ -761,11 +761,27 @@ Methods and limitations from this pack:
 - These are observational results. Fitness changes, intentions, training, selection into the dataset and unmeasured conditions can explain differences. Outcome percentiles describe variation among performances, not confidence intervals or advice about the best strategy.
 - Apply the reviewed source-quality edition exclusions for this exact export after the timing checks. Known invalid split grids, incomplete ingestion, unreconciled HOLD editions and a selected top-finisher field do not contribute to the analyses or prior benchmarks. Report source exclusions separately; an already invalid timing row is not counted twice. Missing age or recorded gender alone does not exclude an otherwise eligible finish from the overall cohort. Other sparse editions are not declared incomplete merely from their size.
 
+## Rank 2: fast starts, late slowing and finish time
+
+Route: `/analyses/starting-pace`. Producer: [build_fast_start.py](../analysis/build_fast_start.py). Output and provenance: [fast-start evidence](../public/data/fast-start/evidence.json). Full methods, actual global findings, reproduction commands and verification coverage: [FAST_START_ANALYSIS.md](FAST_START_ANALYSIS.md).
+
+The additive builder verifies the current published runner shards and source script hashes, reconstructing the same **555,437** eligible finishes with a best eligible performance in the two strictly earlier calendar years. It excludes every current/same-year record, invalid or held earlier record, and **2,961,899** eligible finishes without that recent benchmark. Source profiles retain the original screened candidate-identity contract; names do not create cross-race links.
+
+First 10 km pace is compared with the earlier best's full-marathon average. Six exact percentage-change bands are `<−10`, `[−10,−5)`, `[−5,−2)`, `[−2,2]`, `(2,5]`, and `>5`, with decimal timing comparisons preserving boundary inclusion. These describe observed openings, not measured physiological overreach. Supported filters are course, exact-age band, recorded gender and four earlier-best bands: under 3:00, 3:00–under 3:30, 3:30–under 4:00 and 4:00 or longer, each with All. The page does not filter by target or current finish and never silently broadens a sparse selection.
+
+Each group of at least 100 finishes supplies section-pace medians relative to the earlier-best pace, actual finish-time difference percentiles, and mean opening/remaining differences against the earlier finish's arithmetic even-pace reference. Opening and remaining **means** add to mean finish change; individual section medians and finish medians need not reconcile. The 10th–90th percentile range describes individual variation, not uncertainty in the median or a prediction.
+
+Sustained slowdown retains the official definition: at least 25% slower than the current race's 5–20 km baseline for contiguous recorded sections totaling at least 5 km after 20 km, with `1e−12` rounding tolerance. The rate denominator is all finishes in the selected group. Onset is the first qualifying recorded section starting at 20, 25, 30 or 35 km; the final 2.195 km cannot qualify alone. Onset shares use detected finishes only and require at least 100 detections. Neither section boundaries nor that threshold locate an exact physiological event.
+
+The file contains **576 filter combinations / 2,846 published groups**. Across All filters, openings more than 10% faster have **47.0% sustained slowdown**, compared with **17.9%** for steady openings. The faster group's median finish is nevertheless **16:37 faster** than its earlier benchmark. Both results must remain visible: improved fitness, course and conditions can confound these pooled comparisons. This is not a causal time penalty, recommendation to start fast, or model of withdrawals.
+
+All 2,846 cells' counts, edition counts, slowdown counts and onset distributions were independently recomputed from the profiles, including sparse-cell omissions. All numeric metrics were independently checked for 36 groups across six filter combinations, alongside eight Python tests. The output binds the exact runner-manifest hash and must be rebuilt whenever that manifest changes. Existing personalized/research payloads remain unchanged; publication is verified separately.
+
 ## Personalized engine: twelve calculation paths and methods
 
 Producer: [analysis/build_personalized.py](../analysis/build_personalized.py), called from build_extended.py with --personalized-output. Renderer/calculation selection: [lib/personalized.ts](../lib/personalized.ts); question wording: [lib/personalized-catalog.ts](../lib/personalized-catalog.ts). Output: [metadata](../public/data/packs/ext_personalized_guide/pack_meta.json) and [summary and city-file mapping](../public/data/packs/ext_personalized_guide/summary.json), with tables/city_XX.json and tables/checkpoint_XX.json shards. Import using import_personalized.py separately from the 33-pack import.
 
-The primary page order and wording come from [the ten-analysis registry](../lib/ten-analyses.ts); the engine catalog below retains its original focus labels and two additional paths, `downhill` and `return`. The primary default is an All courses / 4:00 example, with no assumed age, gender or prior performance. The 0934 pack uses input timestamp `2026-09-12T13:37:16Z` and calculation timestamp `2026-09-11T16:28:51Z`. Every integer target from 90 through 720 minutes has exact threshold support, but profile, near-finish, checkpoint and history cells publish only when their own sample rules pass. Extreme or sparse selections can therefore have no result.
+The primary page order and wording come from [the ten-analysis registry](../lib/ten-analyses.ts); the engine catalog below retains its original focus labels, its earlier `opening` path, and two additional paths, `downhill` and `return`. The primary rank-2 page now uses the separate fast-start output above. The personalized default is an All courses / 4:00 example, with no assumed age, gender or prior performance. The 0934 pack uses input timestamp `2026-09-12T13:37:16Z` and calculation timestamp `2026-09-12T14:13:44Z`. Every integer target from 90 through 720 minutes has exact threshold support, but profile, near-finish, checkpoint and history cells publish only when their own sample rules pass. Extreme or sparse selections can therefore have no result.
 
 All questions share the eligible and prior-history preparation described above. A displayed filter may be broadened only with explicit labeling. Read each method for dimensions deliberately varied, achieved-time conditioning and prior-time exclusions.
 
@@ -777,7 +793,7 @@ Select finishes in the displayed 15-minute finish-time band, centered on the nea
 
 ### opening: Which openings are associated with finishing under my target?
 
-Focus: prepare.
+Focus: prepare. Retained in the research guide; superseded on the primary rank-2 route by the separate fast-start analysis above. Its existing calculation and output have not changed.
 
 Use runners with a recorded best in the two strictly earlier calendar years. Classify the first 10 km as more than 2% faster than that benchmark’s marathon pace, within 2%, or more than 2% slower. For each group, count finishes strictly below the selected time. Groups are observational and pool available editions; a prior-time filter narrows ability but does not eliminate confounding.
 

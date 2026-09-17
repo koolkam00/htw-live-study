@@ -84,6 +84,21 @@ For a standalone calculation audit, run `node scripts/verify-runner-context.cjs 
 
 The [Runner context and peers workflow](../.github/workflows/runner-context.yml) runs on relevant pull-request paths or manual dispatch. It downloads the pinned FULL, calculates against the checked-in runner manifest, runs the independent verifier and uploads **`runner-context`** for 30 days. It does not import, change the pin, merge or deploy. Download/extract the artifact into an input directory for the importer, inspect the exact source/code revision, and preserve durable verification evidence before CI artifacts expire. Check pending/local/publication status in [RUNNER_CONTEXT_AND_PEERS.md](RUNNER_CONTEXT_AND_PEERS.md).
 
+## Fast-start analysis refresh
+
+After any runner-lookup refresh, recalculate the independent fast-start output from those exact published shards. This reuses the reviewed input pin and screened candidate groups; it does not download or modify the ingestion database. It must reconcile all raw/eligible records and the strictly-earlier-two-year benchmark count with the runner manifest before writing output.
+
+```bash
+python -m unittest discover -s analysis -p 'test_fast_start.py'
+python analysis/build_fast_start.py --runners public/data/runners --output /path/to/fast-start/evidence.json
+node scripts/verify-fast-start.cjs --input /path/to/fast-start/evidence.json
+cp /path/to/fast-start/evidence.json public/data/fast-start/evidence.json
+npm run verify:data
+npm run build
+```
+
+The independent verifier checks every cell's count, edition coverage and onset, then independently recomputes every numeric metric for the complete unfiltered cohort and five filtered cohorts. Every figure uses the same selected opening group, except the finish-distribution chart which explicitly compares all available opening groups under the selected course/demographic/prior filters. The dedicated [workflow](../.github/workflows/fast-start.yml) recalculates and verifies a `fast-start-evidence` artifact; it does not import or deploy. Source pins, lookup hashes and calculation hashes cannot be relabeled to avoid rebuilding. See [definitions and evidence](FAST_START_ANALYSIS.md).
+
 ## Producer operations and missing information
 
 The live producer database, scheduled ingestion, retries and recovery scripts are external to this checkout. A consistent SQLite snapshot is made through SQLite's backup mechanism or an equivalent supported snapshot; do not blindly copy a changing database or replace ingestion with a downloaded backup. Publish checksummed full-record snapshots with anonymous opening instructions. Public snapshot access does not require exposing the live service or its credentials.

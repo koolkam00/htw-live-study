@@ -43,6 +43,8 @@ Course pages use `lib/course-data.ts` and only `ext_course_pacing_profiles` for 
 
 ## Primary explorer and personalized semantics
 
+Rank 2 (`/analyses/starting-pace`) now uses `FastStartAnalysis`, `lib/fast-start.ts` and the separate verified `public/data/fast-start/evidence.json`. Its server loader binds the result to the exact runner-manifest hash and current release. The initial all-course row renders at build time; changing filters loads the content-hashed full aggregate with cancellation, retry and checksum verification. Course, exact-age band, recorded gender, four earlier-best bands and six opening intensities select exact rows, with no automatic broadening. It uses no target or eventual-finish filter. Old `previous=` links select the corresponding earlier-best band; `goal=` does not affect this analysis. Other ranked pages retain the shared personalized controls below. See [fast-start methods](FAST_START_ANALYSIS.md).
+
 `lib/analysis-profile.ts` defines the example as All courses, 4:00, all ages, all recorded genders and no previous time. Profile selections travel between the ten pages in URL parameters; browser history restores them. The explorer labels the example and subsequent selections, validates submitted times, and provides visible loading, retry and unavailable-result states. There is no arbitrary city substitution for a sparse cohort. All courses has no terrain profile: the terrain page asks for a course explicitly.
 
 - Ranking is fixed. Profile changes update comparisons and availability without reordering the ten.
