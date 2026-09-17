@@ -56,6 +56,9 @@ export function sanitizeAnalyticsEvent(event: CaptureResult | null): CaptureResu
   if (!event || !Object.prototype.hasOwnProperty.call(eventProperties, event.event)) return null;
   const source = event.properties;
   const properties: Record<string, unknown> = {};
+  // PostHog requires the browser user agent to derive its rotating cookieless identity.
+  // Removing this SDK-generated field causes ingestion to drop otherwise valid events.
+  if (typeof source.$raw_user_agent === 'string') properties.$raw_user_agent = source.$raw_user_agent;
   for (const key of ['token', '$lib', '$lib_version', '$browser', '$browser_version', '$os', '$os_version', '$device_type', '$screen_height', '$screen_width', '$viewport_height', '$viewport_width', '$config_defaults']) {
     if (['string', 'number', 'boolean'].includes(typeof source[key])) properties[key] = source[key];
   }
