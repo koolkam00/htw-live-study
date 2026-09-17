@@ -8,6 +8,7 @@ export default function SiteNav() {
     <Link href="/analyses" aria-current={path.startsWith('/analyses') ? 'page' : undefined}>Explore analyses</Link>
     <Link href="/runners" aria-current={path === '/runners' || path.startsWith('/runners/') ? 'page' : undefined}>Find a runner</Link>
     <Link href="/about" aria-current={path === '/about' ? 'page' : undefined}>About the study</Link>
+    <Link href="/request-analysis" className="nav-request" aria-current={path === '/request-analysis' ? 'page' : undefined}>Request an analysis</Link>
     <a href="https://github.com/koolkam00/htw-live-study/releases" className="nav-data">Open data <span aria-hidden="true">↗</span></a>
   </nav>;
 }
