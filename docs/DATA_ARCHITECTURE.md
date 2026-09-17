@@ -15,6 +15,7 @@ Current full-refresh source: **`private-export-20260912-0934`**, created `2026-0
 | Supporting study | `public/data/study/evidence.json` | Current-source sustained-slowdown, severity and milestone calculations |
 | Runner lookup | `public/data/runners/manifest.json` and compressed shards | Public recorded names and race records, with candidate linkage and quality reasons |
 | Runner context | `public/data/runner-context/manifest.json` and edition shards | Same-edition peer distributions and validated environmental context, bound to the exact runner manifest |
+| All-finisher context | `public/data/all-finisher-context/evidence.json` | Edition-balanced within-race comparisons, bound to exact runner and context manifests; no previous race required |
 | Website data | [public/data](../public/data) | Static JSON/CSV consumed during build or fetched by charts; no live SQLite queries |
 
 Backups (`htw-db-*`), exports (`private-export-*`) and pack bundle IDs (`private-*`) are different identifiers. Their legacy names do not determine access. The current policy makes source code, full records, overlays and snapshots publicly downloadable as ordinary unencrypted files; gzip is compression. Prefer Release assets for large files. [ACCESS.md](../analysis/ACCESS.md) gives exact downloads and checksums. Operational credentials are not research data.

@@ -18,7 +18,7 @@ import type { WeatherDefinition } from '@/lib/weather-types';
 
 const EMPTY_CITY: CityData = { city: 'All courses', cohorts: {}, terrain: [] };
 
-export default function AnalysisExplorer({ definition, summary, initialAnswer, weatherQuestions = [] }: { definition: AnalysisDefinition; summary: PersonalSummary; initialAnswer: GuideAnswer; weatherQuestions?: WeatherDefinition[] }) {
+export default function AnalysisExplorer({ definition, summary, initialAnswer, weatherQuestions = [], historyMode = false }: { definition: AnalysisDefinition; summary: PersonalSummary; initialAnswer: GuideAnswer; weatherQuestions?: WeatherDefinition[]; historyMode?: boolean }) {
   const { units } = useUnits();
   const text = (value: string | undefined) => unitText(value || '', units);
   const [profile, setProfile] = useState<Profile>(EXAMPLE_PROFILE);
@@ -65,7 +65,7 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer, w
   const applyProfile = (nextProfile: Profile) => {
     trackAnalytics('analysis_filters_applied', { analysis: definition.id, course_scope: nextProfile.city === 'All courses' ? 'all' : 'single' });
     setSelection(nextProfile); setChanged(true); setFormError('');
-    window.history.pushState(null, '', window.location.pathname + profileSearch(nextProfile) + '&units=' + units);
+    window.history.pushState(null, '', window.location.pathname + profileSearch(nextProfile) + (historyMode ? '&comparison=history' : '') + '&units=' + units);
   };
   const visibleAnswer = definition.id === 'courses' && answer?.charts[0]?.rows.length
     ? 'Compare ' + answer.charts[0].rows.length + (answer.charts[0].rows.length === 1 ? ' course' : ' courses') + ' with enough results to show a meaningful range.'
@@ -74,6 +74,7 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer, w
     <aside className="analysis-sidebar"><Link href="/analyses" className="sidebar-heading">The essential ten</Link><nav aria-label="The ten ranked analyses"><ol>{TEN_ANALYSES.map(item => <li key={item.id}><Link href={analysisHref(item) + search} aria-current={item.id === definition.id ? 'page' : undefined}><span>{String(item.rank).padStart(2, '0')}</span>{text(item.shortTitle)}</Link></li>)}</ol></nav><p>One question at a time.<br />Your comparisons travel with you.</p></aside>
     <article className="analysis-main">
       <header className="analysis-heading"><Link href="/analyses" className="eyebrow">Analysis {String(definition.rank).padStart(2, '0')} of 10 <span aria-hidden="true"> / </span> {definition.category}</Link><h1>{text(definition.title)}</h1><p>{text(definition.purpose)}</p></header>
+      {['courses', 'weather', 'gains'].includes(definition.id) && <p className="coverage-notice"><strong>This comparison requires earlier results.</strong> {definition.id === 'gains' ? 'Personal improvement compares a finish with the fastest eligible finish in any strictly earlier year. One race cannot establish improvement.' : 'Finish change compares a result with the fastest eligible finish in the two strictly earlier calendar years.'} Leaving the earlier-time filter blank includes every eligible history group; it does not include finishes with no earlier benchmark.{definition.id === 'gains' && <> With one race, explore <Link href="/analyses/pacing-pattern">pacing patterns</Link> or <Link href="/runners">same-edition peers</Link>.</>}</p>}
       <form className="comparison-controls" onSubmit={event => {
         event.preventDefault();
         const goal = definition.controls.time ? parseMinutes(timeText) : draft.goal;

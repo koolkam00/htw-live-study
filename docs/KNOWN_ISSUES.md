@@ -1,5 +1,9 @@
 # Known issues and evidence status
 
+## Earlier-result coverage update
+
+Weather and course defaults no longer depend on recorded history. Broader slow-start, opening variability, downhill, weather-profile, course consistency/profile and race-day views use eligible single races. The source-quality exclusions and missing-environment gaps still apply; sparse cells remain unavailable. Personal improvement and other cross-race questions intentionally keep history. See [methods and evidence](ALL_FINISHER_ANALYSES.md), including publication status.
+
 Updated September 12, 2026 for `private-export-20260912-0934`. The [current refresh record](REFRESH_20260912_0934.md) separates source, calculation, import and production evidence. Prior implementation records remain dated historical evidence.
 
 | Priority/status | Issue | Current evidence | Next action |

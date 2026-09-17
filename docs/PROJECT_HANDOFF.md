@@ -1,5 +1,9 @@
 # Project handoff
 
+## Broader analysis views (September 17 implementation)
+
+Weather and course comparisons now default to within-race evidence without linked history. Their prior-result modes retain the original outputs. A new downhill-start view and seven broader archive entries cover slow/aggressive openings, opening variability, course consistency, course profiles, weather profiles and same-edition context. The additive builder consumes the exact checked runner and runner-context manifests; neither source pin nor earlier output is changed. Read [methods, routes and validation](ALL_FINISHER_ANALYSES.md). Personal improvement and longitudinal learning still require linked races; the UI explains this explicitly. Publication evidence for this change must be recorded separately from PR #42.
+
 Updated September 17, 2026 for the expanded [fast-start analysis](FAST_START_ANALYSIS.md), using the unchanged **`private-export-20260912-0934`** pin. Its new default includes all eligible finishes; the earlier-best comparison remains available with its original output. Calculation, CI and publication evidence for the addition must be recorded separately from the earlier [PR #41](https://github.com/koolkam00/htw-live-study/pull/41). The [current refresh record](REFRESH_20260912_0934.md) distinguishes the September 12 source audit, calculation, import and production verification. The [runner-context record](RUNNER_CONTEXT_AND_PEERS.md) and [supporting-study/name-search record](CURRENT_SITE_AND_RUNNER_SEARCH.md) retain their earlier implementation evidence. The public site is [splithappens.run](https://splithappens.run).
 
 ## Read in order

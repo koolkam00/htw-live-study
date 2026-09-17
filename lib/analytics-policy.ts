@@ -5,7 +5,7 @@ import { WEATHER_QUESTIONS } from './weather-catalog';
 export const ANALYTICS_PREFERENCE = 'marathon-analytics-disabled';
 export const ANALYTICS_CHANGED = 'marathon-analytics-changed';
 export const ANALYTICS_HOSTS = new Set(['splithappens.run', 'www.splithappens.run', 'htw-live-study.vercel.app']);
-const pages = new Set(['/', '/analyses', '/runners', '/about', '/methodology', '/privacy', '/slowdown', '/htw', '/your-race', '/research/personalized',
+const pages = new Set(['/', '/analyses', '/analyses/downhill-start', '/runners', '/about', '/methodology', '/privacy', '/slowdown', '/htw', '/your-race', '/research/personalized',
   ...TEN_ANALYSES.map(item => '/analyses/' + item.slug), ...WEATHER_QUESTIONS.map(item => '/analyses/' + item.slug)]);
 const analyses = new Set([...TEN_ANALYSES.map(item => item.id), ...WEATHER_QUESTIONS.map(item => item.id)]);
 

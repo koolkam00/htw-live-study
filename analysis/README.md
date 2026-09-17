@@ -1,5 +1,9 @@
 # Marathon pacing analysis pipeline
 
+## All-finisher environmental and course comparisons
+
+`build_all_finisher_context.py` adds history-independent comparisons from verified runner and runner-context shards. It preserves both pins and all older builder outputs. Run `python -m unittest discover -s analysis -p 'test_all_finisher_context.py'`, then build and independently verify with `node scripts/verify-all-finisher-context.cjs`. The full website check also validates clients and routes. Rebuild after either referenced manifest changes, including same-tag refreshes. Read [definitions, source contracts and commands](../docs/ALL_FINISHER_ANALYSES.md).
+
 The current full-refresh source is **`private-export-20260912-0934`**. Its verified input contains 4,462,379 raw and feature rows; the reviewed timing/source-quality cohort contains 3,517,336 eligible finishes. Calculation, import and publication are distinct statuses recorded in the [current refresh](../docs/REFRESH_20260912_0934.md). Use the exact tag and current source commit when reproducing results.
 
 The pipeline calculates eight foundation and 25 extended packs, plus the 12-path personalized engine supplying the [essential ten](../docs/TOP_TEN_ANALYSES.md). A separate [weather screen](../docs/WEATHER_ANALYSES.md) evaluates humidity, four-hour warming and wind and publishes only supported candidates. The 33 broad packs form the research archive. Group running and congestion remain limited by missing physical-proximity/start-offset measurements.
