@@ -51,6 +51,8 @@ Candidates use screened supplied identities where available, otherwise one recor
 
 The new runner-context pipeline adds exact same-edition finish comparisons by recorded gender and exact-age band, achieved-time pacing quartiles, selected-race section differences, and validated weather/current-route context. It binds its 256 edition shards to the exact runner manifest; lookup refreshes therefore require a context rebuild even at the same release tag. It uses the same 3,517,336 eligible finishes, with 1,729 peer groups and 13,523 achieved-time pace groups. Weather matches 249 raw editions and terrain 254; gaps and proxy limits remain explicit. See [methods, coverage and verification](RUNNER_CONTEXT_AND_PEERS.md) and the [refresh commands](OPERATIONS.md#runner-context-refresh).
 
+The [September 17 runner-coverage update](RUNNER_RECORD_COVERAGE.md) makes lookup coverage visible beside the search form and gives selections containing only incomplete or held results a full source-record view. Mixed selections retain those records alongside eligible-race analysis. A scan of every published profile found 944,975 searchable records that are ineligible for analysis; all were already indexed. This is a presentation update, with no source-pin, index, calculation or eligibility change. Publication is verified separately in the PR.
+
 ## Public access and operations
 
 Source code, complete runner records including recorded names, exports, database snapshots, overlays and aggregate outputs are public research material. Gzip compression is not encryption. Release assets keep large binaries out of website builds for size and reproducibility. Passwords, access tokens and operational credentials are not dataset contents.
