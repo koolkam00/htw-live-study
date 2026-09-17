@@ -73,7 +73,7 @@ async function client(): Promise<PostHog | null> {
 
 async function send(event: keyof AnalyticsEvents | '$pageview', properties: Record<string, unknown>): Promise<void> {
   if (!analyticsConfigured() || analyticsDisabled()) return;
-  const safeProperties = { ...properties, $current_url: 'https://splithappens.run' + analyticsPath(window.location.pathname), $referrer: document.referrer };
+  const safeProperties = { ...properties, $current_url: 'https://splithappens.run' + analyticsPath(window.location.pathname, process.env.NEXT_PUBLIC_BASE_PATH || ''), $referrer: document.referrer };
   try {
     const posthog = await client();
     if (posthog && !analyticsDisabled()) posthog.capture(event, safeProperties);

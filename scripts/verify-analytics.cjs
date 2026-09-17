@@ -28,6 +28,9 @@ assert.doesNotMatch(JSON.stringify(clean), /Private|private@|record_id|initial_c
 assert.equal(dirty.properties.q, 'Private Name', 'Sanitizing must not mutate the caller');
 for (const event of ['$autocapture', '$snapshot', '$identify', '$exception', 'unknown', 'constructor']) assert.equal(policy.sanitizeAnalyticsEvent({ ...dirty, event }), null);
 assert.equal(policy.analyticsPath('/analyses/starting-pace?age=35#private'), '/analyses/starting-pace');
+assert.equal(policy.analyticsPath('/htw-live-study/analyses/starting-pace?age=35#private', '/htw-live-study'), '/analyses/starting-pace');
+assert.equal(policy.analyticsPath('/htw-live-study/', '/htw-live-study'), '/');
+assert.equal(policy.analyticsPath('/htw-live-study-other/runners', '/htw-live-study'), '/other');
 assert.equal(policy.analyticsPath('/unknown/Private-Name'), '/other');
 assert.equal(policy.analyticsPath('/courses/Private-Name'), '/courses');
 assert.equal(policy.referringDomain('javascript:alert(1)'), '');
@@ -76,6 +79,14 @@ async function main() {
   window.location.pathname = '/runners'; analytics.trackPage('/runners'); await settle(); assert.equal(events.length, 2);
   analytics.trackAnalytics('runner_search_completed', { outcome: 'no_matches', name: 'Private Name' }); await settle();
   assert.equal(events.at(-1).properties.outcome, 'no_matches'); assert.equal(events.at(-1).properties.name, undefined);
+  process.env.NEXT_PUBLIC_BASE_PATH = '/htw-live-study';
+  window.location.pathname = '/htw-live-study/analyses/starting-pace';
+  analytics.trackPage('/analyses/starting-pace'); await settle();
+  assert.equal(events.at(-1).properties.$pathname, '/analyses/starting-pace', 'Subdirectory deployments retain their application route');
+  window.location.pathname = '/htw-live-study/runners';
+  analytics.trackAnalytics('runner_search_submitted', {}); await settle();
+  assert.equal(events.at(-1).properties.$current_url, 'https://splithappens.run/runners', 'Feature events also remove the configured base path');
+  delete process.env.NEXT_PUBLIC_BASE_PATH;
   const count = events.length;
   analytics.setAnalyticsDisabled(true); analytics.trackAnalytics('runner_search_submitted', {}); await settle(); assert.equal(events.length, count);
   assert.equal(config.before_send(dirty), null, 'Opt-out also blocks an already-initialized SDK');

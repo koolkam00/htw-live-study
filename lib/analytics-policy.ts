@@ -26,9 +26,11 @@ const eventProperties: Record<keyof AnalyticsEvents | '$pageview', Record<string
 };
 
 // Only known public pages are retained. Query strings, fragments, names, record IDs and unknown paths never leave the site.
-export function analyticsPath(value: string): string {
+export function analyticsPath(value: string, basePath = ''): string {
   try {
-    const path = new URL(value, 'https://splithappens.run').pathname.replace(/\/$/, '') || '/';
+    let path = new URL(value, 'https://splithappens.run').pathname.replace(/\/$/, '') || '/';
+    const base = basePath.replace(/\/$/, '');
+    if (base && (path === base || path.startsWith(base + '/'))) path = path.slice(base.length) || '/';
     if (pages.has(path)) return path;
     if (path === '/courses' || path.startsWith('/courses/')) return '/courses';
     if (path === '/packs' || path.startsWith('/packs/')) return '/packs';
