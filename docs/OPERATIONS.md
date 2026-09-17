@@ -86,18 +86,22 @@ The [Runner context and peers workflow](../.github/workflows/runner-context.yml)
 
 ## Fast-start analysis refresh
 
-After any runner-lookup refresh, recalculate the independent fast-start output from those exact published shards. This reuses the reviewed input pin and screened candidate groups; it does not download or modify the ingestion database. It must reconcile all raw/eligible records and the strictly-earlier-two-year benchmark count with the runner manifest before writing output.
+After any runner-lookup refresh, recalculate **both** independent fast-start outputs from those exact published shards. This reuses the reviewed input pin and does not download or modify the ingestion database. The default all-finisher mode must include every eligible record once; history must additionally reconcile the strictly-earlier-two-year benchmark count. Both verify all source shards, raw/eligible counts, source calculation hashes and the exact runner-manifest hash. Adding the all-finisher mode without a lookup refresh preserves the existing history output byte for byte.
 
 ```bash
 python -m unittest discover -s analysis -p 'test_fast_start.py'
 python analysis/build_fast_start.py --runners public/data/runners --output /path/to/fast-start/evidence.json
 node scripts/verify-fast-start.cjs --input /path/to/fast-start/evidence.json
+python -m unittest discover -s analysis -p 'test_fast_start_all.py'
+python analysis/build_fast_start_all.py --runners public/data/runners --output /path/to/fast-start/all-finishers.json
+node scripts/verify-fast-start-all.cjs --input /path/to/fast-start/all-finishers.json
 cp /path/to/fast-start/evidence.json public/data/fast-start/evidence.json
+cp /path/to/fast-start/all-finishers.json public/data/fast-start/all-finishers.json
 npm run verify:data
 npm run build
 ```
 
-The independent verifier checks every cell's count, edition coverage and onset, then independently recomputes every numeric metric for the complete unfiltered cohort and five filtered cohorts. Every figure uses the same selected opening group, except the finish-distribution chart which explicitly compares all available opening groups under the selected course/demographic/prior filters. The dedicated [workflow](../.github/workflows/fast-start.yml) recalculates and verifies a `fast-start-evidence` artifact; it does not import or deploy. Source pins, lookup hashes and calculation hashes cannot be relabeled to avoid rebuilding. See [definitions and evidence](FAST_START_ANALYSIS.md).
+The history verifier checks every cell's count, edition coverage and onset, then independently recomputes every numeric metric for the complete unfiltered cohort and five filtered cohorts. The separate all-finisher verifier covers its full eligible population, exact opening boundaries, published and sparse-cell counts, onset denominators and new time outcomes. Preserve evidence of each verifier's actual checks; passing one mode does not validate the other. Each view uses its selected opening group except its clearly labeled cross-group time-distribution chart. Source pins, lookup hashes and calculation hashes cannot be relabeled to avoid rebuilding. The dedicated [workflow](../.github/workflows/fast-start.yml) recalculates and verifies evidence artifacts; it does not import or deploy. Record CI and anonymous production-payload checks separately. See [definitions and evidence](FAST_START_ANALYSIS.md).
 
 ## Producer operations and missing information
 
