@@ -31,7 +31,7 @@ function DashboardInner() {
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <div>
               <div className="site-title" style={{ gap: '0.5rem' }}>
-                <span>Marathon Pacing Study</span>
+                <span>Pace Notes</span>
               </div>
               <div className="site-subtitle">Sustained slowdown across recorded marathon finishes</div>
             </div>

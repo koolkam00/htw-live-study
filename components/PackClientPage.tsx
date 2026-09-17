@@ -105,7 +105,7 @@ export default function PackClientPage({
     return (
       <div className="panel">
         <div className="figure-title">{info.title}</div>
-        <div className="site-subtitle">Explore sustained late-race slowing within the Marathon Pacing Study.</div>
+        <div className="site-subtitle">Explore sustained late-race slowing with Pace Notes.</div>
         <div style={{ marginTop: '0.75rem' }}>
           <Link href="/slowdown">Explore sustained slowdown</Link>
         </div>

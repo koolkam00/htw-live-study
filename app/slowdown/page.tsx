@@ -4,7 +4,7 @@ import ResearchQuestion from '@/components/ResearchQuestion';
 import { getStudyAnswer, getWallTimingAnswer } from '@/lib/research-data';
 
 export const metadata = {
-  title: 'Sustained slowdown | Marathon Pacing Study',
+  title: 'Sustained slowdown | Pace Notes',
   description: 'Explore sustained slowdown thresholds, recorded age, earlier performance, and patterns around recorded bests using the current data release.',
   alternates: { canonical: 'https://htw-live-study.vercel.app/slowdown' },
 };

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { formatNumber } from '@/lib/csv';
 import { getCourseNames, getIndividualCourseAnswer, slugifyCity } from '@/lib/course-data';
 
-export const metadata = { title: 'Courses | Marathon Pacing Study' };
+export const metadata = { title: 'Courses | Pace Notes' };
 export default function CoursesPage() {
   const names = getCourseNames();
   return <div className="prose">

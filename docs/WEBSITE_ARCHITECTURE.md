@@ -12,7 +12,7 @@ The current refresh adopts the 0934 source across primary analyses, supporting s
 
 The primary ten are accompanied by any weather candidates that pass the fixed screen in `public/data/weather/evidence.json`. `weather-data.ts` exposes only ready candidates; `WeatherIndex` adds their links to the homepage and directory, and the temperature page links them as well. `WeatherAnalysis` renders an adjusted percentage-point estimate and uncertainty plus a browser for unadjusted edition observations. Browsing does not refit the overall estimate. The full refresh uses `private-export-20260912-0934` for both inputs; the [refresh record](REFRESH_20260912_0934.md) separately records import and deployment. Read [weather methods and decisions](WEATHER_ANALYSES.md) for the current ready/withheld results.
 
-[package.json](../package.json) pins Next.js 14.2.5, React 18.3.1, Recharts 2.12.7 and TypeScript 5.5.4. [next.config.mjs](../next.config.mjs) sets static export, unoptimized images and optional NEXT_PUBLIC_BASE_PATH/assetPrefix. The public host is [Marathon Pacing Study](https://splithappens.run); the original [Vercel address](https://htw-live-study.vercel.app) remains available.
+[package.json](../package.json) pins Next.js 14.2.5, React 18.3.1, Recharts 2.12.7 and TypeScript 5.5.4. [next.config.mjs](../next.config.mjs) sets static export, unoptimized images and optional NEXT_PUBLIC_BASE_PATH/assetPrefix. The public host is [Pace Notes](https://splithappens.run); the original [Vercel address](https://htw-live-study.vercel.app) remains available.
 
 | Route | Source / renderer | Purpose |
 | --- | --- | --- |
@@ -98,3 +98,9 @@ About lists the marathon names and exact recorded years from the runner manifest
 ## Visitor analytics
 
 The root layout mounts `SiteAnalytics` for production-only PostHog pageviews and explicit feature events. The `/privacy` route documents collection and provides a browser opt-out. See [analytics configuration, event definitions and verification](ANALYTICS.md). Search terms, runner IDs, personal filter values and URL queries are excluded; analytics does not read or change the public research data.
+
+## Pace Notes branding and analysis requests
+
+The public brand is **Pace Notes**, credited to [Run_with_Kam · Andrew Kam](https://www.instagram.com/run_with_kam/) on the home page, About and footer. Public page titles use this name; compatibility URLs, research provenance, package names and the splithappens.run host remain stable.
+
+`/request-analysis` provides a question and optional context field. `AnalysisRequest` prepares an encoded email to Andrew; visitors must send it through their own email app or Gmail. A copy fallback is available. This is a client-side email composer, not a server-side delivery service: never report a draft as submitted or delivered. The page stores no request text, and analytics receives only the allowed page path. No email provider keys or runtime API are required, preserving Next static export. Footer, About and analysis-directory links make the page discoverable.

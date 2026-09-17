@@ -1,4 +1,4 @@
-# Ten analyses for Marathon Pacing Study
+# Ten analyses for Pace Notes
 
 ## Current all-finisher defaults
 

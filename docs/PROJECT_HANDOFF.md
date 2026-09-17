@@ -1,5 +1,9 @@
 # Project handoff
 
+## Pace Notes presentation and requests
+
+The public name is Pace Notes, with Instagram attribution to Run_with_Kam · Andrew Kam. `/request-analysis` prepares an email request to Andrew; the visitor sends it from their email app or Gmail. It does not send mail from the server or confirm delivery. See [website architecture](WEBSITE_ARCHITECTURE.md#pace-notes-branding-and-analysis-requests). This presentation change does not recalculate analyses or alter data pins.
+
 ## Broader analysis views (September 17 implementation)
 
 Weather and course comparisons now default to within-race evidence without linked history. Their prior-result modes retain the original outputs. A new downhill-start view and seven broader archive entries cover slow/aggressive openings, opening variability, course consistency, course profiles, weather profiles and same-edition context. The additive builder consumes the exact checked runner and runner-context manifests; neither source pin nor earlier output is changed. Read [methods, routes and validation](ALL_FINISHER_ANALYSES.md). Personal improvement and longitudinal learning still require linked races; the UI explains this explicitly. Publication evidence for this change must be recorded separately from PR #42.
