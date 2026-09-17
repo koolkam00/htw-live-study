@@ -14,6 +14,7 @@ const { renderToStaticMarkup } = require('react-dom/server');
 const { FAST_START_DEFAULT, PRIOR_OPTIONS, fastStartSearch, readFastStartSelection, fastStartRow, fastStartCharts, timeChange, loadFastStartEvidence } = require('../lib/fast-start.ts');
 const { getFastStartStart } = require('../lib/fast-start-server.ts');
 const { FastStartResults, default: FastStartAnalysis } = require('../components/FastStartAnalysis.tsx');
+const { default: MethodologyPage } = require('../app/methodology/page.tsx');
 const start = getFastStartStart();
 const bytes = fs.readFileSync(path.join(__dirname, '../public/data/fast-start/evidence.json'));
 const evidence = JSON.parse(bytes);
@@ -54,6 +55,7 @@ async function main() {
     assert.match(html,/17\.9%/); assert.match(html,/142,757/); assert.match(html,/67,025/);
     assert.match(html,/earlier recorded best/); assert.match(html,/do not prove that the start caused/);
     assert.match(html,/not minutes caused or lost/);
+    assert.match(html, /href="https:\/\/journals\.plos\.org\/plosone\/article\?id=10\.1371\/journal\.pone\.0251513"/);
     assert.match(html,units==='mi'?/18\.64–21\.75 mi/:/30–35 km/);
     assert.match(html,units==='mi'?/26\.22 mi/:/42\.195 km/);
     assert.doesNotMatch(html,/private-export-|20260912/,'Internal upload identifiers stay out of visible result copy');
@@ -67,6 +69,12 @@ async function main() {
   const page=render(FastStartAnalysis,{start});
   assert.match(page,/Opening pace/); assert.match(page,/Earlier recorded best/); assert.doesNotMatch(page,/>Target time</);
   assert.match(page,/withdrawals/i); assert.match(page,/555,437/);
+  const methodology=render(MethodologyPage,{});
+  const legacyOpening=(methodology.match(/<details\b[^>]*>[\s\S]*?<\/details>/g)||[]).find(detail=>detail.includes('Which openings are associated with finishing under my target?'));
+  assert.ok(legacyOpening,'Keep the legacy opening explanation available');
+  assert.match(legacyOpening,/href="\/research\/personalized#guide-opening"/,'Legacy target comparison must open its own guide');
+  assert.doesNotMatch(legacyOpening,/href="\/analyses\/starting-pace"/);
+  assert.match(methodology,/href="\/analyses\/starting-pace"/,'Document and link the current fast-start analysis separately');
   for (const row of evidence.rows.filter(row=>row.city!=='All courses').slice(0,3)) {
     const html=render(FastStartResults,{row,focus:row.groups[0],start,units:'mi'});
     assert.ok(html.includes(row.city==='New York'?'New York City':row.city));
