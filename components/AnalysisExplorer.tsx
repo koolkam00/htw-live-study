@@ -12,6 +12,7 @@ import { EXAMPLE_PROFILE, profileSearch, readAnalysisProfile, sameProfile } from
 import { loadAnalysisAggregate } from '@/lib/analysis-aggregates';
 import AnalysisChart from './AnalysisChart';
 import CheckpointExplorer from './CheckpointExplorer';
+import { trackAnalytics } from '@/lib/analytics';
 import { weatherHref } from '@/lib/weather-catalog';
 import type { WeatherDefinition } from '@/lib/weather-types';
 
@@ -62,6 +63,7 @@ export default function AnalysisExplorer({ definition, summary, initialAnswer, w
   const previous = TEN_ANALYSES[definition.rank - 2], next = TEN_ANALYSES[definition.rank];
   const search = profileSearch(profile) + '&units=' + units;
   const applyProfile = (nextProfile: Profile) => {
+    trackAnalytics('analysis_filters_applied', { analysis: definition.id, course_scope: nextProfile.city === 'All courses' ? 'all' : 'single' });
     setSelection(nextProfile); setChanged(true); setFormError('');
     window.history.pushState(null, '', window.location.pathname + profileSearch(nextProfile) + '&units=' + units);
   };

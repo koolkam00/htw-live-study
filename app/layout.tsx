@@ -2,6 +2,7 @@ import './globals.css';
 import { UnitLink as Link, UnitSwitch } from '@/components/UnitsProvider';
 import UnitsProvider from '@/components/UnitsProvider';
 import SiteNav from '@/components/SiteNav';
+import SiteAnalytics from '@/components/SiteAnalytics';
 
 export const metadata = {
   title: 'Marathon Pacing Study | Understand your next 26.2 miles',
@@ -28,9 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/about">About the study</Link>
             <Link href="/methodology">Methods &amp; sources</Link>
             <Link href="/packs">Research archive</Link>
+            <Link href="/privacy">Privacy &amp; analytics</Link>
             <a href="https://github.com/koolkam00/htw-live-study/releases">Download the data ↗</a>
           </nav>
         </footer>
+        <SiteAnalytics />
       </UnitsProvider></body>
     </html>
   );
